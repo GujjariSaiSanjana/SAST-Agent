@@ -5,6 +5,34 @@ import { logger } from '../../utils/logger';
 const aiService = new AiService();
 
 export class IssueService {
+    async list(userId: string, limit = 10, offset = 0) {
+        const [issues, total] = await Promise.all([
+            prisma.issue.findMany({
+                where: { scan: { userId } },
+                include: {
+                    scan: {
+                        select: {
+                            id: true,
+                            inputRef: true,
+                            project: { select: { name: true } },
+                        },
+                    },
+                },
+                orderBy: [
+                    { severity: 'asc' }, // CRITICAL, HIGH, MEDIUM... based on Enum order
+                    { createdAt: 'desc' },
+                ],
+                take: limit,
+                skip: offset,
+            }),
+            prisma.issue.count({
+                where: { scan: { userId } },
+            }),
+        ]);
+
+        return { issues, total };
+    }
+
     async get(id: string, userId: string) {
         return prisma.issue.findFirstOrThrow({
             where: { id, scan: { userId } },

@@ -14,35 +14,48 @@ export class AiScannerService {
 
         logger.info(`[AI-Scanner] Found ${files.length} relevant files for scanning`);
 
-        // Process files sequentially to respect API rate limits (NVIDIA NIM is sensitive)
+        // Process files sequentially with backoff to respect tight API rate limits
         const BATCH_SIZE = 1;
         for (let i = 0; i < files.length; i += BATCH_SIZE) {
             const file = files[i];
-            try {
-                const content = await fs.readFile(file, 'utf-8');
-                const relativePath = path.relative(targetDir, file);
+            let retries = 0;
+            const MAX_RETRIES = 2;
 
-                // Basic file sanity checks (skip images, empty files, huge files)
-                if (content.length < 10 || content.length > 60000) continue;
+            while (retries <= MAX_RETRIES) {
+                try {
+                    const content = await fs.readFile(file, 'utf-8');
+                    const relativePath = path.relative(targetDir, file);
 
-                logger.debug(`[AI-Scanner] Sequential analysis: ${relativePath}...`);
-                const findings = await this.provider.scan(relativePath, content);
+                    if (content.length < 10 || content.length > 60000) break;
 
-                if (findings.length > 0) {
-                    const batchFindings = findings.map(f => ({ ...f, filePath: relativePath }));
-                    allFindings.push(...batchFindings);
-                    if (onFindings) {
-                        await onFindings(batchFindings);
+                    logger.debug(`[AI-Scanner] Sequential analysis: ${relativePath} (Retry: ${retries})...`);
+                    const findings = await this.provider.scan(relativePath, content);
+
+                    if (findings.length > 0) {
+                        const batchFindings = findings.map(f => ({ ...f, filePath: relativePath }));
+                        allFindings.push(...batchFindings);
+                        if (onFindings) {
+                            await onFindings(batchFindings);
+                        }
+                    }
+
+                    // Successful call, exit retry loop
+                    break;
+
+                } catch (err: any) {
+                    if (err.status === 429 && retries < MAX_RETRIES) {
+                        logger.warn(`[AI-Scanner] Rate limit hit for ${file}. Retrying in 5s...`);
+                        await new Promise(resolve => setTimeout(resolve, 5000));
+                        retries++;
+                    } else {
+                        logger.error(`[AI-Scanner] Failed to analyze file ${file} after ${retries} retries:`, err.message);
+                        break; // Move to next file
                     }
                 }
-
-                // Small delay to prevent 429 rate limits
-                await new Promise(resolve => setTimeout(resolve, 800));
-
-            } catch (err) {
-                logger.error(`[AI-Scanner] Failed to analyze file ${file}:`, err);
-                // Continue with next file instead of failing entire scan
             }
+
+            // Respectful breather between files
+            await new Promise(resolve => setTimeout(resolve, 2000));
         }
 
         logger.info(`[AI-Scanner] AI Scan complete: ${allFindings.length} findings for scanId=${scanId}`);

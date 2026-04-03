@@ -28,22 +28,22 @@ export default function ScanResultsPage() {
     const [liveData, setLiveData] = useState<any>({ totalIssues: 0, counts: {} });
 
     // Fetch summary query
-    const { data: summary, refetch: refetchSummary } = useQuery({
+    const { data: summary, refetch: refetchSummary } = useQuery<any>({
         queryKey: ['scanSummary', id],
         queryFn: () => api.get(`/scans/${id}/summary`),
-        enabled: scanStatus === 'COMPLETED' || scanStatus === 'FAILED',
     });
 
     // Fetch issues query
-    const { data: issuesData, refetch: refetchIssues } = useQuery({
+    const { data: issuesData, refetch: refetchIssues } = useQuery<any>({
         queryKey: ['scanIssues', id],
         queryFn: () => api.get(`/scans/${id}/issues?limit=100`),
-        enabled: scanStatus === 'COMPLETED' || scanStatus === 'AI_ANALYSIS',
     });
 
     // SSE for live status
     useEffect(() => {
-        const eventSource = new EventSource(`http://localhost:3001/api/scans/${id}/stream`, {
+        if (!id) return;
+        const url = `/api/scans/${id}/stream`;
+        const eventSource = new EventSource(url, {
             withCredentials: true,
         });
 
@@ -52,12 +52,20 @@ export default function ScanResultsPage() {
             if (data.status) setScanStatus(data.status);
             if (data.totalIssues !== undefined) {
                 setLiveData(data);
+                // Proactively refresh findings list when new ones are reported
+                refetchIssues();
+                refetchSummary();
             }
             if (data.done) {
                 eventSource.close();
                 refetchSummary();
                 refetchIssues();
             }
+        };
+
+        eventSource.onerror = (e) => {
+            console.error('SSE Error:', e);
+            eventSource.close();
         };
 
         return () => eventSource.close();
@@ -77,8 +85,9 @@ export default function ScanResultsPage() {
     };
 
     const isScanning = ['PENDING', 'CLONING', 'SCANNING', 'PROCESSING', 'AI_ANALYSIS'].includes(scanStatus);
+    const showInitialLoading = scanStatus === 'PENDING' || scanStatus === 'CLONING' || (isScanning && (!issuesData || issuesData.issues?.length === 0));
 
-    if (isScanning) {
+    if (showInitialLoading) {
         return (
             <div className="flex flex-col items-center justify-center min-h-[60vh] space-y-8 max-w-2xl mx-auto">
                 <div className="relative">
