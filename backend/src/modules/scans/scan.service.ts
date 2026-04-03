@@ -96,37 +96,33 @@ export class ScanService {
     }
 
     async subscribeToScan(scanId: string, userId: string, onProgress: (data: any) => void) {
-        let lastSync = 0;
         const check = async () => {
             try {
-                const scan = await prisma.scan.findFirst({
-                    where: { id: scanId, userId },
-                    select: {
-                        status: true,
-                        errorMsg: true,
-                        totalIssues: true,
-                        riskScore: true,
-                        criticalCount: true,
-                        highCount: true,
-                        mediumCount: true,
-                        lowCount: true,
-                        warningCount: true,
-                    },
-                });
+                const [scan, totalIssues, counts] = await Promise.all([
+                    prisma.scan.findFirst({
+                        where: { id: scanId, userId },
+                        select: { status: true, errorMsg: true, riskScore: true }
+                    }),
+                    prisma.issue.count({ where: { scanId } }),
+                    prisma.issue.groupBy({
+                        by: ['severity'],
+                        where: { scanId },
+                        _count: true
+                    })
+                ]);
 
                 if (scan) {
+                    const severityCounts = counts.reduce((acc, curr) => {
+                        acc[curr.severity.toLowerCase()] = curr._count;
+                        return acc;
+                    }, {} as Record<string, number>);
+
                     onProgress({
                         status: scan.status,
                         error: scan.errorMsg,
-                        totalIssues: scan.totalIssues,
+                        totalIssues,
                         riskScore: scan.riskScore,
-                        counts: {
-                            critical: scan.criticalCount,
-                            high: scan.highCount,
-                            medium: scan.mediumCount,
-                            low: scan.lowCount,
-                            warning: scan.warningCount,
-                        },
+                        counts: severityCounts,
                         done: ['COMPLETED', 'FAILED'].includes(scan.status)
                     });
                 }
@@ -142,7 +138,7 @@ export class ScanService {
             if (status && ['COMPLETED', 'FAILED'].includes(status)) {
                 clearInterval(interval);
             }
-        }, 1500); // Slightly faster polling for snappier UI
+        }, 1000);
 
         check();
         return () => clearInterval(interval);

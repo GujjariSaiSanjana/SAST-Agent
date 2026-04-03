@@ -79,7 +79,24 @@ export function parseScanResponse(raw: string): AiScanFinding[] {
         .trim();
     try {
         const parsed = JSON.parse(cleaned);
-        return Array.isArray(parsed.findings) ? parsed.findings : [];
+        const rawFindings = Array.isArray(parsed.findings) ? parsed.findings : [];
+
+        return rawFindings.map((f: any) => {
+            const severity = String(f.severity || 'INFO').toUpperCase();
+            const validSeverities = ['CRITICAL', 'HIGH', 'MEDIUM', 'LOW', 'WARNING', 'INFO'];
+
+            return {
+                ruleId: String(f.ruleId || 'rule-id'),
+                title: String(f.title || 'Security Finding'),
+                description: String(f.description || ''),
+                severity: (validSeverities.includes(severity) ? severity : 'INFO') as any,
+                category: String(f.category || 'Security'),
+                lineStart: Number(f.lineStart) || 1,
+                lineEnd: Number(f.lineEnd) || 1,
+                codeSnippet: String(f.codeSnippet || ''),
+                filePath: f.filePath, // Will be mixed in by the caller
+            };
+        });
     } catch {
         return [];
     }
