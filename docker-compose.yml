@@ -1,0 +1,66 @@
+services:
+  postgres:
+    image: postgres:15-alpine
+    environment:
+      POSTGRES_USER: sast_user
+      POSTGRES_PASSWORD: sast_password
+      POSTGRES_DB: sast_db
+    ports:
+      - "5432:5432"
+    volumes:
+      - pg_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U sast_user -d sast_db"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+  redis:
+    image: redis:7-alpine
+    ports:
+      - "6379:6379"
+
+  backend:
+    build: 
+      context: ./backend
+      dockerfile: Dockerfile
+    environment:
+      - NODE_ENV=production
+      - PORT=3001
+      - CLIENT_URL=http://localhost:5173
+      - DATABASE_URL=postgresql://sast_user:sast_password@postgres:5432/sast_db?schema=public
+      - REDIS_URL=redis://redis:6379
+      - BEARER_CLI_PATH=/usr/local/bin/bearer
+      - TEMP_DIR=/tmp/sast-agent
+      # Load remaining secrets from host env or .env file
+      - JWT_SECRET=${JWT_SECRET:-your-secret-fallback}
+      - GITHUB_CLIENT_ID=${GITHUB_CLIENT_ID}
+      - GITHUB_CLIENT_SECRET=${GITHUB_CLIENT_SECRET}
+      - GITHUB_CALLBACK_URL=http://localhost:3001/auth/github/callback
+      - GEMINI_API_KEY=${GEMINI_API_KEY}
+      - OPENAI_API_KEY=${OPENAI_API_KEY}
+      - NVIDIA_API_KEY=${NVIDIA_API_KEY}
+    ports:
+      - "3001:3001"
+    volumes:
+      - scan_data:/tmp/sast-agent
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_started
+    command: >
+      sh -c "npm run prisma:migrate && npm run start"
+
+  frontend:
+    build: 
+      context: ./frontend
+      dockerfile: Dockerfile
+    ports:
+      - "5173:80"
+    depends_on:
+      - backend
+
+volumes:
+  pg_data:
+  scan_data:
