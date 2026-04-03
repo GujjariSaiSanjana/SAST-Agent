@@ -22,11 +22,11 @@ export default function NewScanPage() {
             // Create project first if needed
             let projectId = undefined;
             if (projectName) {
-                const pRes = await api.post('/projects', { name: projectName, repoUrl: url });
+                const pRes: any = await api.post('/projects', { name: projectName, repoUrl: url });
                 projectId = pRes.id;
             }
 
-            const res = await api.post('/scans', { repoUrl: url, projectId });
+            const res: any = await api.post('/scans', { repoUrl: url, projectId });
             navigate(`/scans/${res.id}`);
         } catch (err: any) {
             setError(err.response?.data?.error || 'Failed to start GitHub scan');
@@ -43,7 +43,7 @@ export default function NewScanPage() {
         try {
             let projectId = undefined;
             if (projectName) {
-                const pRes = await api.post('/projects', { name: projectName });
+                const pRes: any = await api.post('/projects', { name: projectName });
                 projectId = pRes.id;
             }
 
@@ -51,7 +51,7 @@ export default function NewScanPage() {
             formData.append('file', file);
             if (projectId) formData.append('projectId', projectId);
 
-            const res = await api.post('/scans/upload', formData, {
+            const res: any = await api.post('/scans/upload', formData, {
                 headers: { 'Content-Type': 'multipart/form-data' }
             });
             navigate(`/scans/${res.id}`);

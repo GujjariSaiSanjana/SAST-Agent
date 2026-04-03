@@ -67,8 +67,8 @@ export class ScanService {
         await scanQueue.add({
             scanId: scan.id,
             userId,
-            repoUrl,
-            type: 'GITHUB',
+            source: 'GITHUB',
+            inputRef: repoUrl,
         });
 
         return scan;
@@ -79,7 +79,7 @@ export class ScanService {
             data: {
                 userId,
                 projectId,
-                source: 'UPLOAD',
+                source: 'ZIP_UPLOAD',
                 inputRef: filePath.split('/').pop() || 'upload.zip',
                 status: 'PENDING',
             },
@@ -88,8 +88,8 @@ export class ScanService {
         await scanQueue.add({
             scanId: scan.id,
             userId,
-            filePath,
-            type: 'UPLOAD',
+            source: 'ZIP_UPLOAD',
+            inputRef: filePath,
         });
 
         return scan;

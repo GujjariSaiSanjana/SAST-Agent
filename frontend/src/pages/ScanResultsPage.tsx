@@ -98,13 +98,13 @@ export default function ScanResultsPage() {
             <div className="flex flex-col items-center justify-center min-h-[60vh]">
                 <AlertTriangle className="h-16 w-16 text-destructive mb-4" />
                 <h2 className="text-2xl font-bold">Scan Failed</h2>
-                <p className="text-muted-foreground mt-2">{summary?.scan?.errorMsg || 'An unknown error occurred during scanning.'}</p>
+                <p className="text-muted-foreground mt-2">{(summary as any)?.scan?.errorMsg || 'An unknown error occurred during scanning.'}</p>
             </div>
         );
     }
 
-    const scan = summary?.scan;
-    const severityData = summary?.severityBreakdown?.map((s: any) => ({
+    const scan = (summary as any)?.scan;
+    const severityData = (summary as any)?.severityBreakdown?.map((s: any) => ({
         name: s.severity,
         value: s.count,
     })) || [];
@@ -141,7 +141,7 @@ export default function ScanResultsPage() {
                         </CardHeader>
                         <CardContent className="flex-1 overflow-y-auto p-0">
                             <div className="divide-y">
-                                {issuesData?.issues?.map((issue: any) => (
+                                {(issuesData as any)?.issues?.map((issue: any) => (
                                     <div
                                         key={issue.id}
                                         onClick={() => setActiveIssue(issue)}

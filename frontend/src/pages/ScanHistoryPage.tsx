@@ -16,7 +16,7 @@ export default function ScanHistoryPage() {
         return <div className="animate-pulse">Loading scan history...</div>;
     }
 
-    const scans = data?.scans || [];
+    const scans = (data as any)?.scans || [];
 
     return (
         <div className="space-y-6 animate-slide-up">

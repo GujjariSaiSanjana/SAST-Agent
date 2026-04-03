@@ -18,5 +18,5 @@ export const ScanQuerySchema = z.object({
     projectId: z.string().optional(),
 });
 
-export type CreateGithubScanDto = z.infer<typeof CreateGithubScanSchema>;
+export type CreateScanDto = z.infer<typeof CreateScanSchema>;
 export type ScanQueryDto = z.infer<typeof ScanQuerySchema>;

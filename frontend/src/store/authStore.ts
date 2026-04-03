@@ -1,5 +1,5 @@
 import { create } from 'zustand';
-import { authApi } from './api';
+import { authApi } from '../lib/api';
 
 interface User {
     id: string;
