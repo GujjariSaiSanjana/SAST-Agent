@@ -68,8 +68,9 @@ export class BearerService {
                 '--format', 'json',
                 '--output', outputFile,
                 '--quiet',
-                '--no-banner',
-                '--exit-code', '0', // don't fail on findings
+                '--hide-progress-bar',
+                '--no-color',
+                '--exit-code', '0',
                 targetDir,
             ];
 
@@ -78,15 +79,12 @@ export class BearerService {
                 maxBuffer: 50 * 1024 * 1024, // 50MB
                 env: {
                     ...process.env,
-                    HOME: process.env.HOME || '/tmp',
+                    HOME: '/tmp', // Force a writable home for Bearer cache
                 },
             });
 
             if (stderr && !stderr.includes('Completed successfully')) {
-                logger.warn(`[Bearer] stderr: ${stderr.slice(0, 500)}`);
-            }
-            if (stdout) {
-                logger.debug(`[Bearer] stdout: ${stdout.slice(0, 500)}`);
+                logger.warn(`[Bearer] stderr: ${stderr}`);
             }
 
             // Read the JSON output file
@@ -103,8 +101,9 @@ export class BearerService {
                 success: true,
             };
         } catch (err) {
-            const error = err as NodeJS.ErrnoException & { code?: string; killed?: boolean };
-            logger.error(`[Bearer] Scan failed for scanId=${scanId}:`, error.message);
+            const error = err as any;
+            const errorMessage = error.stderr || error.message || 'Unknown error';
+            logger.error(`[Bearer] Scan failed for scanId=${scanId}. Error: ${errorMessage}`);
 
             // Try to read output anyway (partial results)
             let partial: BearerFinding[] = [];
@@ -120,11 +119,10 @@ export class BearerService {
                 raw: '',
                 findings: partial,
                 success: false,
-                errorMsg: error.killed
-                    ? 'Scan timed out after 5 minutes'
-                    : error.message,
+                errorMsg: errorMessage,
             };
-        } finally {
+        }
+        finally {
             // Clean up output file
             await fs.unlink(outputFile).catch(() => { });
         }

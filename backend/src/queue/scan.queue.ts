@@ -8,9 +8,11 @@ import { createReadStream } from 'fs';
 import { ScanStatus } from '@prisma/client';
 import { prisma } from '../config/database';
 import { BearerService } from '../scanner/bearer.service';
+import { AiScannerService } from '../scanner/ai-scanner.service';
 import { parseFindings } from '../scanner/parser';
 import { AiService } from '../modules/ai/ai.service';
 import { logger } from '../utils/logger';
+import { AiScanFinding } from '../modules/ai/ai.interface';
 
 export interface ScanJobData {
     scanId: string;
@@ -31,7 +33,6 @@ export const scanQueue = new Bull<ScanJobData>('scan-queue', REDIS_URL, {
     },
 });
 
-const bearerService = new BearerService();
 const aiService = new AiService();
 
 // ── Worker ────────────────────────────────────────────────────
@@ -57,63 +58,80 @@ scanQueue.process(2, async (job) => {
         await updateStatus(scanId, 'SCANNING');
         job.progress(30);
 
-        const scanResult = await bearerService.scan(workDir, scanId);
+        const aiProvider = aiService.getProvider('nvidia');
+        if (!aiProvider) {
+            throw new Error('No AI provider configured (requires NVIDIA NIM API Key)');
+        }
 
-        // ── 3. PARSING ───────────────────────────────────────────
-        await updateStatus(scanId, 'PROCESSING');
-        job.progress(60);
+        const aiScanner = new AiScannerService(aiProvider);
 
-        const parsed = parseFindings(scanResult.findings);
+        let currentFindingsCount = 0;
+        const liveCounts = { critical: 0, high: 0, medium: 0, low: 0, warning: 0, info: 0 };
 
-        // ── 4. STORE ISSUES ─────────────────────────────────────
-        if (parsed.issues.length > 0) {
+        const findings = await aiScanner.scan(workDir, scanId, async (batch) => {
+            // 1. SAVE TO DB IMMEDIATELY
             await prisma.issue.createMany({
-                data: parsed.issues.map((issue) => ({
-                    ...issue,
+                data: batch.map((f) => ({
+                    ruleId: f.ruleId,
+                    title: f.title,
+                    description: f.description,
+                    severity: f.severity as any,
+                    category: f.category,
+                    filePath: f.filePath || 'unknown',
+                    lineStart: f.lineStart,
+                    lineEnd: f.lineEnd,
+                    codeSnippet: f.codeSnippet,
                     scanId,
+                    aiProcessed: true,
+                    aiProcessedAt: new Date(),
                 })),
                 skipDuplicates: true,
             });
-        }
 
-        // ── 5. UPDATE SCAN RECORD ────────────────────────────────
+            // 2. UPDATE LIVE COUNTS
+            batch.forEach(f => {
+                const s = f.severity.toLowerCase();
+                if (s === 'critical') liveCounts.critical++;
+                else if (s === 'high') liveCounts.high++;
+                else if (s === 'medium') liveCounts.medium++;
+                else if (s === 'low') liveCounts.low++;
+                else if (s === 'warning') liveCounts.warning++;
+                else if (s === 'info') liveCounts.info++;
+            });
+            currentFindingsCount += batch.length;
+
+            const riskScore = (liveCounts.critical * 10) + (liveCounts.high * 7) + (liveCounts.medium * 4) + (liveCounts.low * 1);
+
+            // 3. UPDATE SCAN RECORD FOR REAL-TIME UI
+            await prisma.scan.update({
+                where: { id: scanId },
+                data: {
+                    totalIssues: currentFindingsCount,
+                    riskScore,
+                    criticalCount: liveCounts.critical,
+                    highCount: liveCounts.high,
+                    mediumCount: liveCounts.medium,
+                    lowCount: liveCounts.low,
+                    warningCount: liveCounts.warning + liveCounts.info,
+                }
+            });
+
+            logger.info(`[Queue] Scan ${scanId} live update: ${currentFindingsCount} findings found so far...`);
+        });
+
+        // ── 4. COMPLETE SCAN RECORD ──────────────────────────────
         const duration = Math.round((Date.now() - startTime) / 1000);
         await prisma.scan.update({
             where: { id: scanId },
             data: {
-                status: 'AI_ANALYSIS',
-                riskScore: parsed.riskScore,
-                totalIssues: parsed.issues.length,
-                criticalCount: parsed.counts.critical,
-                highCount: parsed.counts.high,
-                mediumCount: parsed.counts.medium,
-                lowCount: parsed.counts.low,
-                warningCount: parsed.counts.warning,
-                duration,
-                bearerOutput: scanResult.raw ? JSON.parse(scanResult.raw) : undefined,
-                errorMsg: scanResult.success ? null : scanResult.errorMsg,
-            },
-        });
-
-        job.progress(70);
-
-        // ── 6. AI ANALYSIS ───────────────────────────────────────
-        await aiService.processScanIssues(scanId);
-        job.progress(95);
-
-        // ── 7. COMPLETE ──────────────────────────────────────────
-        const finalDuration = Math.round((Date.now() - startTime) / 1000);
-        await prisma.scan.update({
-            where: { id: scanId },
-            data: {
                 status: 'COMPLETED',
+                duration,
                 completedAt: new Date(),
-                duration: finalDuration,
             },
         });
 
         job.progress(100);
-        logger.info(`[Queue] ✅ Scan ${scanId} completed in ${finalDuration}s`);
+        logger.info(`[Queue] ✅ AI Scan ${scanId} completed in ${duration}s with ${findings.length} findings`);
 
     } catch (err) {
         const error = err as Error;

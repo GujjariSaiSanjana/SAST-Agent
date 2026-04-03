@@ -32,7 +32,7 @@ export class ScanService {
 
         return {
             scan,
-            severityBreakdown: severityBreakdown.map((s) => ({
+            severityBreakdown: severityBreakdown.map((s: any) => ({
                 severity: s.severity,
                 count: s._count,
             })),
@@ -96,21 +96,37 @@ export class ScanService {
     }
 
     async subscribeToScan(scanId: string, userId: string, onProgress: (data: any) => void) {
-        // Simple polling for progress for now (or a real pub/sub if needed)
-        // In a real app we'd use Redis Pub/Sub, but here we can poll or use an event emitter
-
-        let lastStatus = '';
+        let lastSync = 0;
         const check = async () => {
             try {
                 const scan = await prisma.scan.findFirst({
                     where: { id: scanId, userId },
-                    select: { status: true, errorMsg: true },
+                    select: {
+                        status: true,
+                        errorMsg: true,
+                        totalIssues: true,
+                        riskScore: true,
+                        criticalCount: true,
+                        highCount: true,
+                        mediumCount: true,
+                        lowCount: true,
+                        warningCount: true,
+                    },
                 });
-                if (scan && scan.status !== lastStatus) {
-                    lastStatus = scan.status;
+
+                if (scan) {
                     onProgress({
                         status: scan.status,
                         error: scan.errorMsg,
+                        totalIssues: scan.totalIssues,
+                        riskScore: scan.riskScore,
+                        counts: {
+                            critical: scan.criticalCount,
+                            high: scan.highCount,
+                            medium: scan.mediumCount,
+                            low: scan.lowCount,
+                            warning: scan.warningCount,
+                        },
                         done: ['COMPLETED', 'FAILED'].includes(scan.status)
                     });
                 }
@@ -126,11 +142,9 @@ export class ScanService {
             if (status && ['COMPLETED', 'FAILED'].includes(status)) {
                 clearInterval(interval);
             }
-        }, 2000);
+        }, 1500); // Slightly faster polling for snappier UI
 
-        // Initial check
         check();
-
         return () => clearInterval(interval);
     }
 }

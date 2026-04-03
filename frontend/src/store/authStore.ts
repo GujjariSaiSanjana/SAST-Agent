@@ -28,7 +28,8 @@ export const useAuthStore = create<AuthState>((set) => ({
         try {
             set({ isLoading: true });
             const res = await authApi.get('/me');
-            set({ user: res.data.data, isAuthenticated: true, isLoading: false });
+            // Since the interceptor already returns response.data, 'res' is { success, data }
+            set({ user: res.data, isAuthenticated: true, isLoading: false });
         } catch {
             set({ user: null, isAuthenticated: false, isLoading: false });
         }

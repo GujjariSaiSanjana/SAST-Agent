@@ -25,6 +25,7 @@ export default function ScanResultsPage() {
     const [activeIssue, setActiveIssue] = useState<any>(null);
     const [isExplaining, setIsExplaining] = useState(false);
     const [scanStatus, setScanStatus] = useState<string>('PENDING');
+    const [liveData, setLiveData] = useState<any>({ totalIssues: 0, counts: {} });
 
     // Fetch summary query
     const { data: summary, refetch: refetchSummary } = useQuery({
@@ -49,6 +50,9 @@ export default function ScanResultsPage() {
         eventSource.onmessage = (e) => {
             const data = JSON.parse(e.data);
             if (data.status) setScanStatus(data.status);
+            if (data.totalIssues !== undefined) {
+                setLiveData(data);
+            }
             if (data.done) {
                 eventSource.close();
                 refetchSummary();
@@ -76,17 +80,50 @@ export default function ScanResultsPage() {
 
     if (isScanning) {
         return (
-            <div className="flex flex-col items-center justify-center min-h-[60vh] space-y-6">
+            <div className="flex flex-col items-center justify-center min-h-[60vh] space-y-8 max-w-2xl mx-auto">
                 <div className="relative">
-                    <div className="w-24 h-24 border-4 border-primary/30 rounded-full"></div>
-                    <div className="w-24 h-24 border-4 border-primary rounded-full border-t-transparent animate-spin absolute top-0 left-0"></div>
-                    <ShieldAlert className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 h-8 w-8 text-primary animate-pulse" />
+                    <div className="w-32 h-32 border-4 border-primary/20 rounded-full"></div>
+                    <div className="w-32 h-32 border-4 border-primary rounded-full border-t-transparent animate-spin absolute top-0 left-0" style={{ animationDuration: '3s' }}></div>
+                    <ShieldAlert className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 h-12 w-12 text-primary animate-pulse" />
                 </div>
-                <div className="text-center space-y-2">
-                    <h2 className="text-2xl font-bold tracking-tight">Analysis in Progress</h2>
-                    <p className="text-muted-foreground uppercase tracking-wider font-semibold text-sm">Status: {scanStatus.replace('_', ' ')}</p>
+
+                <div className="text-center space-y-4 w-full">
+                    <div className="space-y-1">
+                        <h2 className="text-3xl font-bold tracking-tight">AI Security Audit in Progress</h2>
+                        <p className="text-muted-foreground uppercase tracking-wider font-bold text-xs flex items-center justify-center gap-2">
+                            <span className="w-2 h-2 bg-green-500 rounded-full animate-ping"></span>
+                            Status: {scanStatus.replace('_', ' ')}
+                        </p>
+                    </div>
+
+                    {/* LIVE STATS TICKET */}
+                    <div className="grid grid-cols-4 gap-4 bg-secondary/30 p-6 rounded-2xl border border-border mt-4">
+                        <div className="text-center">
+                            <div className="text-2xl font-bold text-red-500">{liveData.counts?.critical || 0}</div>
+                            <div className="text-[10px] uppercase font-bold text-muted-foreground">Critical</div>
+                        </div>
+                        <div className="text-center">
+                            <div className="text-2xl font-bold text-orange-500">{liveData.counts?.high || 0}</div>
+                            <div className="text-[10px] uppercase font-bold text-muted-foreground">High</div>
+                        </div>
+                        <div className="text-center">
+                            <div className="text-2xl font-bold text-yellow-500">{liveData.counts?.medium || 0}</div>
+                            <div className="text-[10px] uppercase font-bold text-muted-foreground">Medium</div>
+                        </div>
+                        <div className="text-center">
+                            <div className="text-2xl font-bold text-blue-500">{liveData.totalIssues || 0}</div>
+                            <div className="text-[10px] uppercase font-bold text-muted-foreground">Total Found</div>
+                        </div>
+                    </div>
+
+                    <p className="text-sm text-muted-foreground italic">
+                        {liveData.totalIssues > 0
+                            ? `Identified ${liveData.totalIssues} potential vulnerabilities using ${summary?.scan?.scannerVersion || 'AI'}...`
+                            : 'Analyzing code structure and business logic...'}
+                    </p>
                 </div>
-                <div className="w-64 h-2 bg-muted rounded-full overflow-hidden">
+
+                <div className="w-full h-1.5 bg-secondary rounded-full overflow-hidden">
                     <div className="h-full bg-primary animate-shimmer w-full"></div>
                 </div>
             </div>

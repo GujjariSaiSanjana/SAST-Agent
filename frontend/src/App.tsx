@@ -17,7 +17,7 @@ export default function App() {
 
     useEffect(() => {
         checkAuth();
-    }, [checkAuth]);
+    }, []); // Run once on mount
 
     // Loading state with a premium loader
     if (isLoading) {

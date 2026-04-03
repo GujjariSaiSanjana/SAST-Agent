@@ -2,9 +2,9 @@ FROM node:20-alpine
 
 WORKDIR /app
 
-# Install Bearer CLI
-RUN apk add --no-cache curl unzip git
-RUN curl -sfL https://raw.githubusercontent.com/Bearer/bearer/main/contrib/install.sh | sh
+# Install dependencies for Prisma and Bearer
+RUN apk add --no-cache curl unzip git openssl libc6-compat
+RUN curl -sfL https://raw.githubusercontent.com/Bearer/bearer/main/contrib/install.sh | sh -s -- -b /usr/local/bin
 
 # Copy package files
 COPY package*.json ./

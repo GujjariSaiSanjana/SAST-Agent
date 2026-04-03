@@ -1,5 +1,14 @@
 import { GoogleGenerativeAI, GenerativeModel } from '@google/generative-ai';
-import { AiProvider, AiIssueInput, AiAnalysisResult, buildAnalysisPrompt, parseAiResponse } from './ai.interface';
+import {
+    AiProvider,
+    AiIssueInput,
+    AiAnalysisResult,
+    AiScanFinding,
+    buildScanPrompt,
+    parseScanResponse,
+    buildAnalysisPrompt,
+    parseAiResponse
+} from './ai.interface';
 import { logger } from '../../utils/logger';
 
 export class GeminiProvider implements AiProvider {
@@ -28,11 +37,25 @@ export class GeminiProvider implements AiProvider {
         try {
             const result = await this.model.generateContent(prompt);
             const text = result.response.text();
-            logger.debug(`[Gemini] Response for issue ${issue.id}: ${text.slice(0, 100)}...`);
+            logger.debug(`[Gemini] Analysis response: ${text.slice(0, 100)}...`);
             return parseAiResponse(text);
-        } catch (err) {
-            logger.error(`[Gemini] Analysis failed for issue ${issue.id}:`, err);
+        } catch (err: any) {
+            logger.error(`[Gemini] Analysis failed:`, err);
             throw err;
+        }
+    }
+
+    async scan(filePath: string, content: string): Promise<AiScanFinding[]> {
+        const prompt = buildScanPrompt(filePath, content);
+
+        try {
+            const result = await this.model.generateContent(prompt);
+            const text = result.response.text();
+            logger.debug(`[Gemini] Scan response for ${filePath}: ${text.slice(0, 100)}...`);
+            return parseScanResponse(text);
+        } catch (err) {
+            logger.error(`[Gemini] Scan failed for ${filePath}:`, err);
+            return [];
         }
     }
 }

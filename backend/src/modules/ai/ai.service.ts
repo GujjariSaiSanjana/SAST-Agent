@@ -30,6 +30,14 @@ export class AiService {
         }
     }
 
+    getProvider(name?: string): AiProvider | null {
+        if (this.providers.length === 0) return null;
+        if (name) {
+            return this.providers.find(p => p.name === name) || this.providers[0];
+        }
+        return this.providers[0];
+    }
+
     async analyzeIssue(issue: AiIssueInput): Promise<AiAnalysisResult | null> {
         if (this.providers.length === 0) return null;
 
