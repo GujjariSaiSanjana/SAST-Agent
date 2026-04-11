@@ -17,6 +17,10 @@ export default {
             },
         },
         extend: {
+            fontFamily: {
+                sans: ["Inter", "-apple-system", "system-ui", "sans-serif"],
+                mono: ['"JetBrains Mono"', "ui-monospace", "monospace"],
+            },
             colors: {
                 border: "hsl(var(--border))",
                 input: "hsl(var(--input))",
@@ -51,11 +55,23 @@ export default {
                     DEFAULT: "hsl(var(--card))",
                     foreground: "hsl(var(--card-foreground))",
                 },
+                link: "hsl(var(--link))",
+                "link-legal": "hsl(var(--link-legal))",
+                preview: "hsl(var(--preview))",
             },
             borderRadius: {
                 lg: "var(--radius)",
                 md: "calc(var(--radius) - 2px)",
                 sm: "calc(var(--radius) - 4px)",
+                pill: "9999px",
+                "2xl": "1rem",
+                "3xl": "1.5rem",
+            },
+            boxShadow: {
+                whisper:
+                    "0 3px 6px rgba(0,0,0,0.08), 0 2px 4px rgba(0,0,0,0.07)",
+                elevated:
+                    "0 10px 20px rgba(0,0,0,0.1), 0 3px 6px rgba(0,0,0,0.05)",
             },
             keyframes: {
                 "accordion-down": {
@@ -66,10 +82,15 @@ export default {
                     from: { height: "var(--radix-accordion-content-height)" },
                     to: { height: "0" },
                 },
+                "slide-up": {
+                    from: { opacity: "0", transform: "translateY(8px)" },
+                    to: { opacity: "1", transform: "translateY(0)" },
+                },
             },
             animation: {
                 "accordion-down": "accordion-down 0.2s ease-out",
                 "accordion-up": "accordion-up 0.2s ease-out",
+                "slide-up": "slide-up 0.45s ease-out both",
             },
         },
     },

@@ -13,21 +13,25 @@ export default function ScanHistoryPage() {
     });
 
     if (isLoading) {
-        return <div className="animate-pulse">Loading scan history...</div>;
+        return (
+            <div className="animate-pulse text-sm font-medium text-muted-foreground">Loading scan history…</div>
+        );
     }
 
     const scans = (data as any)?.scans || [];
 
     return (
-        <div className="space-y-6 animate-slide-up">
-            <div>
-                <h1 className="text-3xl font-bold tracking-tight">Scan History</h1>
-                <p className="text-muted-foreground mt-1">Audit log of all security scans performed.</p>
+        <div className="animate-slide-up space-y-12">
+            <div className="space-y-3">
+                <h1 className="text-4xl font-bold tracking-[-0.06em] text-foreground md:text-5xl md:leading-[1.1]">
+                    Scan history
+                </h1>
+                <p className="text-lg leading-[1.4] text-muted-foreground">Audit log of all security scans performed.</p>
             </div>
 
-            <Card>
+            <Card className="overflow-hidden shadow-whisper">
                 <CardContent className="p-0">
-                    <div className="divide-y border-b border-t mt-4">
+                    <div className="mt-0 divide-y border-y border-border">
                         {scans.length === 0 ? (
                             <div className="p-8 text-center text-muted-foreground flex flex-col items-center">
                                 <AlertCircle className="h-10 w-10 mb-2 opacity-50" />
@@ -35,10 +39,14 @@ export default function ScanHistoryPage() {
                             </div>
                         ) : (
                             scans.map((scan: any) => (
-                                <Link to={`/scans/${scan.id}`} key={scan.id} className="flex items-center justify-between p-4 hover:bg-accent/50 transition-colors group">
+                                <Link
+                                    to={`/scans/${scan.id}`}
+                                    key={scan.id}
+                                    className="group flex items-center justify-between p-5 transition-colors hover:bg-accent/80"
+                                >
                                     <div className="flex items-center gap-4">
-                                        <div className="bg-primary/10 p-2 rounded-md group-hover:bg-primary/20 transition-colors">
-                                            <FolderGit2 className="h-5 w-5 text-primary" />
+                                        <div className="rounded-xl border border-border bg-background p-2 transition-colors group-hover:border-foreground/15">
+                                            <FolderGit2 className="h-5 w-5 text-foreground" aria-hidden />
                                         </div>
                                         <div>
                                             <p className="font-semibold">{scan.project?.name || 'Unnamed Project'} <span className="text-muted-foreground font-normal text-sm ml-2">({scan.source})</span></p>

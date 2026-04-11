@@ -91,22 +91,26 @@ export default function ScanResultsPage() {
         return (
             <div className="flex flex-col items-center justify-center min-h-[60vh] space-y-8 max-w-2xl mx-auto">
                 <div className="relative">
-                    <div className="w-32 h-32 border-4 border-primary/20 rounded-full"></div>
-                    <div className="w-32 h-32 border-4 border-primary rounded-full border-t-transparent animate-spin absolute top-0 left-0" style={{ animationDuration: '3s' }}></div>
-                    <ShieldAlert className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 h-12 w-12 text-primary animate-pulse" />
+                    <div className="h-32 w-32 rounded-full border-4 border-muted" />
+                    <div
+                        className="absolute left-0 top-0 h-32 w-32 animate-spin rounded-full border-4 border-foreground border-t-transparent"
+                        style={{ animationDuration: '3s' }}
+                    />
+                    <ShieldAlert className="absolute left-1/2 top-1/2 h-12 w-12 -translate-x-1/2 -translate-y-1/2 animate-pulse text-foreground" />
                 </div>
 
                 <div className="text-center space-y-4 w-full">
-                    <div className="space-y-1">
-                        <h2 className="text-3xl font-bold tracking-tight">AI Security Audit in Progress</h2>
-                        <p className="text-muted-foreground uppercase tracking-wider font-bold text-xs flex items-center justify-center gap-2">
-                            <span className="w-2 h-2 bg-green-500 rounded-full animate-ping"></span>
+                    <div className="space-y-2">
+                        <h2 className="text-3xl font-bold tracking-[-0.05em] text-foreground md:text-4xl">
+                            AI security audit in progress
+                        </h2>
+                        <p className="flex items-center justify-center gap-2 text-xs font-semibold uppercase tracking-wide text-muted-foreground">
+                            <span className="h-2 w-2 rounded-full bg-emerald-500" aria-hidden />
                             Status: {scanStatus.replace('_', ' ')}
                         </p>
                     </div>
 
-                    {/* LIVE STATS TICKET */}
-                    <div className="grid grid-cols-4 gap-4 bg-secondary/30 p-6 rounded-2xl border border-border mt-4">
+                    <div className="mt-6 grid grid-cols-4 gap-4 rounded-2xl border border-border bg-card p-6 shadow-whisper">
                         <div className="text-center">
                             <div className="text-2xl font-bold text-red-500">{liveData.counts?.critical || 0}</div>
                             <div className="text-[10px] uppercase font-bold text-muted-foreground">Critical</div>
@@ -132,8 +136,8 @@ export default function ScanResultsPage() {
                     </p>
                 </div>
 
-                <div className="w-full h-1.5 bg-secondary rounded-full overflow-hidden">
-                    <div className="h-full bg-primary animate-shimmer w-full"></div>
+                <div className="h-1.5 w-full overflow-hidden rounded-full bg-muted">
+                    <div className="h-full w-full animate-pulse rounded-full bg-foreground/80" />
                 </div>
             </div>
         );
@@ -158,11 +162,13 @@ export default function ScanResultsPage() {
     return (
         <div className="space-y-6 animate-slide-up">
             {/* Header */}
-            <div className="flex flex-col md:flex-row md:items-end justify-between gap-4">
+            <div className="flex flex-col justify-between gap-6 md:flex-row md:items-end">
                 <div>
-                    <div className="flex items-center gap-3">
-                        <h1 className="text-3xl font-bold tracking-tight">Scan Results</h1>
-                        <Badge variant="outline" className="bg-primary/10 text-primary border-primary/20">
+                    <div className="flex flex-wrap items-center gap-3">
+                        <h1 className="text-4xl font-bold tracking-[-0.06em] text-foreground md:text-5xl">
+                            Scan results
+                        </h1>
+                        <Badge variant="outline" className="max-w-full truncate border-border font-mono text-xs font-normal text-muted-foreground">
                             {scan?.inputRef}
                         </Badge>
                     </div>
@@ -191,11 +197,11 @@ export default function ScanResultsPage() {
                                     <div
                                         key={issue.id}
                                         onClick={() => setActiveIssue(issue)}
-                                        className={`p-4 cursor-pointer hover:bg-accent/50 transition-colors ${activeIssue?.id === issue.id ? 'bg-accent border-l-4 border-l-primary' : ''}`}
+                                        className={`cursor-pointer p-4 transition-colors hover:bg-accent/80 ${activeIssue?.id === issue.id ? 'border-l-4 border-l-foreground bg-accent/50' : ''}`}
                                     >
                                         <div className="flex items-start justify-between mb-2">
                                             <Badge variant={issue.severity.toLowerCase()}>{issue.severity}</Badge>
-                                            {issue.aiProcessed && <Sparkles className="h-4 w-4 text-purple-500" />}
+                                            {issue.aiProcessed && <Sparkles className="h-4 w-4 text-preview" aria-hidden />}
                                         </div>
                                         <p className="font-semibold text-sm line-clamp-2">{issue.title}</p>
                                         <div className="flex items-center text-xs text-muted-foreground mt-2">
@@ -255,8 +261,12 @@ export default function ScanResultsPage() {
                                             </div>
                                         </div>
                                         {!activeIssue.aiProcessed && (
-                                            <Button onClick={() => handleExplain(activeIssue.id)} disabled={isExplaining} size="sm" className="bg-purple-600 hover:bg-purple-700 text-white">
-                                                {isExplaining ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : <Sparkles className="mr-2 h-4 w-4" />}
+                                            <Button onClick={() => handleExplain(activeIssue.id)} disabled={isExplaining} size="sm">
+                                                {isExplaining ? (
+                                                    <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                                                ) : (
+                                                    <Sparkles className="mr-2 h-4 w-4" />
+                                                )}
                                                 Ask AI Copilot
                                             </Button>
                                         )}
@@ -295,11 +305,11 @@ export default function ScanResultsPage() {
 
                             {/* AI Details Card */}
                             {activeIssue.aiProcessed && activeIssue.aiExplanation && (
-                                <Card className="border-purple-500/30 shadow-[0_0_15px_rgba(168,85,247,0.1)]">
-                                    <CardHeader className="bg-purple-500/5 border-b border-purple-500/20 pb-4">
-                                        <CardTitle className="flex items-center text-purple-400">
-                                            <Sparkles className="mr-2 h-5 w-5" />
-                                            AI Remediation Guidance
+                                <Card className="border-preview/25 shadow-elevated">
+                                    <CardHeader className="border-b border-border pb-4">
+                                        <CardTitle className="flex items-center text-lg font-semibold text-foreground">
+                                            <Sparkles className="mr-2 h-5 w-5 text-preview" aria-hidden />
+                                            AI remediation guidance
                                         </CardTitle>
                                     </CardHeader>
                                     <CardContent className="pt-6 space-y-6">
@@ -317,9 +327,9 @@ export default function ScanResultsPage() {
                                             <p className="text-sm leading-relaxed whitespace-pre-wrap mb-4">{activeIssue.aiRemediation}</p>
 
                                             {activeIssue.aiFixCode && (
-                                                <div className="border border-green-500/30 rounded-md overflow-hidden">
-                                                    <div className="bg-green-500/10 px-4 py-2 border-b border-green-500/30 text-xs font-mono text-green-400 font-semibold">
-                                                        Suggested Fix
+                                                <div className="overflow-hidden rounded-lg border border-border">
+                                                    <div className="border-b border-border bg-muted px-4 py-2 font-mono text-xs font-semibold text-foreground">
+                                                        Suggested fix
                                                     </div>
                                                     <div className="h-48">
                                                         <Editor

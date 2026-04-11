@@ -1,82 +1,100 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
- 
+
 @layer base {
   :root {
-    --background: 220 20% 98%;
-    --foreground: 220 10% 20%;
+    /* Surfaces — Expo-inspired light system */
+    --background: 240 7% 95%; /* Cloud Gray #f0f0f3 */
+    --foreground: 220 14% 13%; /* Near Black #1c2024 */
 
-    --card: 0 0% 100%;
-    --card-foreground: 220 10% 20%;
- 
+    --card: 0 0% 100%; /* Pure White */
+    --card-foreground: 220 14% 13%;
+
     --popover: 0 0% 100%;
-    --popover-foreground: 220 10% 20%;
- 
-    --primary: 220 90% 56%;
-    --primary-foreground: 0 0% 100%;
- 
-    --secondary: 220 20% 90%;
-    --secondary-foreground: 220 10% 20%;
- 
-    --muted: 220 20% 90%;
-    --muted-foreground: 220 10% 40%;
- 
-    --accent: 220 20% 90%;
-    --accent-foreground: 220 10% 20%;
- 
-    --destructive: 0 84% 60%;
-    --destructive-foreground: 0 0% 100%;
+    --popover-foreground: 220 14% 13%;
 
-    --border: 220 20% 86%;
-    --input: 220 20% 86%;
-    --ring: 220 90% 56%;
- 
-    --radius: 0.5rem;
+    /* Primary actions: Expo Black on white text */
+    --primary: 0 0% 0%;
+    --primary-foreground: 0 0% 100%;
+
+    --secondary: 240 8% 93%;
+    --secondary-foreground: 220 14% 13%;
+
+    --muted: 240 8% 93%;
+    --muted-foreground: 220 9% 40%; /* Slate Gray #60646c */
+
+    --accent: 240 8% 93%;
+    --accent-foreground: 220 14% 13%;
+
+    --destructive: 0 55% 74%; /* Destructive Rose #eb8e90 */
+    --destructive-foreground: 220 14% 13%;
+
+    --border: 230 14% 90%; /* Border Lavender #e0e1e6 */
+    --input: 230 10% 86%; /* Input Border #d9d9e0 */
+    --ring: 211 89% 43%; /* Link Cobalt focus #0d74ce */
+
+    --link: 211 89% 43%; /* Link Cobalt #0d74ce */
+    --link-legal: 231 100% 64%; /* Legal Blue #476cff */
+    --preview: 271 45% 49%; /* Preview Purple #8145b5 */
+
+    --radius: 0.5rem; /* 8px — standard cards & functional UI */
   }
- 
+
   .dark {
-    --background: 224 71% 4%;
-    --foreground: 210 40% 98%;
- 
-    --card: 222 47% 11%;
-    --card-foreground: 210 40% 98%;
- 
-    --popover: 222 47% 11%;
-    --popover-foreground: 210 40% 98%;
- 
-    --primary: 217 91% 60%;
-    --primary-foreground: 222 47% 11%;
- 
-    --secondary: 217 32% 17%;
-    --secondary-foreground: 210 40% 98%;
- 
-    --muted: 217 32% 17%;
-    --muted-foreground: 215 20% 65%;
- 
-    --accent: 217 32% 17%;
-    --accent-foreground: 210 40% 98%;
- 
-    --destructive: 0 62% 30%;
-    --destructive-foreground: 210 40% 98%;
- 
-    --border: 217 32% 17%;
-    --input: 217 32% 17%;
-    --ring: 224 71% 4%;
+    --background: 0 0% 9%;
+    --foreground: 240 7% 96%;
+
+    --card: 0 0% 12%;
+    --card-foreground: 240 7% 96%;
+
+    --popover: 0 0% 12%;
+    --popover-foreground: 240 7% 96%;
+
+    --primary: 0 0% 100%;
+    --primary-foreground: 0 0% 0%;
+
+    --secondary: 0 0% 18%;
+    --secondary-foreground: 240 7% 96%;
+
+    --muted: 0 0% 18%;
+    --muted-foreground: 220 9% 65%;
+
+    --accent: 0 0% 18%;
+    --accent-foreground: 240 7% 96%;
+
+    --destructive: 0 45% 45%;
+    --destructive-foreground: 240 7% 96%;
+
+    --border: 220 9% 22%;
+    --input: 220 9% 22%;
+    --ring: 226 71% 50%;
+
+    --link: 211 89% 55%;
+    --link-legal: 231 100% 70%;
+    --preview: 271 45% 60%;
   }
 }
- 
+
 @layer base {
   * {
     @apply border-border;
   }
   body {
-    @apply bg-background text-foreground;
-    font-family: 'Inter', sans-serif;
+    @apply bg-background text-foreground antialiased;
+    font-family: Inter, -apple-system, system-ui, sans-serif;
+    font-feature-settings: "cv02", "cv03", "cv04", "cv11";
+    line-height: 1.4;
+  }
+  code,
+  kbd,
+  samp,
+  pre {
+    font-family: "JetBrains Mono", ui-monospace, monospace;
   }
 }
 
-/* Scrollbar customization */
+/* Scrollbar — whisper contrast */
 ::-webkit-scrollbar {
   width: 8px;
   height: 8px;
@@ -87,9 +105,9 @@
 }
 
 ::-webkit-scrollbar-thumb {
-  @apply bg-muted-foreground/30 rounded-full;
+  @apply rounded-full bg-muted-foreground/25;
 }
 
 ::-webkit-scrollbar-thumb:hover {
-  @apply bg-muted-foreground/50;
+  @apply bg-muted-foreground/40;
 }

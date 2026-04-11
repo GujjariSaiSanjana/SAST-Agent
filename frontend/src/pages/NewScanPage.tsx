@@ -62,34 +62,43 @@ export default function NewScanPage() {
         }
     };
 
+    const inputClass =
+        'w-full flex h-10 rounded-md border border-input bg-card px-3 py-2 text-sm text-foreground ring-offset-background placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50';
+
     return (
-        <div className="max-w-4xl mx-auto space-y-8 animate-slide-up">
-            <div>
-                <h1 className="text-3xl font-bold tracking-tight">New Security Scan</h1>
-                <p className="text-muted-foreground mt-1">Initialize SAST Copilot on a repository or ZIP archive.</p>
+        <div className="mx-auto max-w-4xl animate-slide-up space-y-12">
+            <div className="space-y-3">
+                <h1 className="text-4xl font-bold tracking-[-0.06em] text-foreground md:text-5xl md:leading-[1.1]">
+                    New security scan
+                </h1>
+                <p className="text-lg leading-[1.4] text-muted-foreground">
+                    Initialize SAST Copilot on a repository or ZIP archive.
+                </p>
             </div>
 
             {error && (
-                <div className="bg-destructive/15 text-destructive border border-destructive/30 p-4 rounded-md text-sm">
+                <div className="rounded-lg border border-destructive/40 bg-destructive/10 p-4 text-sm text-foreground">
                     {error}
                 </div>
             )}
 
-            <div className="mb-6">
-                <label className="block text-sm font-medium mb-2">Project Name (Optional, will create a new project)</label>
+            <div>
+                <label className="mb-2 block text-sm font-medium text-foreground">
+                    Project name (optional — creates a new project)
+                </label>
                 <input
                     type="text"
                     value={projectName}
                     onChange={(e) => setProjectName(e.target.value)}
                     placeholder="e.g. Core Auth Service"
-                    className="w-full flex h-10 rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
+                    className={inputClass}
                 />
             </div>
 
-            <div className="grid md:grid-cols-2 gap-6">
-                <Card className="relative overflow-hidden group border-2 hover:border-primary transition-colors">
-                    <div className="absolute top-0 right-0 p-4 opacity-10 group-hover:opacity-20 transition-opacity">
-                        <Github className="w-24 h-24" />
+            <div className="grid gap-8 md:grid-cols-2">
+                <Card className="group relative overflow-hidden transition-shadow hover:shadow-elevated">
+                    <div className="absolute right-0 top-0 p-4 opacity-[0.07] transition-opacity group-hover:opacity-[0.12]">
+                        <Github className="h-24 w-24 text-foreground" aria-hidden />
                     </div>
                     <CardHeader>
                         <CardTitle className="flex items-center gap-2">
@@ -108,7 +117,7 @@ export default function NewScanPage() {
                                     onChange={(e) => setUrl(e.target.value)}
                                     disabled={isLoading}
                                     required
-                                    className="w-full flex h-10 rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
+                                    className={inputClass}
                                 />
                             </div>
                             <Button type="submit" className="w-full" disabled={isLoading || !url}>
@@ -119,9 +128,9 @@ export default function NewScanPage() {
                     </CardContent>
                 </Card>
 
-                <Card className="relative overflow-hidden group border-2 hover:border-primary transition-colors">
-                    <div className="absolute top-0 right-0 p-4 opacity-10 group-hover:opacity-20 transition-opacity">
-                        <Upload className="w-24 h-24" />
+                <Card className="group relative overflow-hidden transition-shadow hover:shadow-elevated">
+                    <div className="absolute right-0 top-0 p-4 opacity-[0.07] transition-opacity group-hover:opacity-[0.12]">
+                        <Upload className="h-24 w-24 text-foreground" aria-hidden />
                     </div>
                     <CardHeader>
                         <CardTitle className="flex items-center gap-2">
@@ -139,7 +148,7 @@ export default function NewScanPage() {
                                     onChange={(e) => setFile(e.target.files?.[0] || null)}
                                     disabled={isLoading}
                                     required
-                                    className="w-full flex h-10 cursor-pointer rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
+                                    className={`${inputClass} cursor-pointer file:border-0 file:bg-transparent file:text-sm file:font-medium`}
                                 />
                             </div>
                             <Button type="submit" className="w-full" disabled={isLoading || !file}>

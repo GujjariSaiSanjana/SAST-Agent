@@ -22,9 +22,9 @@ export default function App() {
     // Loading state with a premium loader
     if (isLoading) {
         return (
-            <div className="min-h-screen bg-background flex flex-col items-center justify-center">
-                <div className="w-16 h-16 border-t-2 border-primary rounded-full animate-spin"></div>
-                <p className="mt-4 text-muted-foreground animate-pulse">Initializing Copilot...</p>
+            <div className="flex min-h-screen flex-col items-center justify-center bg-background">
+                <div className="h-12 w-12 rounded-full border-2 border-muted border-t-foreground animate-spin" />
+                <p className="mt-6 text-sm font-medium text-muted-foreground">Initializing Copilot…</p>
             </div>
         );
     }
