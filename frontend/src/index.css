@@ -111,3 +111,13 @@
 ::-webkit-scrollbar-thumb:hover {
   @apply bg-muted-foreground/40;
 }
+
+/* Monaco editor line highlight for vulnerable code */
+.vuln-line-highlight {
+  background-color: rgba(239, 68, 68, 0.12) !important;
+}
+.vuln-line-decoration {
+  background-color: #ef4444 !important;
+  width: 3px !important;
+  margin-left: 3px;
+}

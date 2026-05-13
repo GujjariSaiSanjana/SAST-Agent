@@ -18,16 +18,11 @@ export class IssueService {
                         },
                     },
                 },
-                orderBy: [
-                    { severity: 'asc' }, // CRITICAL, HIGH, MEDIUM... based on Enum order
-                    { createdAt: 'desc' },
-                ],
+                orderBy: [{ severity: 'asc' }, { createdAt: 'desc' }],
                 take: limit,
                 skip: offset,
             }),
-            prisma.issue.count({
-                where: { scan: { userId } },
-            }),
+            prisma.issue.count({ where: { scan: { userId } } }),
         ]);
 
         return { issues, total };
@@ -45,12 +40,11 @@ export class IssueService {
             where: { id, scan: { userId } },
         });
 
-        // Trigger AI analysis if not already processed
         if (issue.aiProcessed && issue.aiExplanation) {
             return issue;
         }
 
-        logger.info(`[Issue] Requesting manual AI explanation for ${id}`);
+        logger.info(`[Issue] Manual AI explain for ${id}`);
 
         const aiResult = await aiService.analyzeIssue({
             id: issue.id,
@@ -66,20 +60,19 @@ export class IssueService {
             cweId: issue.cweId,
         });
 
-        if (!aiResult) throw new Error('AI analysis failed');
+        if (!aiResult) throw new Error('AI analysis failed — all providers exhausted');
 
-        const updated = await prisma.issue.update({
+        return prisma.issue.update({
             where: { id },
             data: {
                 aiExplanation: aiResult.explanation,
                 aiImpact: aiResult.impact,
+                aiProofOfConcept: aiResult.proofOfConcept,
                 aiRemediation: aiResult.remediation,
                 aiFixCode: aiResult.fixCode,
                 aiProcessed: true,
                 aiProcessedAt: new Date(),
             },
         });
-
-        return updated;
     }
 }

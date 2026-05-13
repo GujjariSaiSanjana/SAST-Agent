@@ -1,6 +1,7 @@
 export interface AiAnalysisResult {
     explanation: string;
     impact: string;
+    proofOfConcept: string;
     remediation: string;
     fixCode: string;
 }
@@ -23,11 +24,13 @@ export interface AiScanFinding {
     ruleId: string;
     title: string;
     description: string;
-    severity: 'CRITICAL' | 'HIGH' | 'MEDIUM' | 'LOW' | 'INFO';
+    severity: 'CRITICAL' | 'HIGH' | 'MEDIUM' | 'LOW' | 'WARNING' | 'INFO';
     category: string;
     lineStart: number;
     lineEnd: number;
     codeSnippet: string;
+    cweId?: string;
+    owaspId?: string;
     filePath?: string;
 }
 
@@ -42,7 +45,7 @@ export function buildScanPrompt(filePath: string, content: string): string {
 Your core directive is to perform an exhaustive, zero-trust security audit of the provided code. You are looking for CRITICAL and HIGH impact vulnerabilities that could lead to financial loss, data breaches, or complete system compromise.
 
 ### AUDIT SCOPE:
-1. **OWASP Top 10 & SANS Top 25**: (e.g., SQLi, NoSQLi, XSS, SSRF, CSRF, IDOR/BOLO, Broken Auth, Insecure Deserialization).
+1. **OWASP Top 10 & SANS Top 25**: (e.g., SQLi, NoSQLi, XSS, SSRF, CSRF, IDOR/BOLA, Broken Auth, Insecure Deserialization).
 2. **Cryptographic Failures**: Weak algorithms, hardcoded secrets, lack of salt, bypassable encryption.
 3. **Business Logic Flaws**: Race conditions, unauthorized state transitions, price/amount manipulation.
 4. **Input Validation & Sanitization**: Missing output encoding, improper regex, buffer overflows in low-level languages.
@@ -59,14 +62,16 @@ ${content}
 Return a JSON object with a "findings" array. If no high-impact issues exist, return {"findings": []}.
 
 Each finding MUST include:
-- **ruleId**: Specific category (e.g., "SSRF-CVE-XXXX", "JWT-MISSING-SIGNATURE-VERIFICATION").
+- **ruleId**: Specific category (e.g., "SSRF-001", "JWT-MISSING-SIGNATURE-VERIFICATION").
 - **title**: Impact-focused title (e.g., "Full Account Takeover via IDOR").
-- **description**: Deep technical analysis of exactly how a hacker would exploit this. Explain the "why".
-- **severity**: [CRITICAL, HIGH, MEDIUM, LOW, INFO] -- Be honest but strict.
-- **category**: [Security, Privacy, Best Practice]
+- **description**: Deep technical analysis of exactly how an attacker would exploit this. Explain the "why".
+- **severity**: One of [CRITICAL, HIGH, MEDIUM, LOW, INFO] — be honest but strict.
+- **category**: One of [Injection, Authentication, Cryptography, SSRF, XSS, IDOR, Secrets, Configuration, Supply Chain, Business Logic, Other]
 - **lineStart**: 1-indexed start line of the vulnerable code.
 - **lineEnd**: 1-indexed end line of the vulnerable code.
 - **codeSnippet**: The exact snippet of code that is the root cause.
+- **cweId**: CWE identifier (e.g., "CWE-89") or null.
+- **owaspId**: OWASP Top 10 identifier (e.g., "A03:2021") or null.
 
 STRICT RULE: Do NOT report generic "improve comments" or "unused variable" warnings. Only report actionable security risks. Respond ONLY with the raw JSON object.`;
 }
@@ -86,7 +91,7 @@ export function parseScanResponse(raw: string): AiScanFinding[] {
             const validSeverities = ['CRITICAL', 'HIGH', 'MEDIUM', 'LOW', 'WARNING', 'INFO'];
 
             return {
-                ruleId: String(f.ruleId || 'rule-id'),
+                ruleId: String(f.ruleId || 'UNKNOWN'),
                 title: String(f.title || 'Security Finding'),
                 description: String(f.description || ''),
                 severity: (validSeverities.includes(severity) ? severity : 'INFO') as any,
@@ -94,7 +99,9 @@ export function parseScanResponse(raw: string): AiScanFinding[] {
                 lineStart: Number(f.lineStart) || 1,
                 lineEnd: Number(f.lineEnd) || 1,
                 codeSnippet: String(f.codeSnippet || ''),
-                filePath: f.filePath, // Will be mixed in by the caller
+                cweId: f.cweId ? String(f.cweId) : undefined,
+                owaspId: f.owaspId ? String(f.owaspId) : undefined,
+                filePath: f.filePath,
             };
         });
     } catch {
@@ -120,8 +127,9 @@ ${issue.codeSnippet ? `## Vulnerable Code\n\`\`\`\n${issue.codeSnippet}\n\`\`\``
 
 Analyze this security vulnerability and respond with a valid JSON object in exactly this format:
 {
-  "explanation": "Clear, developer-friendly explanation of what this vulnerability is and why it's dangerous",
+  "explanation": "Clear, developer-friendly explanation of what this vulnerability is and why it is dangerous",
   "impact": "Specific business and technical impact if exploited",
+  "proofOfConcept": "Concrete attack scenario or payload showing how an attacker would exploit this — be specific",
   "remediation": "Step-by-step remediation guidance with best practices",
   "fixCode": "Corrected code snippet showing the fix (use the same language as the vulnerable code)"
 }
@@ -130,7 +138,6 @@ Respond ONLY with the JSON object. No markdown, no explanation outside the JSON.
 }
 
 export function parseAiResponse(raw: string): AiAnalysisResult {
-    // Strip markdown code fences if present
     const cleaned = raw
         .replace(/^```json\s*/i, '')
         .replace(/^```\s*/i, '')
@@ -142,6 +149,7 @@ export function parseAiResponse(raw: string): AiAnalysisResult {
     return {
         explanation: String(parsed.explanation || ''),
         impact: String(parsed.impact || ''),
+        proofOfConcept: String(parsed.proofOfConcept || ''),
         remediation: String(parsed.remediation || ''),
         fixCode: String(parsed.fixCode || ''),
     };

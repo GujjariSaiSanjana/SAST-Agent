@@ -12,6 +12,10 @@ export class AiService {
     private providers: AiProvider[] = [];
 
     constructor() {
+        if (process.env.NVIDIA_API_KEY) {
+            this.providers.push(new NvidiaProvider());
+            logger.info('[AI] Loaded provider: NVIDIA NIM (Llama-3.1)');
+        }
         if (process.env.GEMINI_API_KEY) {
             this.providers.push(new GeminiProvider());
             logger.info('[AI] Loaded provider: Gemini 1.5 Flash');
@@ -20,21 +24,20 @@ export class AiService {
             this.providers.push(new OpenAIProvider());
             logger.info('[AI] Loaded provider: OpenAI GPT-4o-mini');
         }
-        if (process.env.NVIDIA_API_KEY) {
-            this.providers.push(new NvidiaProvider());
-            logger.info('[AI] Loaded provider: NVIDIA NIM (Llama-3.1)');
-        }
 
         if (this.providers.length === 0) {
-            logger.warn('[AI] No AI providers configured — AI analysis will be skipped');
+            logger.warn('[AI] No AI providers configured');
         }
+    }
+
+    /** Returns all providers in priority order for fallback chains */
+    getProviders(): AiProvider[] {
+        return this.providers;
     }
 
     getProvider(name?: string): AiProvider | null {
         if (this.providers.length === 0) return null;
-        if (name) {
-            return this.providers.find(p => p.name === name) || this.providers[0];
-        }
+        if (name) return this.providers.find(p => p.name === name) || this.providers[0];
         return this.providers[0];
     }
 
@@ -45,7 +48,7 @@ export class AiService {
             try {
                 return await provider.analyze(issue);
             } catch (err: any) {
-                logger.warn(`[AI] Provider (${provider.name}) failed for ${issue.id}, trying next...`, err.message);
+                logger.warn(`[AI] Provider ${provider.name} failed for issue ${issue.id}: ${err.message}`);
             }
         }
 
@@ -53,57 +56,34 @@ export class AiService {
         return null;
     }
 
-    /**
-     * Process CRITICAL + HIGH issues for a scan in batches
-     */
     async processScanIssues(scanId: string): Promise<void> {
         const issues = await prisma.issue.findMany({
-            where: {
-                scanId,
-                severity: { in: ['CRITICAL', 'HIGH'] },
-                aiProcessed: false,
-            },
+            where: { scanId, severity: { in: ['CRITICAL', 'HIGH'] }, aiProcessed: false },
             select: {
-                id: true,
-                ruleId: true,
-                title: true,
-                description: true,
-                severity: true,
-                category: true,
-                filePath: true,
-                lineStart: true,
-                lineEnd: true,
-                codeSnippet: true,
-                cweId: true,
+                id: true, ruleId: true, title: true, description: true,
+                severity: true, category: true, filePath: true,
+                lineStart: true, lineEnd: true, codeSnippet: true, cweId: true,
             },
         });
 
         if (!issues.length) {
-            logger.info(`[AI] No CRITICAL/HIGH issues to process for scan ${scanId}`);
+            logger.info(`[AI] No unprocessed CRITICAL/HIGH issues for scan ${scanId}`);
             return;
         }
 
-        logger.info(`[AI] Processing ${issues.length} issues for scan ${scanId}`);
+        logger.info(`[AI] Enriching ${issues.length} issues for scan ${scanId}`);
 
-        // Process in batches
         for (let i = 0; i < issues.length; i += BATCH_SIZE) {
-            const batch = issues.slice(i, i + BATCH_SIZE);
-            await this.processBatch(batch);
+            await this.processBatch(issues.slice(i, i + BATCH_SIZE));
         }
 
-        logger.info(`[AI] Completed AI analysis for scan ${scanId}`);
+        logger.info(`[AI] Enrichment complete for scan ${scanId}`);
     }
 
     private async processBatch(issues: AiIssueInput[]): Promise<void> {
-        // Process with limited concurrency
-        const chunks = [];
         for (let i = 0; i < issues.length; i += CONCURRENCY) {
-            chunks.push(issues.slice(i, i + CONCURRENCY));
-        }
-
-        for (const chunk of chunks) {
             await Promise.all(
-                chunk.map(async (issue) => {
+                issues.slice(i, i + CONCURRENCY).map(async (issue) => {
                     try {
                         const result = await this.analyzeIssue(issue);
                         if (result) {
@@ -112,21 +92,21 @@ export class AiService {
                                 data: {
                                     aiExplanation: result.explanation,
                                     aiImpact: result.impact,
+                                    aiProofOfConcept: result.proofOfConcept,
                                     aiRemediation: result.remediation,
                                     aiFixCode: result.fixCode,
                                     aiProcessed: true,
                                     aiProcessedAt: new Date(),
                                 },
                             });
-                            logger.debug(`[AI] ✅ Processed issue ${issue.id}`);
+                            logger.debug(`[AI] Enriched issue ${issue.id}`);
                         }
                     } catch (err) {
-                        logger.error(`[AI] Failed to process issue ${issue.id}:`, err);
-                        // Mark as processed to avoid infinite retries
+                        logger.error(`[AI] Failed to enrich issue ${issue.id}:`, err);
                         await prisma.issue.update({
                             where: { id: issue.id },
                             data: { aiProcessed: true, aiProcessedAt: new Date() },
-                        }).catch(() => { });
+                        }).catch(() => {});
                     }
                 })
             );
