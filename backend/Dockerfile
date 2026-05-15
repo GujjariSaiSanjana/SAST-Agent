@@ -1,28 +1,33 @@
-FROM node:20-alpine
-
+FROM node:20-alpine AS builder
 WORKDIR /app
 
-# Install dependencies for Prisma and Bearer
-RUN apk add --no-cache curl unzip git openssl libc6-compat
-RUN curl -sfL https://raw.githubusercontent.com/Bearer/bearer/main/contrib/install.sh | sh -s -- -b /usr/local/bin
+RUN apk add --no-cache curl unzip git openssl libc6-compat && \
+    curl -sfL https://raw.githubusercontent.com/Bearer/bearer/main/contrib/install.sh | sh -s -- -b /usr/local/bin
 
-# Copy package files
 COPY package*.json ./
+RUN npm ci
 
-# Install dependencies
-RUN npm install
-
-# Copy source and prisma schema
 COPY tsconfig.json ./
 COPY prisma ./prisma
 COPY src ./src
 
-# Generate prisma client
-RUN npm run prisma:generate
+RUN npx prisma generate && npm run build
 
-# Build the app
-RUN npm run build
+# ── Production image ──────────────────────────────────────────
+FROM node:20-alpine AS runner
+WORKDIR /app
+
+RUN apk add --no-cache git openssl libc6-compat
+
+COPY --from=builder /usr/local/bin/bearer /usr/local/bin/bearer
+
+COPY package*.json ./
+RUN npm ci --omit=dev
+
+COPY --from=builder /app/node_modules/.prisma ./node_modules/.prisma
+COPY --from=builder /app/dist ./dist
+COPY prisma ./prisma
 
 EXPOSE 3001
 
-CMD ["npm", "run", "start"]
+CMD ["node", "dist/index.js"]

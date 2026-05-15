@@ -17,12 +17,7 @@ const responseInterceptor = (response: any) => {
     return response;
 };
 
-const errorInterceptor = (error: any) => {
-    if (error.response?.status === 401) {
-        window.location.href = '/login';
-    }
-    return Promise.reject(error);
-};
+const errorInterceptor = (error: any) => Promise.reject(error);
 
 api.interceptors.response.use(responseInterceptor, errorInterceptor);
 authApi.interceptors.response.use(responseInterceptor, errorInterceptor);

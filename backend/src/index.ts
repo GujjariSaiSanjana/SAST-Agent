@@ -65,6 +65,11 @@ app.use('/api/projects', projectRoutes);
 app.use('/api/scans', scanRoutes);
 app.use('/api/issues', issueRoutes);
 
+// ── 404 handler ──────────────────────────────────────────────
+app.use((_req, res) => {
+    res.status(404).json({ success: false, error: 'Not Found', code: 'NOT_FOUND' });
+});
+
 // ── Error handling ───────────────────────────────────────────
 app.use(errorHandler);
 

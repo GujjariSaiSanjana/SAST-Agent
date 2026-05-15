@@ -4,7 +4,7 @@ import fs from 'fs/promises';
 import os from 'os';
 import simpleGit from 'simple-git';
 import unzipper from 'unzipper';
-import { createReadStream } from 'fs';
+import { createReadStream, createWriteStream } from 'fs';
 import { ScanStatus } from '@prisma/client';
 import { prisma } from '../config/database';
 import { AiScannerService } from '../scanner/ai-scanner.service';
@@ -182,7 +182,7 @@ async function extractZip(zipPath: string, targetDir: string): Promise<void> {
                     entry.autodrain();
                 } else {
                     await fs.mkdir(path.dirname(destPath), { recursive: true });
-                    entry.pipe(require('fs').createWriteStream(destPath));
+                    entry.pipe(createWriteStream(destPath));
                 }
             })
             .on('finish', resolve)

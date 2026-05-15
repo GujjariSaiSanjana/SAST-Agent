@@ -11,12 +11,4 @@ export const CreateScanSchema = z.object({
     projectId: z.string().optional(),
 });
 
-export const ScanQuerySchema = z.object({
-    page: z.coerce.number().int().positive().default(1),
-    limit: z.coerce.number().int().min(1).max(100).default(20),
-    status: z.enum(['PENDING', 'CLONING', 'SCANNING', 'PROCESSING', 'AI_ANALYSIS', 'COMPLETED', 'FAILED']).optional(),
-    projectId: z.string().optional(),
-});
-
 export type CreateScanDto = z.infer<typeof CreateScanSchema>;
-export type ScanQueryDto = z.infer<typeof ScanQuerySchema>;
