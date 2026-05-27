@@ -458,6 +458,67 @@ export default function ScanResultsPage() {
                                         </div>
                                     </Card>
                                 )}
+
+                                {/* Solution / Remediation */}
+                                <Card>
+                                    <CardHeader className="pb-2 pt-3 px-4 border-b">
+                                        <div className="flex items-center justify-between">
+                                            <CardTitle className="text-xs font-semibold text-emerald-500 uppercase tracking-wide">Solution Code</CardTitle>
+                                            {activeIssue.aiProcessed && activeIssue.aiFixCode && (
+                                                <span className="text-[10px] text-emerald-500 font-semibold">✓ AI Generated</span>
+                                            )}
+                                        </div>
+                                    </CardHeader>
+                                    <CardContent className="p-4 space-y-3">
+                                        {activeIssue.aiFixCode ? (
+                                            <>
+                                                {activeIssue.aiRemediation && (
+                                                    <p className="text-xs text-muted-foreground leading-relaxed">{activeIssue.aiRemediation}</p>
+                                                )}
+                                                <div className="rounded-lg border border-emerald-800/40 overflow-hidden">
+                                                    <div className="flex items-center justify-between bg-emerald-950/40 px-3 py-1.5 border-b border-emerald-800/40">
+                                                        <span className="text-[10px] font-mono text-emerald-400">{langFromPath(activeIssue.filePath)}</span>
+                                                        <span className="text-[10px] text-emerald-400 font-semibold">fixed version</span>
+                                                    </div>
+                                                    <div className="h-52">
+                                                        <Editor
+                                                            height="100%"
+                                                            language={langFromPath(activeIssue.filePath)}
+                                                            theme="vs-dark"
+                                                            value={activeIssue.aiFixCode}
+                                                            options={{ readOnly: true, minimap: { enabled: false }, scrollBeyondLastLine: false, fontSize: 12, lineNumbers: 'on' }}
+                                                        />
+                                                    </div>
+                                                </div>
+                                            </>
+                                        ) : (
+                                            <div className="flex flex-col items-center gap-3 py-4">
+                                                <p className="text-xs text-muted-foreground text-center">
+                                                    {activeIssue.aiProcessed
+                                                        ? 'No fix code available for this issue.'
+                                                        : 'Ask AI to generate a remediation code snippet for this vulnerability.'}
+                                                </p>
+                                                {!activeIssue.aiProcessed && (
+                                                    <button
+                                                        onClick={() => handleExplain(activeIssue.id)}
+                                                        disabled={isExplaining}
+                                                        className="inline-flex items-center gap-2 rounded-md bg-emerald-600 hover:bg-emerald-500 disabled:opacity-50 disabled:cursor-not-allowed px-3 py-1.5 text-xs font-semibold text-white transition-colors"
+                                                    >
+                                                        {isExplaining ? (
+                                                            <>
+                                                                <svg className="animate-spin h-3 w-3" viewBox="0 0 24 24" fill="none">
+                                                                    <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
+                                                                    <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v8z" />
+                                                                </svg>
+                                                                Generating…
+                                                            </>
+                                                        ) : '✦ Ask AI for Solution'}
+                                                    </button>
+                                                )}
+                                            </div>
+                                        )}
+                                    </CardContent>
+                                </Card>
                             </>
                         )}
                     </div>

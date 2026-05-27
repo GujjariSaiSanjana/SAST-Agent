@@ -1,8 +1,7 @@
 FROM node:20-alpine AS builder
 WORKDIR /app
 
-RUN apk add --no-cache curl unzip git openssl libc6-compat && \
-    curl -sfL https://raw.githubusercontent.com/Bearer/bearer/main/contrib/install.sh | sh -s -- -b /usr/local/bin
+RUN apk add --no-cache git openssl libc6-compat
 
 COPY package*.json ./
 RUN npm ci
@@ -18,8 +17,6 @@ FROM node:20-alpine AS runner
 WORKDIR /app
 
 RUN apk add --no-cache git openssl libc6-compat
-
-COPY --from=builder /usr/local/bin/bearer /usr/local/bin/bearer
 
 COPY package*.json ./
 RUN npm ci --omit=dev

@@ -1,0 +1,1263 @@
+<!DOCTYPE html>
+<html lang="en" class="theme-light">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>SAST Security Copilot – Faculty VIVA Guide</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Newsreader:ital,opsz,wght@0,6..72,400;1,6..72,400&display=swap" rel="stylesheet">
+<style>
+@import url('https://cdn.jsdelivr.net/npm/geist@1.3.0/dist/fonts/geist-sans/style.css');
+@import url('https://cdn.jsdelivr.net/npm/geist@1.3.0/dist/fonts/geist-mono/style.css');
+
+/* ── SecNode Console Design Tokens ──────────────────── */
+:root {
+  --font-sans: "Geist", ui-sans-serif, system-ui, -apple-system, "Segoe UI", Helvetica, Arial, sans-serif;
+  --font-mono: "Geist Mono", ui-monospace, "SF Mono", Menlo, Consolas, monospace;
+  --font-serif: "Newsreader", "Source Serif 4", Georgia, serif;
+
+  --text-2xs:11px; --text-xs:12px; --text-sm:13px; --text-base:14px;
+  --text-md:15px;  --text-lg:17px; --text-xl:20px; --text-2xl:24px;
+  --text-3xl:30px; --text-4xl:38px; --text-5xl:48px;
+
+  --space-1:4px;  --space-2:8px;  --space-3:12px; --space-4:16px;
+  --space-5:20px; --space-6:24px; --space-8:32px; --space-10:40px;
+  --space-12:48px; --space-16:64px;
+
+  --radius-xs:4px; --radius-sm:6px; --radius-md:8px; --radius-lg:10px;
+  --radius-xl:14px; --radius-2xl:18px;
+  --radius:10px;
+
+  --sidebar-w:244px; --topbar-h:52px;
+}
+
+:root,
+.theme-light {
+  --bg:            oklch(0.987 0.014 82);
+  --bg-deep:       oklch(0.970 0.016 82);
+  --surface:       oklch(1.000 0.008 82);
+  --surface-2:     oklch(0.978 0.016 82);
+  --surface-3:     oklch(0.964 0.018 82);
+  --surface-inset: oklch(0.948 0.018 82);
+
+  --fg:        oklch(0.18 0.016 75);
+  --fg-strong: oklch(0.09 0.012 75);
+  --fg-muted:  oklch(0.44 0.010 75);
+  --fg-subtle: oklch(0.60 0.008 75);
+  --fg-faint:  oklch(0.76 0.006 75);
+
+  --border:        oklch(0.90 0.012 82);
+  --border-strong: oklch(0.82 0.014 82);
+  --hairline:      oklch(0.93 0.010 82);
+
+  --accent:             oklch(0.45 0.15 255);
+  --accent-fg:          oklch(1 0 0);
+  --accent-soft:        oklch(0.45 0.15 255 / 0.09);
+  --accent-soft-strong: oklch(0.45 0.15 255 / 0.16);
+
+  --shadow-xs: 0 1px 2px oklch(0.18 0.016 75 / 0.06);
+  --shadow-sm: 0 1px 3px oklch(0.18 0.016 75 / 0.06), 0 2px 6px oklch(0.18 0.016 75 / 0.04);
+  --shadow-md: 0 2px 4px oklch(0.18 0.016 75 / 0.06), 0 8px 24px oklch(0.18 0.016 75 / 0.08);
+  --shadow-lg: 0 6px 12px oklch(0.18 0.016 75 / 0.08), 0 20px 48px oklch(0.18 0.016 75 / 0.12);
+
+  --sidebar-bg:     oklch(0.972 0.016 82);
+  --sidebar-fg:     oklch(0.18 0.016 75);
+  --sidebar-border: oklch(0.90 0.012 82);
+  --nav-bg:         oklch(0.987 0.014 82 / 0.92);
+
+  color-scheme: light;
+}
+
+.theme-dark {
+  --bg:            oklch(0.148 0.016 78);
+  --bg-deep:       oklch(0.118 0.016 78);
+  --surface:       oklch(0.188 0.015 78);
+  --surface-2:     oklch(0.210 0.014 78);
+  --surface-3:     oklch(0.232 0.013 78);
+  --surface-inset: oklch(0.168 0.015 78);
+
+  --fg:        oklch(0.955 0.010 82);
+  --fg-strong: oklch(0.990 0.005 82);
+  --fg-muted:  oklch(0.680 0.010 78);
+  --fg-subtle: oklch(0.520 0.010 78);
+  --fg-faint:  oklch(0.380 0.010 78);
+
+  --border:        oklch(0.290 0.014 78);
+  --border-strong: oklch(0.370 0.014 78);
+  --hairline:      oklch(0.240 0.013 78);
+
+  --accent:             oklch(0.74 0.14 252);
+  --accent-fg:          oklch(0.10 0.01 252);
+  --accent-soft:        oklch(0.74 0.14 252 / 0.13);
+  --accent-soft-strong: oklch(0.74 0.14 252 / 0.22);
+
+  --shadow-xs: 0 1px 2px oklch(0 0 0 / 0.50);
+  --shadow-sm: 0 2px 4px oklch(0 0 0 / 0.40), 0 1px 2px oklch(0 0 0 / 0.30);
+  --shadow-md: 0 2px 4px oklch(0 0 0 / 0.40), 0 10px 24px oklch(0 0 0 / 0.38);
+  --shadow-lg: 0 8px 16px oklch(0 0 0 / 0.45), 0 28px 56px oklch(0 0 0 / 0.55);
+
+  --sidebar-bg:     oklch(0.128 0.015 78);
+  --sidebar-fg:     oklch(0.920 0.008 82);
+  --sidebar-border: oklch(0.240 0.013 78);
+  --nav-bg:         oklch(0.148 0.016 78 / 0.92);
+
+  color-scheme: dark;
+}
+
+*, *::before, *::after { margin:0; padding:0; box-sizing:border-box }
+html { scroll-behavior:smooth; -webkit-text-size-adjust:100% }
+body {
+  background: var(--bg);
+  color: var(--fg);
+  font-family: var(--font-sans);
+  font-size: 15px;
+  line-height: 1.6;
+  letter-spacing: -0.007em;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  font-feature-settings: "ss01","cv11","liga";
+  transition: background .3s ease, color .3s ease;
+}
+
+nav {
+  position: sticky; top: 0; z-index: 100;
+  background: var(--nav-bg);
+  backdrop-filter: blur(14px) saturate(160%);
+  -webkit-backdrop-filter: blur(14px) saturate(160%);
+  border-bottom: 1px solid var(--hairline);
+  padding: 0 2rem;
+  height: 56px;
+}
+.nav-inner {
+  max-width: 1160px; margin: 0 auto;
+  display: flex; align-items: center; justify-content: space-between;
+  height: 56px; gap: 1rem;
+}
+.nav-brand {
+  font-size: 13px; font-weight: 650;
+  color: var(--fg-strong);
+  letter-spacing: -0.015em;
+  white-space: nowrap;
+}
+.nav-links { display:flex; gap:.05rem; flex-wrap:wrap }
+.nav-links a {
+  color: var(--fg-subtle);
+  text-decoration: none;
+  font-size: 13px;
+  padding: .3rem .6rem;
+  border-radius: 6px;
+  transition: background .12s, color .12s;
+  letter-spacing: -0.005em;
+}
+.nav-links a:hover { background: var(--surface-2); color: var(--fg) }
+.theme-btn {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  color: var(--fg-muted);
+  cursor: pointer;
+  padding: 5px 12px;
+  border-radius: 7px;
+  font-size: 12px; font-weight: 500;
+  display: flex; align-items: center; gap: .4rem;
+  transition: .12s; white-space: nowrap;
+  font-family: inherit;
+  box-shadow: var(--shadow-xs);
+}
+.theme-btn:hover { border-color: var(--border-strong); background: var(--surface-2); color: var(--fg) }
+
+.container { max-width: 1100px; margin: 0 auto; padding: 3rem 2rem }
+
+.hero {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 20px;
+  padding: 4.5rem 3.5rem;
+  margin-bottom: 4rem;
+  text-align: center;
+  position: relative; overflow: hidden;
+  box-shadow: var(--shadow-lg);
+}
+.hero::before {
+  content: '';
+  position: absolute; inset: 0; pointer-events: none;
+  background:
+    radial-gradient(ellipse 90% 55% at 50% -5%, oklch(0.78 0.12 85 / 0.18), transparent 70%),
+    radial-gradient(ellipse 50% 40% at 100% 110%, oklch(0.45 0.15 255 / 0.10), transparent 60%);
+}
+.hero h1 {
+  font-family: var(--font-serif);
+  font-size: clamp(2rem, 5vw, 3.25rem);
+  font-weight: 700;
+  line-height: 1.1;
+  letter-spacing: -0.03em;
+  color: var(--fg-strong);
+  margin-bottom: .75rem;
+  position: relative;
+}
+.hero h1 span { color: var(--accent); font-style: italic }
+.hero > p {
+  color: var(--fg-muted);
+  font-size: 1rem;
+  max-width: 620px; margin: .875rem auto 0;
+  line-height: 1.75;
+  position: relative;
+}
+.badge-row {
+  display: flex; flex-wrap: wrap; gap: .4rem;
+  justify-content: center; margin-top: 2rem;
+  position: relative;
+}
+.badge {
+  padding: 4px 11px;
+  border-radius: 6px;
+  font-size: 11px; font-weight: 500;
+  background: var(--surface-2);
+  color: var(--fg-muted);
+  border: 1px solid var(--border);
+  font-family: var(--font-mono);
+  letter-spacing: .01em;
+}
+
+section { margin-bottom: 4.5rem }
+
+.section-title {
+  font-family: var(--font-serif);
+  font-size: clamp(1.4rem, 3vw, 1.9rem);
+  font-weight: 700;
+  line-height: 1.15;
+  color: var(--fg-strong);
+  letter-spacing: -0.025em;
+  margin-bottom: 1.75rem;
+  padding-bottom: .875rem;
+  border-bottom: 1px solid var(--border);
+  display: flex; align-items: baseline; gap: .75rem;
+}
+.section-title span.num {
+  font-family: var(--font-mono);
+  font-size: .875rem; font-weight: 600;
+  color: var(--accent);
+  letter-spacing: .02em;
+  flex-shrink: 0;
+}
+
+.subsection { margin-bottom: 2.25rem }
+.subsection h3 {
+  font-size: 11px; font-weight: 600;
+  color: var(--fg-subtle);
+  text-transform: uppercase; letter-spacing: .09em;
+  margin-bottom: 1rem;
+  display: flex; align-items: center; gap: .6rem;
+}
+.subsection h3::before {
+  content: '';
+  display: inline-block;
+  width: 18px; height: 1.5px;
+  background: var(--accent);
+  flex-shrink: 0; border-radius: 2px;
+}
+
+.card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  padding: 20px 22px;
+  margin-bottom: 1rem;
+  box-shadow: var(--shadow-xs);
+  transition: box-shadow .2s, border-color .2s;
+}
+.card:hover { box-shadow: var(--shadow-sm); border-color: var(--border-strong) }
+
+.card-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: .75rem; margin-bottom: 1rem;
+}
+
+.card h4 {
+  font-size: 13px; font-weight: 650;
+  color: var(--fg-strong); margin-bottom: .625rem;
+  letter-spacing: -0.01em;
+}
+.card p, .card li { color: var(--fg-muted); font-size: .9rem; line-height: 1.65 }
+.card ul { padding-left: 1.1rem }
+.card li { margin-bottom: .3rem }
+
+.term-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: .6rem;
+}
+.term-card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-top: 2.5px solid var(--accent);
+  border-radius: var(--radius-md);
+  padding: 14px 16px;
+  transition: box-shadow .2s;
+}
+.term-card:hover { box-shadow: var(--shadow-sm) }
+.term-card .term {
+  font-weight: 650; color: var(--fg-strong);
+  font-size: 14px; letter-spacing: -0.01em;
+  margin-bottom: .25rem;
+}
+.term-card .full {
+  color: var(--accent); font-size: 11px; font-weight: 600;
+  text-transform: uppercase; letter-spacing: .07em;
+  margin-bottom: .5rem; display: block;
+}
+.term-card .def { color: var(--fg-muted); font-size: .875rem; line-height: 1.6 }
+
+code {
+  background: var(--surface-inset);
+  color: var(--fg-strong);
+  font-family: var(--font-mono);
+  font-size: .8rem;
+  padding: .15rem .4rem;
+  border-radius: var(--radius-xs);
+  border: 1px solid var(--border);
+}
+
+table { width: 100%; border-collapse: collapse; margin: 1rem 0; font-size: .875rem }
+thead { background: var(--surface-2) }
+th {
+  color: var(--fg-subtle);
+  font-size: 11px; font-weight: 600;
+  text-transform: uppercase; letter-spacing: .08em;
+  padding: 10px 14px; text-align: left;
+  border-bottom: 1px solid var(--border);
+  font-family: var(--font-mono);
+}
+td {
+  padding: 10px 14px;
+  border-bottom: 1px solid var(--hairline);
+  color: var(--fg-muted);
+  vertical-align: top;
+  line-height: 1.55;
+}
+tr:last-child td { border-bottom: none }
+tr:hover td { background: var(--surface-2) }
+
+/* Q&A ACCORDION */
+.qa-block {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  margin-bottom: .5rem;
+  overflow: hidden;
+  transition: border-color .2s;
+}
+.qa-q {
+  padding: 14px 18px;
+  font-weight: 500; font-size: 14px;
+  cursor: pointer;
+  display: flex; justify-content: space-between; align-items: flex-start;
+  color: var(--fg); transition: background .12s;
+  line-height: 1.45; gap: 1rem;
+}
+.qa-q:hover { background: var(--surface-2) }
+.qa-q::after {
+  content: '+';
+  font-size: 20px; line-height: 1; font-weight: 300;
+  color: var(--fg-subtle);
+  transition: transform .2s, color .2s;
+  flex-shrink: 0;
+  margin-top: 1px;
+}
+.qa-a {
+  padding: 14px 18px;
+  color: var(--fg-muted);
+  font-size: .9rem; line-height: 1.75;
+  display: none;
+  border-top: 1px solid var(--hairline);
+}
+.qa-block.open { border-color: var(--border-strong) }
+.qa-block.open .qa-q { color: var(--fg-strong); background: var(--surface-2) }
+.qa-block.open .qa-q::after { content: '−'; color: var(--accent) }
+.qa-block.open .qa-a { display: block }
+
+/* Faculty tag on question */
+.fac-tag {
+  display: inline-block;
+  font-size: 10px; font-weight: 600;
+  font-family: var(--font-mono);
+  letter-spacing: .05em;
+  padding: 2px 7px;
+  border-radius: 4px;
+  background: var(--surface-inset);
+  color: var(--fg-subtle);
+  border: 1px solid var(--border);
+  flex-shrink: 0;
+  align-self: flex-start;
+  margin-top: 2px;
+}
+
+.fac-tag.snobby {
+  background: oklch(0.72 0.19 25 / 0.10);
+  color: oklch(0.55 0.18 25);
+  border-color: oklch(0.72 0.19 25 / 0.25);
+}
+.fac-tag.confused {
+  background: oklch(0.78 0.12 85 / 0.12);
+  color: oklch(0.55 0.12 70);
+  border-color: oklch(0.78 0.12 85 / 0.30);
+}
+.fac-tag.trap {
+  background: oklch(0.45 0.15 255 / 0.09);
+  color: var(--accent);
+  border-color: oklch(0.45 0.15 255 / 0.25);
+}
+
+.qa-q-inner {
+  display: flex; align-items: flex-start; gap: .75rem; flex: 1;
+}
+.qa-q-text { flex: 1; line-height: 1.5 }
+
+.highlight {
+  background: var(--surface-2);
+  border: 1px solid var(--border);
+  border-left: 3px solid var(--accent);
+  border-radius: 0 var(--radius-md) var(--radius-md) 0;
+  padding: 14px 18px; margin: 1.25rem 0;
+}
+.highlight strong { color: var(--fg-strong) }
+.highlight p { color: var(--fg-muted); font-size: .9rem; line-height: 1.65 }
+
+.warn-box {
+  background: oklch(0.72 0.19 25 / 0.08);
+  border: 1px solid oklch(0.72 0.19 25 / 0.25);
+  border-left: 3px solid oklch(0.55 0.18 25);
+  border-radius: 0 var(--radius-md) var(--radius-md) 0;
+  padding: 14px 18px; margin: 1.25rem 0;
+}
+.warn-box strong { color: oklch(0.55 0.18 25) }
+.warn-box p { color: var(--fg-muted); font-size: .9rem; line-height: 1.65 }
+
+.tip-box {
+  background: oklch(0.58 0.09 160 / 0.08);
+  border: 1px solid oklch(0.58 0.09 160 / 0.25);
+  border-left: 3px solid oklch(0.58 0.09 160);
+  border-radius: 0 var(--radius-md) var(--radius-md) 0;
+  padding: 14px 18px; margin: 1.25rem 0;
+}
+.tip-box strong { color: oklch(0.40 0.10 155) }
+.tip-box p { color: var(--fg-muted); font-size: .9rem; line-height: 1.65 }
+.theme-dark .tip-box strong { color: oklch(0.74 0.10 160) }
+.theme-dark .warn-box strong { color: oklch(0.72 0.19 25) }
+
+.flow { display: flex; align-items: center; flex-wrap: wrap; gap: .35rem; margin: 1.25rem 0 }
+.flow-step {
+  background: var(--surface-2);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  padding: 5px 11px;
+  font-size: .78rem; font-weight: 500;
+  color: var(--fg-muted);
+  font-family: var(--font-mono);
+  letter-spacing: .01em;
+}
+.flow-arrow { color: var(--fg-faint); font-size: .85rem; padding: 0 1px }
+.flow-step.active {
+  background: var(--accent-soft);
+  color: var(--accent);
+  border-color: var(--accent-soft-strong);
+  font-weight: 600;
+}
+
+@media (max-width: 768px) {
+  .hero { padding: 2.5rem 1.5rem }
+  .nav-links { display: none }
+  .card-grid { grid-template-columns: 1fr }
+  .term-grid { grid-template-columns: 1fr }
+  .container { padding: 2rem 1rem }
+  .section-title { font-size: 1.4rem }
+}
+</style>
+</head>
+<body>
+
+<nav>
+  <div class="nav-inner">
+    <span class="nav-brand">SAST Security Copilot &mdash; Faculty VIVA</span>
+    <div class="nav-links">
+      <a href="#overview">Overview</a>
+      <a href="#motivation">Motivation</a>
+      <a href="#techstack">Tech Stack</a>
+      <a href="#diagrams">Diagrams</a>
+      <a href="#ai">AI Questions</a>
+      <a href="#security">Security</a>
+      <a href="#business">Business</a>
+      <a href="#testing">Testing</a>
+      <a href="#future">Future Scope</a>
+      <a href="#team">Team</a>
+      <a href="#survival">Survival Tips</a>
+    </div>
+    <button class="theme-btn" onclick="toggleTheme()">&#9788; Light</button>
+  </div>
+</nav>
+
+<div class="container">
+
+  <div class="hero">
+    <h1>Faculty VIVA <span>Survival Guide</span></h1>
+    <p>Every question a non-technical, occasionally snobby faculty member will ask — and exactly how to answer them without panicking. No deep tech required.</p>
+    <div class="badge-row">
+      <span class="badge">Management POV</span>
+      <span class="badge">Non-technical Faculty</span>
+      <span class="badge">SAST Copilot</span>
+      <span class="badge">Project Defence</span>
+      <span class="badge">Real Questions</span>
+    </div>
+  </div>
+
+  <div class="highlight">
+    <strong>How to read this guide:</strong>
+    <p>Every accordion shows the faculty question with a tag: <span class="fac-tag snobby">snobby</span> (testing your confidence), <span class="fac-tag confused">confused</span> (genuine misunderstanding), or <span class="fac-tag trap">trap</span> (trying to catch you out). The answer inside is what you actually say — written the way you'd speak it, not like a textbook.</p>
+  </div>
+
+  <!-- ═══════════════════════════════════════════════════════
+       §1  OVERVIEW & ONE-LINERS
+  ═══════════════════════════════════════════════════════ -->
+  <section id="overview">
+    <h2 class="section-title"><span class="num">01</span> Overview &amp; One-Liners</h2>
+    <p style="color:var(--fg-muted);font-size:.9rem;margin-bottom:1.5rem">Faculty always opens with "tell me about your project." Have a 30-second version, a 2-minute version, and a one-liner ready.</p>
+
+    <div class="qa-block">
+      <div class="qa-q">
+        <div class="qa-q-inner">
+          <span class="fac-tag snobby">snobby</span>
+          <span class="qa-q-text">So, what exactly is your project? Explain it in one sentence.</span>
+        </div>
+      </div>
+      <div class="qa-a">
+        <strong>Your answer:</strong> "Our project is an AI-powered tool that automatically scans software source code, finds security vulnerabilities before the software is released, and explains each vulnerability to the developer in plain English."<br><br>
+        <em>If they push for simpler:</em> "Think of it as a smart antivirus — but instead of scanning files for malware after a computer gets infected, ours scans the code itself before the software even runs, and catches the mistakes that hackers would exploit."
+      </div>
+    </div>
+
+    <div class="qa-block">
+      <div class="qa-q">
+        <div class="qa-q-inner">
+          <span class="fac-tag snobby">snobby</span>
+          <span class="qa-q-text">What does SAST stand for? And why that name?</span>
+        </div>
+      </div>
+      <div class="qa-a">
+        <strong>SAST</strong> stands for <strong>Static Application Security Testing</strong>. "Static" means we analyse the code without running it — like reading a recipe for errors before cooking, rather than tasting the dish after something goes wrong. It is the industry standard term used by companies like Google, Microsoft, and all major cybersecurity firms.
+      </div>
+    </div>
+
+    <div class="qa-block">
+      <div class="qa-q">
+        <div class="qa-q-inner">
+          <span class="fac-tag confused">confused</span>
+          <span class="qa-q-text">Is this a website? An app? What exactly did you build?</span>
+        </div>
+      </div>
+      <div class="qa-a">
+        We built a <strong>web application</strong> — you open it in a browser like any website. You log in, paste a link to your code repository (or upload code), click Scan, and within seconds it shows you a list of security issues found in the code, with AI-generated explanations and suggested fixes for each issue. There is also a real-time progress bar while the scan runs.
+      </div>
+    </div>
+
+    <div class="qa-block">
+      <div class="qa-q">
+        <div class="qa-q-inner">
+          <span class="fac-tag snobby">snobby</span>
+          <span class="qa-q-text">What problem does this solve? Is there really a need for this?</span>
+        </div>
+      </div>
+      <div class="qa-a">
+        Cybersecurity breaches cost businesses <strong>$4.88 million on average per incident</strong> in 2024 (IBM Cost of Data Breach Report). The majority of breaches exploit vulnerabilities that were already present in the code — meaning they could have been caught before release. Our tool addresses exactly that gap: automated detection at the development stage, when fixing a bug costs 100× less than fixing it after deployment. The need is not hypothetical — companies like Snyk and Veracode are valued at billions of dollars solving this exact problem.
+      </div>
+    </div>
+
+    <div class="qa-block">
+      <div class="qa-q">
+        <div class="qa-q-inner">
+          <span class="fac-tag confused">confused</span>
+          <span class="qa-q-text">Who is the target user of this application?</span>
+        </div>
+      </div>
+      <div class="qa-a">
+        Our primary users are <strong>software developers and development teams</strong> — specifically those who write code and want to know if it has security flaws before they ship it to customers. Secondary users are security engineers or team leads who want a project-wide view of all vulnerabilities. The tool is designed to be used during the software development process, not after the product is already live.
+      </div>
+    </div>
+  </section>
+
+  <!-- ═══════════════════════════════════════════════════════
+       §2  MOTIVATION & NOVELTY
+  ═══════════════════════════════════════════════════════ -->
+  <section id="motivation">
+    <h2 class="section-title"><span class="num">02</span> Motivation &amp; Innovation</h2>
+
+    <div class="qa-block">
+      <div class="qa-q">
+        <div class="qa-q-inner">
+          <span class="fac-tag snobby">snobby</span>
+          <span class="qa-q-text">What is the novelty of your project? Tools like this already exist, no?</span>
+        </div>
+      </div>
+      <div class="qa-a">
+        Yes, enterprise tools exist — Snyk, SonarQube, Veracode. But our novelty is threefold:<br><br>
+        1. <strong>AI explanation layer</strong> — existing open-source scanners just flag a line number and a rule ID. Ours uses a large language model to explain <em>why</em> that code is dangerous and <em>how</em> to fix it in plain language, making it accessible to junior developers who may not understand raw security alerts.<br><br>
+        2. <strong>AI fallback chain</strong> — we use three different AI providers (NVIDIA, Google, OpenAI) in sequence, so if one fails the next takes over automatically, ensuring reliability without vendor lock-in.<br><br>
+        3. <strong>Integrated, accessible platform</strong> — enterprise tools cost hundreds of dollars per month. Ours is a self-hosted, open architecture. The integration of scanning + AI explanation + GitHub authentication in a single modern interface is the differentiation.
+      </div>
+    </div>
+
+    <div class="qa-block">
+      <div class="qa-q">
+        <div class="qa-q-inner">
+          <span class="fac-tag confused">confused</span>
+          <span class="qa-q-text">Why did you choose cybersecurity as your domain?</span>
+        </div>
+      </div>
+      <div class="qa-a">
+        Cybersecurity is one of the fastest growing fields in technology — the global market is projected to reach $657 billion by 2030. Every application written today needs security testing, and there is a significant shortage of security professionals. Building an AI-assisted tool in this domain gives us real-world relevance, aligns with industry trends, and addresses a concrete, measurable problem that companies actively spend money on.
+      </div>
+    </div>
+
+    <div class="qa-block">
+      <div class="qa-q">
+        <div class="qa-q-inner">
+          <span class="fac-tag snobby">snobby</span>
+          <span class="qa-q-text">Why not just use ChatGPT to check the code? Why build a whole system?</span>
+        </div>
+      </div>
+      <div class="qa-a">
+        ChatGPT is a general-purpose chatbot. It has no structured way to scan a full project with hundreds of files, no persistent storage of results, no queue system for handling multiple users simultaneously, no structured output format tied to industry vulnerability standards (OWASP, CWE), and no integration with GitHub repositories. Our system uses the AI only for the explanation and suggestion step — the actual detection is done by a dedicated, rule-based security analysis engine. The two complement each other: the scanner finds the issue precisely, the AI explains it clearly.
+      </div>
+    </div>
+
+    <div class="qa-block">
+      <div class="qa-q">
+        <div class="qa-q-inner">
+          <span class="fac-tag trap">trap</span>
+          <span class="qa-q-text">How is this different from a simple antivirus?</span>
+        </div>
+      </div>
+      <div class="qa-a">
+        An antivirus scans compiled programs or files for known malicious signatures at runtime — it looks for malware that already exists. Our tool scans <em>source code</em> — the human-written instructions — before the software is even compiled or run. It finds <em>coding mistakes</em> that could be exploited by an attacker, not pre-existing malware. The difference is: antivirus is a cure, SAST is prevention. You cannot run an antivirus on source code — different problem, different solution.
+      </div>
+    </div>
+  </section>
+
+  <!-- ═══════════════════════════════════════════════════════
+       §3  TECH STACK QUESTIONS
+  ═══════════════════════════════════════════════════════ -->
+  <section id="techstack">
+    <h2 class="section-title"><span class="num">03</span> Tech Stack Questions</h2>
+    <p style="color:var(--fg-muted);font-size:.9rem;margin-bottom:1.5rem">Faculty read your tech stack on the cover page and will randomly pick something and ask why. These are the exact questions they will ask.</p>
+
+    <div class="qa-block">
+      <div class="qa-q">
+        <div class="qa-q-inner">
+          <span class="fac-tag confused">confused</span>
+          <span class="qa-q-text">You used Node.js for the backend. Why not Python? Python is more popular for AI.</span>
+        </div>
+      </div>
+      <div class="qa-a">
+        This is a great point and a common misconception. We use Python AI <em>services</em> through APIs — NVIDIA's, Google's, OpenAI's — we are not building or training the AI ourselves. Our backend is the web server that handles user requests, manages the database, schedules jobs, and calls those AI APIs. For this task, Node.js is ideal: it is built for handling many simultaneous web requests efficiently (it is what Netflix, LinkedIn, and Uber use for their servers). Python would be slower for the web server role. We get Python-powered AI without writing Python — by calling their APIs.
+      </div>
+    </div>
+
+    <div class="qa-block">
+      <div class="qa-q">
+        <div class="qa-q-inner">
+          <span class="fac-tag confused">confused</span>
+          <span class="qa-q-text">You have two databases — PostgreSQL and Redis. Why two? Is one not enough?</span>
+        </div>
+      </div>
+      <div class="qa-a">
+        They serve completely different purposes. Think of <strong>PostgreSQL</strong> as a filing cabinet — it permanently stores everything: user accounts, scan results, vulnerability reports. It is the long-term record. <strong>Redis</strong> is like a whiteboard — it holds temporary, fast-access information: the job queue of pending scans, session tokens, rate-limit counters. It is extremely fast but stores nothing permanently. Using the right tool for each job is a standard industry practice — the same approach used by Twitter, GitHub, and most large platforms.
+      </div>
+    </div>
+
+    <div class="qa-block">
+      <div class="qa-q">
+        <div class="qa-q-inner">
+          <span class="fac-tag confused">confused</span>
+          <span class="qa-q-text">What is Prisma? Is it different from PostgreSQL?</span>
+        </div>
+      </div>
+      <div class="qa-a">
+        PostgreSQL is the actual database — the storage engine. <strong>Prisma</strong> is an ORM (Object Relational Mapper) — it is a layer of code that lets our application talk to PostgreSQL using JavaScript objects instead of raw SQL queries. Think of PostgreSQL as the actual bank vault, and Prisma as the banker who knows the vault's layout and handles all the paperwork for us. It also auto-generates the database tables from our schema definition, which reduces errors and speeds up development.
+      </div>
+    </div>
+
+    <div class="qa-block">
+      <div class="qa-q">
+        <div class="qa-q-inner">
+          <span class="fac-tag confused">confused</span>
+          <span class="qa-q-text">Why GitHub login only? What if someone does not have a GitHub account?</span>
+        </div>
+      </div>
+      <div class="qa-a">
+        Our target users are <strong>software developers</strong> — and virtually every developer today has a GitHub account. It is the industry standard platform for storing and managing code, with over 100 million registered users. By using GitHub OAuth, we also get an immediate benefit: once the user logs in, we can directly access their GitHub repositories with their permission, making the scan workflow seamless. Adding traditional email/password login is a straightforward extension for a future version, but for our primary use case, GitHub login is the most relevant choice.
+      </div>
+    </div>
+
+    <div class="qa-block">
+      <div class="qa-q">
+        <div class="qa-q-inner">
+          <span class="fac-tag confused">confused</span>
+          <span class="qa-q-text">What is Docker? Why did you need it? Can't you just run the application normally?</span>
+        </div>
+      </div>
+      <div class="qa-a">
+        You can — but it would only work on the one computer where you set it up. <strong>Docker</strong> packages the entire application — code, settings, libraries, database — into a self-contained container. Think of it like a shipping container: the goods inside are the same whether the ship is sailing in India or Germany. Docker makes our application run identically on any computer, any server, any cloud provider. It eliminates "it works on my machine" problems. For a project with multiple components (backend server, database, job queue) that need to work together, Docker Compose lets us start everything with a single command.
+      </div>
+    </div>
+
+    <div class="qa-block">
+      <div class="qa-q">
+        <div class="qa-q-inner">
+          <span class="fac-tag confused">confused</span>
+          <span class="qa-q-text">What is TypeScript? Why not just use JavaScript?</span>
+        </div>
+      </div>
+      <div class="qa-a">
+        JavaScript is the standard language for web development but it has no type safety — it will happily let you write code that will crash at runtime. <strong>TypeScript</strong> adds a type system on top: it catches those errors before the code even runs, during development. For a security application where data integrity matters — user credentials, vulnerability reports, scan results — TypeScript's strictness is not just convenient, it prevents entire categories of bugs. It is the industry standard for large-scale JavaScript projects: used by Google, Microsoft (which created it), Slack, and Airbnb.
+      </div>
+    </div>
+
+    <div class="qa-block">
+      <div class="qa-q">
+        <div class="qa-q-inner">
+          <span class="fac-tag trap">trap</span>
+          <span class="qa-q-text">What is an API? Explain it simply.</span>
+        </div>
+      </div>
+      <div class="qa-a">
+        An API (Application Programming Interface) is a defined way for two software programs to communicate. Think of a restaurant: the menu is the API — it defines what you can order, in what format, and what you will receive in return. You (the frontend) place an order (send a request) through the waiter (the API), and the kitchen (the backend or AI service) prepares exactly what you asked for and sends it back. In our project, the frontend calls our backend API to submit scans, retrieve results, and request AI explanations. Our backend in turn calls NVIDIA's/Google's API to get AI-generated text.
+      </div>
+    </div>
+
+    <div class="qa-block">
+      <div class="qa-q">
+        <div class="qa-q-inner">
+          <span class="fac-tag confused">confused</span>
+          <span class="qa-q-text">What is React? Why not plain HTML?</span>
+        </div>
+      </div>
+      <div class="qa-a">
+        Plain HTML is a static document — it cannot update itself without reloading the page. <strong>React</strong> is a JavaScript framework that creates dynamic interfaces: when a scan result arrives, only the result panel updates, without the entire page refreshing. Our application has real-time progress updates, live-updating vulnerability lists, and code editors embedded in the page — none of these are possible with plain HTML. React is used by Facebook (who created it), Instagram, WhatsApp, Netflix, and virtually every modern web application.
+      </div>
+    </div>
+  </section>
+
+  <!-- ═══════════════════════════════════════════════════════
+       §4  DIAGRAM QUESTIONS
+  ═══════════════════════════════════════════════════════ -->
+  <section id="diagrams">
+    <h2 class="section-title"><span class="num">04</span> UML &amp; Diagram Questions</h2>
+    <p style="color:var(--fg-muted);font-size:.9rem;margin-bottom:1.5rem">The classic "why did you put that in the diagram" — faculty point at something random and ask why it's there. Prepare for each component.</p>
+
+    <div class="warn-box">
+      <strong>Real example from another student's viva:</strong>
+      <p>Student mentioned FastAPI in tech stack and included it in UML. Faculty asked "why did you mention that in the diagram?" The student panicked. Correct response: "Because it is an active component in the system that other components communicate with — in UML, every component that sends or receives data belongs in an architecture diagram." Stay calm, the question is about your confidence, not your knowledge.</p>
+    </div>
+
+    <div class="qa-block">
+      <div class="qa-q">
+        <div class="qa-q-inner">
+          <span class="fac-tag snobby">snobby</span>
+          <span class="qa-q-text">Why did you include GitHub in your architecture diagram?</span>
+        </div>
+      </div>
+      <div class="qa-a">
+        GitHub is an active external component in our system — it is not just mentioned for context. When a user submits a repository link for scanning, our backend clones that repository directly from GitHub over the network. Our authentication system also communicates with GitHub's OAuth servers to verify a user's identity. Any system component that sends or receives data must appear in the architecture diagram — omitting GitHub would make the diagram incomplete and misleading.
+      </div>
+    </div>
+
+    <div class="qa-block">
+      <div class="qa-q">
+        <div class="qa-q-inner">
+          <span class="fac-tag confused">confused</span>
+          <span class="qa-q-text">Why is Redis in the diagram? I thought it was just a database.</span>
+        </div>
+      </div>
+      <div class="qa-a">
+        Redis appears in the diagram because it plays an active, distinct architectural role — it is the message queue system that holds pending scan jobs. When a user submits a scan, the backend does not immediately run it (that would freeze the server for the next user). Instead it places the job in a Redis queue. A separate background worker picks jobs from that queue and processes them one by one. This is called a <strong>queue architecture</strong>, and Redis is the component that enables it. Every component with a distinct function and communication path is shown in an architecture diagram.
+      </div>
+    </div>
+
+    <div class="qa-block">
+      <div class="qa-q">
+        <div class="qa-q-inner">
+          <span class="fac-tag snobby">snobby</span>
+          <span class="qa-q-text">Can you explain your use case diagram?</span>
+        </div>
+      </div>
+      <div class="qa-a">
+        Our use case diagram shows two actors: the <strong>Developer</strong> (primary user) and the <strong>System/AI</strong> (automated actor). The developer can: register/login, submit a repository for scanning, view scan results, view individual vulnerabilities, and request AI explanation. The System automatically: clones the repository, runs the static analysis engine, stores results in the database, and when requested, calls the AI API to generate explanations. The diagram captures every meaningful interaction between a human user and our application.
+      </div>
+    </div>
+
+    <div class="qa-block">
+      <div class="qa-q">
+        <div class="qa-q-inner">
+          <span class="fac-tag confused">confused</span>
+          <span class="qa-q-text">Why did you make so many diagrams? Was that necessary?</span>
+        </div>
+      </div>
+      <div class="qa-a">
+        Each diagram communicates a different dimension of the system. The architecture diagram shows how components connect. The sequence diagram shows the time-ordered flow of a specific action. The class diagram shows data structure and relationships. The state diagram shows how the system changes over time. In software engineering, UML (Unified Modelling Language) is the professional standard for documenting systems — different stakeholders (developers, managers, testers) read different diagrams. Having all of them demonstrates that the system was properly designed, not just coded.
+      </div>
+    </div>
+
+    <div class="qa-block">
+      <div class="qa-q">
+        <div class="qa-q-inner">
+          <span class="fac-tag snobby">snobby</span>
+          <span class="qa-q-text">What is a sequence diagram? Explain yours.</span>
+        </div>
+      </div>
+      <div class="qa-a">
+        A sequence diagram shows the step-by-step message flow between components for a specific scenario, in time order (top to bottom). Our scan submission sequence shows: (1) Developer sends POST /scans to the Backend. (2) Backend validates the request and saves a pending scan record to PostgreSQL. (3) Backend pushes a job to the Redis Bull Queue. (4) The Queue Worker picks up the job, clones the GitHub repository, runs the security analysis tool, and saves results to PostgreSQL. (5) Frontend receives real-time progress updates via Server-Sent Events. (6) Final results are displayed to the user. Each arrow represents one API call or function call.
+      </div>
+    </div>
+  </section>
+
+  <!-- ═══════════════════════════════════════════════════════
+       §5  AI QUESTIONS
+  ═══════════════════════════════════════════════════════ -->
+  <section id="ai">
+    <h2 class="section-title"><span class="num">05</span> AI &amp; Machine Learning Questions</h2>
+    <p style="color:var(--fg-muted);font-size:.9rem;margin-bottom:1.5rem">Faculty hear "AI" and immediately ask about training data, accuracy, and "what if it's wrong." They often conflate all AI as one thing.</p>
+
+    <div class="qa-block">
+      <div class="qa-q">
+        <div class="qa-q-inner">
+          <span class="fac-tag confused">confused</span>
+          <span class="qa-q-text">How did you train your AI model? What data did you use?</span>
+        </div>
+      </div>
+      <div class="qa-a">
+        We did not train an AI model — and that is a deliberate design decision, not a limitation. Training a large language model requires millions of dollars and months of compute time on thousands of GPUs. Instead, we use three production AI services — NVIDIA NIM (running Qwen3-235B), Google Gemini 1.5 Flash, and OpenAI GPT-4o-mini — via their APIs. These are already trained, state-of-the-art models that have seen enormous amounts of code and security documentation in their training. Our value-add is in <em>how</em> we integrate these models: we craft precise security-context prompts, handle failures gracefully with fallback logic, and embed the output in a structured user workflow.
+      </div>
+    </div>
+
+    <div class="qa-block">
+      <div class="qa-q">
+        <div class="qa-q-inner">
+          <span class="fac-tag trap">trap</span>
+          <span class="qa-q-text">What if the AI gives a wrong explanation or a wrong fix? Is it reliable?</span>
+        </div>
+      </div>
+      <div class="qa-a">
+        This is an important and valid concern. Our architecture accounts for it in two ways:<br><br>
+        First, <strong>the vulnerability detection is not done by AI</strong>. It is done by a deterministic, rule-based static analysis engine. The AI only explains and suggests fixes — it does not decide what is a vulnerability. So even if the AI explanation is slightly imprecise, the underlying finding is reliable.<br><br>
+        Second, AI-generated suggestions in our system are presented as <strong>guidance, not automated changes</strong>. The developer reads the explanation and fix suggestion, then makes their own judgement before modifying code. This is exactly how tools like GitHub Copilot and SonarQube's AI features work — human in the loop, AI as assistant.
+      </div>
+    </div>
+
+    <div class="qa-block">
+      <div class="qa-q">
+        <div class="qa-q-inner">
+          <span class="fac-tag confused">confused</span>
+          <span class="qa-q-text">You mentioned three AI providers. Why three? Is one not enough?</span>
+        </div>
+      </div>
+      <div class="qa-a">
+        Reliability. Any single API can go down due to server issues, rate limits, or outages. Our fallback chain means: we first try NVIDIA NIM (highest capability). If that fails or times out, we automatically try Google Gemini. If that also fails, we fall back to OpenAI GPT-4o-mini. The user sees a smooth response regardless of which provider actually answered. This is called a <strong>resilient, vendor-agnostic architecture</strong> — the same principle airlines use with redundant systems: the passenger never sees which engine is working, they just arrive safely.
+      </div>
+    </div>
+
+    <div class="qa-block">
+      <div class="qa-q">
+        <div class="qa-q-inner">
+          <span class="fac-tag snobby">snobby</span>
+          <span class="qa-q-text">What is the accuracy of your AI?</span>
+        </div>
+      </div>
+      <div class="qa-a">
+        Accuracy of explanation quality is subjective — the AI is producing natural language, not binary classifications, so traditional accuracy metrics do not directly apply. What we can measure: our <strong>vulnerability detection accuracy</strong> (the scanner component, not AI) follows the rule-base accuracy of the underlying engine, which is tested against known vulnerability datasets. The AI's code suggestion quality matches production results from the same models evaluated by Google and OpenAI on coding benchmarks: GPT-4o-mini scores 87% on HumanEval, Gemini 1.5 Flash scores 71%. These are the same models our users receive.
+      </div>
+    </div>
+
+    <div class="qa-block">
+      <div class="qa-q">
+        <div class="qa-q-inner">
+          <span class="fac-tag confused">confused</span>
+          <span class="qa-q-text">What is NVIDIA NIM? Did NVIDIA give you permission to use this?</span>
+        </div>
+      </div>
+      <div class="qa-a">
+        NVIDIA NIM (NVIDIA Inference Microservices) is a <strong>publicly available, commercial AI API service</strong> — anyone can sign up and use it, similar to how anyone can use Google Maps API or Twilio for SMS. We registered for an API key through NVIDIA's developer portal, just as developers do worldwide. No special permission is required beyond a standard API account. It provides access to powerful AI models optimised to run on NVIDIA's GPU infrastructure — we send a text request and receive a text response, we do not manage any hardware.
+      </div>
+    </div>
+  </section>
+
+  <!-- ═══════════════════════════════════════════════════════
+       §6  SECURITY QUESTIONS
+  ═══════════════════════════════════════════════════════ -->
+  <section id="security">
+    <h2 class="section-title"><span class="num">06</span> Security &amp; Trust Questions</h2>
+
+    <div class="qa-block">
+      <div class="qa-q">
+        <div class="qa-q-inner">
+          <span class="fac-tag snobby">snobby</span>
+          <span class="qa-q-text">Is your application itself secure? How can a security tool be trusted if it is not secure?</span>
+        </div>
+      </div>
+      <div class="qa-a">
+        Valid point, and we addressed it directly. Our application implements:<br><br>
+        &bull; <strong>JWT tokens in HttpOnly cookies</strong> — login sessions are stored in a way that JavaScript on the page cannot access, preventing token theft via XSS attacks.<br>
+        &bull; <strong>Rate limiting</strong> — limits requests per IP to prevent abuse and brute-force attacks.<br>
+        &bull; <strong>Input validation</strong> — all user inputs are validated and sanitised before being processed.<br>
+        &bull; <strong>GitHub OAuth</strong> — we never store passwords; authentication is delegated to GitHub's secure infrastructure.<br>
+        &bull; <strong>Parameterised queries via Prisma ORM</strong> — prevents SQL injection attacks.<br><br>
+        These cover the OWASP Top 10 — the globally recognised list of the most critical web application security risks.
+      </div>
+    </div>
+
+    <div class="qa-block">
+      <div class="qa-q">
+        <div class="qa-q-inner">
+          <span class="fac-tag confused">confused</span>
+          <span class="qa-q-text">What is OWASP? You mentioned it in your report.</span>
+        </div>
+      </div>
+      <div class="qa-a">
+        OWASP stands for <strong>Open Worldwide Application Security Project</strong>. It is a non-profit foundation that publishes the most widely referenced security standards in the industry. Their most famous document is the <strong>OWASP Top 10</strong> — a list of the 10 most critical and common web application vulnerabilities, updated every few years based on real-world breach data. When our scanner detects a vulnerability, it labels it with the relevant OWASP category (e.g., "A01:2021 Broken Access Control") so developers immediately understand the severity and context within industry-standard classification.
+      </div>
+    </div>
+
+    <div class="qa-block">
+      <div class="qa-q">
+        <div class="qa-q-inner">
+          <span class="fac-tag confused">confused</span>
+          <span class="qa-q-text">What is JWT? Why not just use sessions?</span>
+        </div>
+      </div>
+      <div class="qa-a">
+        <strong>JWT</strong> (JSON Web Token) is a compact, self-contained token that encodes user information and is cryptographically signed. Traditional server sessions require the server to store session data in memory or a database for every logged-in user. JWT is stateless — the token itself contains the information, and the server just verifies the signature. This scales better: any server instance can verify any token without needing to query a shared session store. For a web application where the frontend and backend may be on different servers, JWTs are the standard modern approach.
+      </div>
+    </div>
+
+    <div class="qa-block">
+      <div class="qa-q">
+        <div class="qa-q-inner">
+          <span class="fac-tag trap">trap</span>
+          <span class="qa-q-text">If someone submits a malicious repository, could it harm your server?</span>
+        </div>
+      </div>
+      <div class="qa-a">
+        We considered this threat. The mitigations: (1) The code is cloned into an isolated temporary directory with restricted permissions. (2) The scanner reads files — it does not execute any code from the scanned repository. (3) The scanning process runs in a separate worker process, not the main web server. (4) Temporary files are deleted after scanning. For production hardening, the scan worker would run inside a sandboxed Docker container with no network access — a standard defence-in-depth approach. This is a known challenge in the SAST industry and our architecture follows the established pattern.
+      </div>
+    </div>
+  </section>
+
+  <!-- ═══════════════════════════════════════════════════════
+       §7  BUSINESS / REAL WORLD
+  ═══════════════════════════════════════════════════════ -->
+  <section id="business">
+    <h2 class="section-title"><span class="num">07</span> Business &amp; Real-World Questions</h2>
+
+    <div class="qa-block">
+      <div class="qa-q">
+        <div class="qa-q-inner">
+          <span class="fac-tag snobby">snobby</span>
+          <span class="qa-q-text">Can this be commercially deployed? Is it production-ready?</span>
+        </div>
+      </div>
+      <div class="qa-a">
+        As a fully functioning prototype, yes — every feature works end-to-end. For commercial production, additional work would be needed: a billing system, a more aggressive sandboxing layer for the scan worker, enterprise authentication (SAML/SSO), SLA guarantees, and compliance certifications (SOC 2). However, the core architecture — PostgreSQL, Redis queues, stateless JWT auth, Docker deployment — is the same stack used by production SaaS companies. The path from prototype to commercial product is clear and well-understood.
+      </div>
+    </div>
+
+    <div class="qa-block">
+      <div class="qa-q">
+        <div class="qa-q-inner">
+          <span class="fac-tag confused">confused</span>
+          <span class="qa-q-text">What is the cost of running this application?</span>
+        </div>
+      </div>
+      <div class="qa-a">
+        Infrastructure cost depends on scale. For a small deployment:<br><br>
+        &bull; Server hosting (a modest cloud VM): ~$20–40/month<br>
+        &bull; AI API calls: Pay-per-use. Google Gemini 1.5 Flash costs approximately $0.075 per million tokens — explaining 1,000 vulnerabilities would cost under $1.<br>
+        &bull; Database: Included in the server, or ~$15/month as a managed service<br><br>
+        Total for a small team: under $60/month. This is dramatically cheaper than enterprise SAST tools like Veracode which cost $15,000+ per year. The cost model is a deliberate competitive advantage.
+      </div>
+    </div>
+
+    <div class="qa-block">
+      <div class="qa-q">
+        <div class="qa-q-inner">
+          <span class="fac-tag confused">confused</span>
+          <span class="qa-q-text">How many users can use this simultaneously?</span>
+        </div>
+      </div>
+      <div class="qa-a">
+        The web server (Node.js) can handle thousands of simultaneous connections with no issue — it is designed for concurrency. The limiting factor is the scan queue: our Bull/Redis queue processes scan jobs sequentially by default (configurable to parallel workers). With a single worker, ten users submitting scans simultaneously would each see their scan complete in order, with a progress indicator while they wait. For higher throughput, you simply add more worker processes — the queue architecture scales horizontally without changing any code.
+      </div>
+    </div>
+
+    <div class="qa-block">
+      <div class="qa-q">
+        <div class="qa-q-inner">
+          <span class="fac-tag snobby">snobby</span>
+          <span class="qa-q-text">Why not make a mobile app instead of a website?</span>
+        </div>
+      </div>
+      <div class="qa-a">
+        Our users are developers working on desktop computers with code editors. They do not write or review code on mobile phones. A web application is available on every device with a browser — mobile, tablet, desktop — without an app store installation. Additionally, the core workflow involves viewing code with syntax highlighting, reading detailed vulnerability reports, and comparing code snippets side by side — these require a large screen and are fundamentally desktop workflows. Building a mobile app would be designing for the wrong user context.
+      </div>
+    </div>
+
+    <div class="qa-block">
+      <div class="qa-q">
+        <div class="qa-q-inner">
+          <span class="fac-tag confused">confused</span>
+          <span class="qa-q-text">What languages can your scanner detect vulnerabilities in?</span>
+        </div>
+      </div>
+      <div class="qa-a">
+        The underlying scanner engine supports multiple languages including JavaScript, TypeScript, Python, Java, Go, Ruby, and more. The current implementation is focused on JavaScript and TypeScript projects since those are the most common in modern web development, but the architecture is extensible — adding support for additional languages requires adding new rule configurations, not rewriting the system.
+      </div>
+    </div>
+
+    <div class="qa-block">
+      <div class="qa-q">
+        <div class="qa-q-inner">
+          <span class="fac-tag snobby">snobby</span>
+          <span class="qa-q-text">What is the contribution of this project to society?</span>
+        </div>
+      </div>
+      <div class="qa-a">
+        Software security failures have direct societal consequences — hospital systems getting ransomwared and delaying surgeries, personal data of millions being stolen, critical infrastructure being compromised. Most of these start with vulnerabilities in code that were preventable. Our tool makes security scanning accessible to small development teams that cannot afford enterprise tools, democratising a capability that previously required significant resources. Better-secured software across the industry means fewer breaches, less financial harm to individuals, and safer digital infrastructure overall.
+      </div>
+    </div>
+  </section>
+
+  <!-- ═══════════════════════════════════════════════════════
+       §8  TESTING & LIMITATIONS
+  ═══════════════════════════════════════════════════════ -->
+  <section id="testing">
+    <h2 class="section-title"><span class="num">08</span> Testing &amp; Limitations</h2>
+
+    <div class="qa-block">
+      <div class="qa-q">
+        <div class="qa-q-inner">
+          <span class="fac-tag snobby">snobby</span>
+          <span class="qa-q-text">How did you test this project?</span>
+        </div>
+      </div>
+      <div class="qa-a">
+        Testing was conducted on multiple levels:<br><br>
+        &bull; <strong>Unit testing</strong> — individual functions (authentication, validation, rate limiting) tested in isolation.<br>
+        &bull; <strong>Integration testing</strong> — API endpoints tested end-to-end with a real database (not mocks).<br>
+        &bull; <strong>Functional testing</strong> — scanning real open-source repositories with known vulnerabilities to verify detection.<br>
+        &bull; <strong>Vulnerability testing</strong> — manually attempting OWASP Top 10 attacks against our own application (SQL injection, XSS, CSRF) to verify our defences.<br>
+        &bull; <strong>Performance testing</strong> — submitting multiple concurrent scans to verify the queue system handles load correctly.
+      </div>
+    </div>
+
+    <div class="qa-block">
+      <div class="qa-q">
+        <div class="qa-q-inner">
+          <span class="fac-tag trap">trap</span>
+          <span class="qa-q-text">What are the limitations of your project?</span>
+        </div>
+      </div>
+      <div class="qa-a">
+        Every well-engineered project has acknowledged limitations — transparency here demonstrates maturity:<br><br>
+        &bull; <strong>False positives</strong>: The scanner may flag code that is technically correct in its specific context — a known limitation of all rule-based static analysis tools.<br>
+        &bull; <strong>No runtime analysis</strong>: We only scan code at rest. Some vulnerabilities only appear when code runs (e.g., specific runtime configurations).<br>
+        &bull; <strong>Language coverage</strong>: Currently optimised for JavaScript/TypeScript.<br>
+        &bull; <strong>AI cost at scale</strong>: API calls have a per-use cost; at very high volume, a self-hosted AI model would be more economical.<br>
+        &bull; <strong>Sandboxing</strong>: The scan worker is not fully containerised in the current prototype — a production deployment would add this.
+      </div>
+    </div>
+
+    <div class="qa-block">
+      <div class="qa-q">
+        <div class="qa-q-inner">
+          <span class="fac-tag confused">confused</span>
+          <span class="qa-q-text">Did you scan your own project with your tool?</span>
+        </div>
+      </div>
+      <div class="qa-a">
+        Yes — and this is actually a standard practice called "dogfooding" (using your own product). We ran our backend codebase through the scanner. The findings were reviewed and addressed, which improved our own code quality. This also served as a real-world validation that the end-to-end workflow — from repository submission to AI-generated fix suggestions — works correctly with a real, non-trivial codebase.
+      </div>
+    </div>
+  </section>
+
+  <!-- ═══════════════════════════════════════════════════════
+       §9  FUTURE SCOPE
+  ═══════════════════════════════════════════════════════ -->
+  <section id="future">
+    <h2 class="section-title"><span class="num">09</span> Future Scope</h2>
+    <p style="color:var(--fg-muted);font-size:.9rem;margin-bottom:1.5rem">Faculty always ask this. Have a crisp list and explain why each is realistic, not just a wish list.</p>
+
+    <div class="card-grid">
+      <div class="card">
+        <h4>CI/CD Integration</h4>
+        <p>Plug our scanner into GitHub Actions or Jenkins so it automatically scans every code commit and blocks deployment if critical vulnerabilities are found. This is how enterprise SAST tools are used in production pipelines.</p>
+      </div>
+      <div class="card">
+        <h4>More Language Support</h4>
+        <p>Extend scanning to Python, Java, and Go codebases. The queue and AI architecture already supports this — only new rule configurations need to be added per language.</p>
+      </div>
+      <div class="card">
+        <h4>Self-hosted AI Model</h4>
+        <p>At scale, API costs grow. Replacing cloud AI calls with a locally hosted open-source model (e.g., CodeLlama) would eliminate per-call costs and improve data privacy for enterprises.</p>
+      </div>
+      <div class="card">
+        <h4>Vulnerability Trend Dashboard</h4>
+        <p>Track which vulnerability types appear repeatedly across scans over time, helping teams identify systematic coding habits that need team-wide training rather than individual fixes.</p>
+      </div>
+      <div class="card">
+        <h4>Auto-PR Fix Generation</h4>
+        <p>When AI generates a fix, automatically open a pull request in the user's GitHub repository with the corrected code — reducing the manual step of applying the suggestion.</p>
+      </div>
+      <div class="card">
+        <h4>DAST Integration</h4>
+        <p>Add Dynamic Application Security Testing — scanning the running application, not just the code. Combined with SAST, this gives a complete security picture covering both code-level and runtime vulnerabilities.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- ═══════════════════════════════════════════════════════
+       §10  TEAM & PROCESS
+  ═══════════════════════════════════════════════════════ -->
+  <section id="team">
+    <h2 class="section-title"><span class="num">10</span> Team &amp; Process Questions</h2>
+
+    <div class="qa-block">
+      <div class="qa-q">
+        <div class="qa-q-inner">
+          <span class="fac-tag snobby">snobby</span>
+          <span class="qa-q-text">What was your personal contribution to this project?</span>
+        </div>
+      </div>
+      <div class="qa-a">
+        Be specific and confident — never vague. Example answer: "I designed and implemented the backend API layer: the authentication system using GitHub OAuth and JWT, the scan submission and queue integration, the AI fallback chain with error handling, and the rate limiting middleware. I also set up the Docker containerisation and database schema design." — Substitute with your actual contributions. The key is to name specific technical components, not just say "I worked on the backend."
+      </div>
+    </div>
+
+    <div class="qa-block">
+      <div class="qa-q">
+        <div class="qa-q-inner">
+          <span class="fac-tag confused">confused</span>
+          <span class="qa-q-text">How long did this project take?</span>
+        </div>
+      </div>
+      <div class="qa-a">
+        State your actual timeline confidently. A reasonable framing: "Active development over [X weeks/months]. The initial architecture and core scanning pipeline took [X weeks]. Integration of the AI explanation layer and the real-time progress system required additional iterations. The final phase covered security hardening, Docker deployment, and documentation." Showing that the project had distinct phases demonstrates structured project management, not just coding.
+      </div>
+    </div>
+
+    <div class="qa-block">
+      <div class="qa-q">
+        <div class="qa-q-inner">
+          <span class="fac-tag snobby">snobby</span>
+          <span class="qa-q-text">Did you face any challenges? How did you solve them?</span>
+        </div>
+      </div>
+      <div class="qa-a">
+        Have 2–3 real challenges ready. Good examples from this project:<br><br>
+        1. <strong>Infinite authentication loop</strong> — the frontend kept reloading because a 401 error triggered a page redirect which triggered another 401. Fixed by removing the redirect from the error interceptor and letting the auth state manager handle it gracefully.<br><br>
+        2. <strong>AI provider reliability</strong> — NVIDIA's API occasionally times out under load. Solution: implemented the three-provider fallback chain with automatic retry.<br><br>
+        3. <strong>Real-time progress updates</strong> — standard web requests cannot push data from server to browser. Implemented Server-Sent Events, which maintains a persistent connection for live scan progress without complex WebSocket overhead.
+      </div>
+    </div>
+
+    <div class="qa-block">
+      <div class="qa-q">
+        <div class="qa-q-inner">
+          <span class="fac-tag confused">confused</span>
+          <span class="qa-q-text">What did you learn from this project?</span>
+        </div>
+      </div>
+      <div class="qa-a">
+        Strong answer structure: mention a technical learning, a design learning, and a process learning. Example: "Technically, I learned how to design async job queue systems and how to integrate multiple external AI APIs with fallback logic. From a design perspective, I understood why security has to be considered from the start rather than added later — we implemented rate limiting, input validation, and JWT security before writing the business logic. Process-wise, Docker Compose taught me how to think about deployment from day one rather than treating it as an afterthought."
+      </div>
+    </div>
+  </section>
+
+  <!-- ═══════════════════════════════════════════════════════
+       §11  SURVIVAL TIPS
+  ═══════════════════════════════════════════════════════ -->
+  <section id="survival">
+    <h2 class="section-title"><span class="num">11</span> Viva Survival Tips</h2>
+
+    <div class="tip-box">
+      <strong>The "I don't know" rule:</strong>
+      <p>If you genuinely do not know, say: "I do not have the exact number off the top of my head, but I can tell you the reasoning behind our approach." Then explain the reasoning. Never guess a statistic — faculty sometimes know the answer and are testing if you will bluff.</p>
+    </div>
+
+    <div class="card-grid">
+      <div class="card">
+        <h4>On "Why X instead of Y?"</h4>
+        <p>Always answer in terms of <strong>fitness for purpose</strong>: "X is better suited for [specific requirement] because [concrete reason]. Y would be chosen if [different scenario]." Never say "because we knew X" or "our guide recommended X."</p>
+      </div>
+      <div class="card">
+        <h4>On diagram questions</h4>
+        <p>Faculty point at diagrams randomly. For any component, know: (1) what it does, (2) what it connects to, (3) why it is separate from other components. Say it in 2 sentences. Do not over-explain.</p>
+      </div>
+      <div class="card">
+        <h4>On "is this original?"</h4>
+        <p>Be honest about what you built vs. what you integrated. "We integrated existing AI services and scanner engines, and built the orchestration layer, the user interface, the queue architecture, and the AI fallback logic from scratch." That is real, substantial work.</p>
+      </div>
+      <div class="card">
+        <h4>On "what is the limitation?"</h4>
+        <p>Never be defensive. Name real limitations confidently — it shows engineering maturity. Then immediately follow with: "which we would address in [next version] by [specific approach]."</p>
+      </div>
+      <div class="card">
+        <h4>On snobby tone</h4>
+        <p>Do not match their energy. Stay measured and confident. Short pauses before answering signal composure, not ignorance. Faculty who are snobby are often testing whether you will panic — the student who stays calm and precise usually impresses more than the one who rushes anxious answers.</p>
+      </div>
+      <div class="card">
+        <h4>Opening statement (memorise this)</h4>
+        <p>"Our project is an AI-assisted static application security testing platform. It scans source code repositories, identifies security vulnerabilities using industry-standard rules, and uses large language models to explain each vulnerability and suggest a fix in plain English. The innovation is the AI explanation layer combined with a resilient multi-provider fallback architecture."</p>
+      </div>
+    </div>
+
+    <div class="warn-box">
+      <strong>Things to absolutely never say:</strong>
+      <p>
+        &bull; "We used this because it was easy to learn." (Say: "because it was the right tool for this requirement.")<br>
+        &bull; "We didn't have time to implement X." (Say: "X is scoped as a future enhancement.")<br>
+        &bull; "I'm not sure, my teammate handled that." (Know your entire project.)<br>
+        &bull; "The AI does everything." (It does not — the scanner does detection, AI only explains.)<br>
+        &bull; "We trained the AI on our data." (You did not — you called an API.)
+      </p>
+    </div>
+
+    <div class="highlight">
+      <strong>The two sentences that save most vivas:</strong>
+      <p>"The decision was driven by [specific requirement]. The trade-off we accepted was [limitation], which we would address by [future approach]." Every "why did you do X?" question is answered by this template.</p>
+    </div>
+  </section>
+
+</div>
+
+<script>
+function toggleTheme() {
+  var html = document.documentElement;
+  var btn  = document.querySelector('.theme-btn');
+  if (html.classList.contains('theme-dark')) {
+    html.classList.remove('theme-dark');
+    html.classList.add('theme-light');
+    btn.textContent = '☼ Dark';
+  } else {
+    html.classList.remove('theme-light');
+    html.classList.add('theme-dark');
+    btn.textContent = '☼ Light';
+  }
+}
+
+document.querySelectorAll('.qa-q').forEach(function(q) {
+  q.addEventListener('click', function() {
+    var block = q.parentElement;
+    block.classList.toggle('open');
+  });
+});
+</script>
+</body>
+</html>

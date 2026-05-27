@@ -30,7 +30,6 @@ services:
       - CLIENT_URL=http://localhost:5173
       - DATABASE_URL=postgresql://sast_user:sast_password@postgres:5432/sast_db?schema=public
       - REDIS_URL=redis://redis:6379
-      - BEARER_CLI_PATH=/usr/local/bin/bearer
       - TEMP_DIR=/tmp/sast-agent
       # Load remaining secrets from host env or .env file
       - JWT_SECRET=${JWT_SECRET:-your-secret-fallback}
@@ -52,14 +51,6 @@ services:
     command: >
       sh -c "npm run prisma:migrate && npm run start"
 
-  frontend:
-    build: 
-      context: ./frontend
-      dockerfile: Dockerfile
-    ports:
-      - "5173:80"
-    depends_on:
-      - backend
 
 volumes:
   pg_data:
