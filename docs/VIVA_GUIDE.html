@@ -1,0 +1,1715 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>SAST Security Copilot – Complete VIVA Guide</title>
+<script src="https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.min.js"></script>
+<style>
+:root[data-theme="light"] {
+  --bg: #FFFBF5;
+  --bg2: #FFF7ED;
+  --card: #FFFFFF;
+  --card2: #FEF3C7;
+  --border: #E8D5B7;
+  --text: #1C1917;
+  --text2: #57534E;
+  --accent: #C2410C;
+  --accent2: #D97706;
+  --accent3: #F59E0B;
+  --tag: #FED7AA;
+  --tag-text: #9A3412;
+  --code-bg: #FFF7ED;
+  --nav-bg: rgba(255,251,245,0.95);
+  --shadow: rgba(0,0,0,0.08);
+  --mermaid-theme: default;
+}
+:root[data-theme="dark"] {
+  --bg: #0C0A09;
+  --bg2: #1C1917;
+  --card: #1C1917;
+  --card2: #292524;
+  --border: #44403C;
+  --text: #FAFAF9;
+  --text2: #A8A29E;
+  --accent: #FB923C;
+  --accent2: #FBBF24;
+  --accent3: #FDE68A;
+  --tag: #431407;
+  --tag-text: #FDBA74;
+  --code-bg: #292524;
+  --nav-bg: rgba(12,10,9,0.95);
+  --shadow: rgba(0,0,0,0.4);
+  --mermaid-theme: dark;
+}
+*{margin:0;padding:0;box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{background:var(--bg);color:var(--text);font-family:'Segoe UI',system-ui,sans-serif;line-height:1.7;transition:background .3s,color .3s}
+/* NAV */
+nav{position:sticky;top:0;z-index:100;background:var(--nav-bg);backdrop-filter:blur(12px);border-bottom:1px solid var(--border);padding:0 2rem}
+.nav-inner{max-width:1200px;margin:0 auto;display:flex;align-items:center;justify-content:space-between;height:56px;gap:1rem}
+.nav-brand{font-weight:700;font-size:1.1rem;color:var(--accent);white-space:nowrap}
+.nav-links{display:flex;gap:.2rem;flex-wrap:wrap}
+.nav-links a{color:var(--text2);text-decoration:none;font-size:.78rem;padding:.3rem .6rem;border-radius:6px;transition:.2s}
+.nav-links a:hover{background:var(--card2);color:var(--accent)}
+.theme-btn{background:var(--card2);border:1px solid var(--border);color:var(--text);cursor:pointer;padding:.4rem .9rem;border-radius:20px;font-size:.82rem;display:flex;align-items:center;gap:.4rem;transition:.2s;white-space:nowrap}
+.theme-btn:hover{background:var(--accent);color:#fff;border-color:var(--accent)}
+/* LAYOUT */
+.container{max-width:1100px;margin:0 auto;padding:2.5rem 1.5rem}
+/* HERO */
+.hero{background:linear-gradient(135deg,var(--card2) 0%,var(--card) 100%);border:1px solid var(--border);border-radius:20px;padding:3rem 2.5rem;margin-bottom:3rem;text-align:center;position:relative;overflow:hidden}
+.hero::before{content:'';position:absolute;inset:0;background:radial-gradient(ellipse at 70% 30%,rgba(251,146,60,.12),transparent 60%);pointer-events:none}
+.hero h1{font-size:2.4rem;font-weight:800;background:linear-gradient(135deg,var(--accent),var(--accent2));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;margin-bottom:.5rem}
+.hero p{color:var(--text2);font-size:1.05rem;max-width:700px;margin:.6rem auto 0}
+.badge-row{display:flex;flex-wrap:wrap;gap:.5rem;justify-content:center;margin-top:1.4rem}
+.badge{padding:.3rem .8rem;border-radius:20px;font-size:.75rem;font-weight:600;background:var(--tag);color:var(--tag-text);border:1px solid var(--border)}
+/* SECTIONS */
+section{margin-bottom:3.5rem}
+.section-title{font-size:1.65rem;font-weight:700;color:var(--accent);margin-bottom:1.2rem;padding-bottom:.6rem;border-bottom:2px solid var(--border);display:flex;align-items:center;gap:.6rem}
+.section-title span.num{background:linear-gradient(135deg,var(--accent),var(--accent2));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;font-size:1.8rem}
+.subsection{margin-bottom:1.8rem}
+.subsection h3{font-size:1.15rem;font-weight:600;color:var(--accent2);margin-bottom:.7rem;display:flex;align-items:center;gap:.5rem}
+.subsection h3::before{content:'▸';color:var(--accent)}
+/* CARDS */
+.card{background:var(--card);border:1px solid var(--border);border-radius:14px;padding:1.5rem;margin-bottom:1rem;box-shadow:0 2px 12px var(--shadow)}
+.card-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:1rem;margin-bottom:1rem}
+.card h4{font-size:1rem;font-weight:600;color:var(--accent2);margin-bottom:.5rem}
+.card p,.card li{color:var(--text2);font-size:.9rem}
+.card ul{padding-left:1.2rem}
+.card li{margin-bottom:.25rem}
+/* TERM CARDS */
+.term-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:.8rem}
+.term-card{background:var(--card);border:1px solid var(--border);border-left:4px solid var(--accent);border-radius:10px;padding:1.1rem 1.3rem}
+.term-card .term{font-weight:700;color:var(--accent);font-size:.95rem}
+.term-card .full{color:var(--text2);font-size:.78rem;margin-bottom:.4rem}
+.term-card .def{color:var(--text);font-size:.88rem}
+/* DIAGRAM BOX */
+.diagram-box{background:var(--card);border:1px solid var(--border);border-radius:14px;padding:1.5rem;margin-bottom:1.5rem;overflow-x:auto}
+.diagram-box h4{color:var(--accent2);font-size:1rem;font-weight:600;margin-bottom:1rem;padding-bottom:.5rem;border-bottom:1px solid var(--border)}
+.diagram-explain{background:var(--card2);border-radius:10px;padding:1rem 1.2rem;margin-top:1rem;border-left:3px solid var(--accent2)}
+.diagram-explain p{color:var(--text2);font-size:.88rem;margin-bottom:.4rem}
+.diagram-explain strong{color:var(--text)}
+/* CODE */
+code{background:var(--code-bg);color:var(--accent);font-family:'Cascadia Code','Fira Code',monospace;font-size:.85rem;padding:.15rem .4rem;border-radius:5px;border:1px solid var(--border)}
+pre{background:var(--code-bg);border:1px solid var(--border);border-radius:10px;padding:1.2rem;overflow-x:auto;margin:.8rem 0}
+pre code{background:none;border:none;padding:0;color:var(--accent3);font-size:.85rem}
+/* TABLE */
+table{width:100%;border-collapse:collapse;margin:.8rem 0;font-size:.88rem}
+th{background:var(--card2);color:var(--accent2);font-weight:600;padding:.6rem .9rem;text-align:left;border-bottom:2px solid var(--border)}
+td{padding:.55rem .9rem;border-bottom:1px solid var(--border);color:var(--text2);vertical-align:top}
+tr:hover td{background:var(--card2)}
+/* SEVERITY */
+.sev{display:inline-block;padding:.15rem .6rem;border-radius:12px;font-size:.75rem;font-weight:700}
+.sev-critical{background:#450A0A;color:#F87171}
+.sev-high{background:#431407;color:#FB923C}
+.sev-medium{background:#422006;color:#FCD34D}
+.sev-low{background:#052E16;color:#4ADE80}
+.sev-info{background:#0C1A3A;color:#60A5FA}
+/* QA */
+.qa-block{background:var(--card);border:1px solid var(--border);border-radius:12px;margin-bottom:.8rem;overflow:hidden}
+.qa-q{padding:1rem 1.3rem;font-weight:600;cursor:pointer;display:flex;justify-content:space-between;align-items:center;color:var(--accent2);transition:.2s}
+.qa-q:hover{background:var(--card2)}
+.qa-q::after{content:'▾';font-size:1.1rem;color:var(--accent);transition:.2s}
+.qa-a{padding:0 1.3rem 1rem;color:var(--text2);font-size:.9rem;line-height:1.7;display:none}
+.qa-block.open .qa-q::after{content:'▴'}
+.qa-block.open .qa-a{display:block}
+/* FLOW VISUAL */
+.flow{display:flex;align-items:center;flex-wrap:wrap;gap:.4rem;margin:.8rem 0}
+.flow-step{background:var(--card2);border:1px solid var(--border);border-radius:8px;padding:.4rem .9rem;font-size:.82rem;color:var(--text);font-weight:500}
+.flow-arrow{color:var(--accent);font-weight:700;font-size:1.1rem}
+.flow-step.active{background:var(--accent);color:#fff;border-color:var(--accent)}
+/* HIGHLIGHT */
+.highlight{background:linear-gradient(135deg,var(--tag),transparent);border:1px solid var(--border);border-radius:10px;padding:1rem 1.2rem;margin:.8rem 0}
+.highlight strong{color:var(--accent)}
+/* MERMAID */
+.mermaid{min-height:80px}
+/* RESPONSIVE */
+@media(max-width:768px){
+  .hero h1{font-size:1.7rem}
+  .nav-links{display:none}
+  .card-grid{grid-template-columns:1fr}
+  .term-grid{grid-template-columns:1fr}
+}
+/* PRINT */
+@media print{nav{display:none}.hero{page-break-after:always}}
+</style>
+</head>
+<body>
+
+<nav>
+  <div class="nav-inner">
+    <div class="nav-brand">🛡️ SAST Copilot</div>
+    <div class="nav-links">
+      <a href="#cybersec">Cybersec Basics</a>
+      <a href="#jargon">Jargon</a>
+      <a href="#project">Project</a>
+      <a href="#arch">Architecture</a>
+      <a href="#diagrams">Diagrams</a>
+      <a href="#tech">Tech Stack</a>
+      <a href="#security">Security</a>
+      <a href="#ai">AI Engine</a>
+      <a href="#api">API</a>
+      <a href="#db">Database</a>
+      <a href="#viva">VIVA Q&amp;A</a>
+    </div>
+    <button class="theme-btn" onclick="toggleTheme()">☀️ Light</button>
+  </div>
+</nav>
+
+<div class="container">
+
+<!-- HERO -->
+<div class="hero">
+  <h1>🛡️ SAST Security Copilot</h1>
+  <p>AI-Powered Static Application Security Testing Platform — Complete VIVA Guide covering Cybersecurity concepts, system design, architecture diagrams, and expected exam questions.</p>
+  <div class="badge-row">
+    <span class="badge">Node.js + TypeScript</span>
+    <span class="badge">React + Vite</span>
+    <span class="badge">PostgreSQL + Redis</span>
+    <span class="badge">NVIDIA NIM · Gemini · OpenAI</span>
+    <span class="badge">Docker</span>
+    <span class="badge">GitHub OAuth</span>
+    <span class="badge">Bull Queue</span>
+    <span class="badge">Prisma ORM</span>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════════════════
+     SECTION 1 — CYBERSECURITY BASICS
+═══════════════════════════════════════════════════════ -->
+<section id="cybersec">
+<h2 class="section-title"><span class="num">1</span> What is Cybersecurity?</h2>
+
+<div class="card">
+<h4>Simple Definition</h4>
+<p>Cybersecurity is the practice of <strong>protecting computers, networks, programs and data</strong> from unauthorized access, damage or attack. Think of it like a bank vault — the stronger the vault (security), the harder for thieves (hackers) to get in.</p>
+</div>
+
+<div class="card-grid">
+  <div class="card">
+    <h4>🔴 Attackers want to…</h4>
+    <ul>
+      <li>Steal passwords, credit cards, personal data</li>
+      <li>Take control of systems (ransomware)</li>
+      <li>Bring websites/apps down (DoS)</li>
+      <li>Inject malicious code into software</li>
+      <li>Impersonate users (identity theft)</li>
+    </ul>
+  </div>
+  <div class="card">
+    <h4>🟢 Defenders do…</h4>
+    <ul>
+      <li>Find and fix vulnerabilities before attackers do</li>
+      <li>Scan code for security flaws (SAST)</li>
+      <li>Use encryption, authentication</li>
+      <li>Monitor logs and alerts</li>
+      <li>Follow security standards (OWASP, CWE)</li>
+    </ul>
+  </div>
+</div>
+
+<div class="subsection">
+<h3>Types of Security Testing</h3>
+<div class="term-grid">
+  <div class="term-card">
+    <div class="term">SAST</div>
+    <div class="full">Static Application Security Testing</div>
+    <div class="def">Analyses source code <em>without running it</em>. Finds vulnerabilities at code level. Like a spell-checker for security. <strong>This project uses SAST.</strong></div>
+  </div>
+  <div class="term-card">
+    <div class="term">DAST</div>
+    <div class="full">Dynamic Application Security Testing</div>
+    <div class="def">Tests a <em>running</em> application by attacking it. Finds runtime vulnerabilities like a real hacker would. Example: OWASP ZAP.</div>
+  </div>
+  <div class="term-card">
+    <div class="term">IAST</div>
+    <div class="full">Interactive Application Security Testing</div>
+    <div class="def">Hybrid — runs inside the application while it is being tested. Combines SAST + DAST advantages.</div>
+  </div>
+  <div class="term-card">
+    <div class="term">SCA</div>
+    <div class="full">Software Composition Analysis</div>
+    <div class="def">Scans third-party libraries/dependencies for known vulnerabilities. Example: <code>npm audit</code>.</div>
+  </div>
+  <div class="term-card">
+    <div class="term">Pen Testing</div>
+    <div class="full">Penetration Testing</div>
+    <div class="def">Ethical hacker manually tries to break into a system to find weaknesses before real attackers do.</div>
+  </div>
+  <div class="term-card">
+    <div class="term">Threat Modelling</div>
+    <div class="full">STRIDE / PASTA framework</div>
+    <div class="def">Systematically identifying threats to a system before building it. Answers "what can go wrong?"</div>
+  </div>
+</div>
+</div>
+</section>
+
+<!-- ═══════════════════════════════════════════════════════
+     SECTION 2 — JARGON DICTIONARY
+═══════════════════════════════════════════════════════ -->
+<section id="jargon">
+<h2 class="section-title"><span class="num">2</span> Cybersecurity Jargon Dictionary</h2>
+
+<div class="subsection">
+<h3>Standards & Frameworks</h3>
+<div class="term-grid">
+  <div class="term-card">
+    <div class="term">OWASP Top 10</div>
+    <div class="full">Open Web Application Security Project</div>
+    <div class="def">The 10 most critical web security risks. Every developer must know these. e.g., A01: Broken Access Control, A03: Injection, A07: Authentication Failures.</div>
+  </div>
+  <div class="term-card">
+    <div class="term">CWE</div>
+    <div class="full">Common Weakness Enumeration</div>
+    <div class="def">A numbered catalog of software weaknesses. e.g., CWE-89 = SQL Injection, CWE-79 = XSS. Our AI scanner tags each finding with a CWE ID.</div>
+  </div>
+  <div class="term-card">
+    <div class="term">CVE</div>
+    <div class="full">Common Vulnerabilities and Exposures</div>
+    <div class="def">Unique identifier for publicly known vulnerabilities in specific software versions. e.g., CVE-2021-44228 = Log4Shell. CWE is the weakness TYPE; CVE is the specific INSTANCE.</div>
+  </div>
+  <div class="term-card">
+    <div class="term">CVSS</div>
+    <div class="full">Common Vulnerability Scoring System</div>
+    <div class="def">A 0–10 score measuring vulnerability severity. 9–10 = Critical, 7–8.9 = High, 4–6.9 = Medium, 0–3.9 = Low. Our system shows risk scores to users.</div>
+  </div>
+  <div class="term-card">
+    <div class="term">SANS Top 25</div>
+    <div class="full">SysAdmin, Audit, Network, Security</div>
+    <div class="def">25 most dangerous software errors. Our AI prompt explicitly checks for these alongside OWASP Top 10.</div>
+  </div>
+  <div class="term-card">
+    <div class="term">Zero Trust</div>
+    <div class="full">Zero Trust Architecture</div>
+    <div class="def">"Never trust, always verify." No user or system is trusted by default — even inside the network. Our auth middleware implements this by validating JWT on every request.</div>
+  </div>
+</div>
+</div>
+
+<div class="subsection">
+<h3>Vulnerability Types</h3>
+<div class="term-grid">
+  <div class="term-card">
+    <div class="term">SQL Injection (SQLi)</div>
+    <div class="full">CWE-89 · OWASP A03</div>
+    <div class="def">Attacker inserts SQL code into input fields. Example: <code>' OR 1=1--</code> logs in without password. Our scanner looks for unparameterized queries.</div>
+  </div>
+  <div class="term-card">
+    <div class="term">XSS</div>
+    <div class="full">Cross-Site Scripting · CWE-79</div>
+    <div class="def">Attacker injects JavaScript into web pages viewed by other users. Steals cookies, redirects users. e.g., <code>&lt;script&gt;alert(document.cookie)&lt;/script&gt;</code></div>
+  </div>
+  <div class="term-card">
+    <div class="term">CSRF</div>
+    <div class="full">Cross-Site Request Forgery · CWE-352</div>
+    <div class="def">Tricks a logged-in user into performing unwanted actions. e.g., hidden form that transfers money. Prevented by CSRF tokens.</div>
+  </div>
+  <div class="term-card">
+    <div class="term">SSRF</div>
+    <div class="full">Server-Side Request Forgery · CWE-918</div>
+    <div class="def">Attacker tricks server into making requests to internal systems. Can expose cloud metadata endpoints (AWS IMDSv1 attack).</div>
+  </div>
+  <div class="term-card">
+    <div class="term">IDOR / BOLA</div>
+    <div class="full">Insecure Direct Object Reference</div>
+    <div class="def">Attacker accesses another user's data by changing an ID. e.g., <code>/api/users/123</code> → change to <code>/api/users/124</code>. Our routes check ownership on all DB queries.</div>
+  </div>
+  <div class="term-card">
+    <div class="term">RCE</div>
+    <div class="full">Remote Code Execution · CWE-78</div>
+    <div class="def">Worst vulnerability — attacker can run arbitrary commands on your server. Often via command injection or deserialization bugs.</div>
+  </div>
+  <div class="term-card">
+    <div class="term">Path Traversal</div>
+    <div class="full">Directory Traversal · CWE-22</div>
+    <div class="def">Attacker accesses files outside intended directory. e.g., <code>../../etc/passwd</code>. Our ZIP extraction validates all paths to prevent this.</div>
+  </div>
+  <div class="term-card">
+    <div class="term">Hardcoded Secret</div>
+    <div class="full">CWE-798</div>
+    <div class="def">Passwords, API keys, tokens stored in source code. Our scanner specifically looks for these patterns. Never commit secrets to git!</div>
+  </div>
+</div>
+</div>
+
+<div class="subsection">
+<h3>Auth & Identity Terms</h3>
+<div class="term-grid">
+  <div class="term-card">
+    <div class="term">OAuth 2.0</div>
+    <div class="full">Open Authorization</div>
+    <div class="def">Lets users grant third-party apps access to their data without sharing passwords. "Login with GitHub" uses OAuth. User logs into GitHub, GitHub tells our app "this user is verified."</div>
+  </div>
+  <div class="term-card">
+    <div class="term">JWT</div>
+    <div class="full">JSON Web Token</div>
+    <div class="def">Compact, signed token for authentication. Three parts: Header.Payload.Signature. Our backend issues JWTs stored in HttpOnly cookies after GitHub OAuth.</div>
+  </div>
+  <div class="term-card">
+    <div class="term">HttpOnly Cookie</div>
+    <div class="full">Cookie security attribute</div>
+    <div class="def">Cookie that JavaScript cannot access. Prevents XSS from stealing session tokens. Our JWT is stored this way for security.</div>
+  </div>
+  <div class="term-card">
+    <div class="term">Bcrypt</div>
+    <div class="full">Password hashing algorithm</div>
+    <div class="def">Slow, salted one-way hash for passwords. The slowness is intentional — makes brute-force attacks impractical. Our project imports bcryptjs.</div>
+  </div>
+  <div class="term-card">
+    <div class="term">Rate Limiting</div>
+    <div class="full">Request throttling</div>
+    <div class="def">Blocks users who make too many requests. Prevents brute-force attacks and DoS. Our API: 1000 req/min global, 5 scans/hour, 10 AI explains/minute.</div>
+  </div>
+  <div class="term-card">
+    <div class="term">CORS</div>
+    <div class="full">Cross-Origin Resource Sharing</div>
+    <div class="def">Browser security feature. Server tells browser which origins can make requests. Our backend only allows requests from <code>localhost:5173</code>.</div>
+  </div>
+</div>
+</div>
+
+<div class="subsection">
+<h3>Severity Levels Explained</h3>
+<div class="card">
+<table>
+<thead><tr><th>Level</th><th>Meaning</th><th>Example</th><th>Action</th></tr></thead>
+<tbody>
+<tr><td><span class="sev sev-critical">CRITICAL</span></td><td>System can be fully compromised</td><td>Unauthenticated RCE, SQL injection with admin access</td><td>Fix immediately, halt release</td></tr>
+<tr><td><span class="sev sev-high">HIGH</span></td><td>Significant data breach risk</td><td>Stored XSS, broken authentication, SSRF</td><td>Fix before next release</td></tr>
+<tr><td><span class="sev sev-medium">MEDIUM</span></td><td>Exploitable but requires conditions</td><td>CSRF, open redirect, information disclosure</td><td>Fix within sprint</td></tr>
+<tr><td><span class="sev sev-low">LOW</span></td><td>Minor risk</td><td>Missing security headers, verbose error messages</td><td>Track and fix</td></tr>
+<tr><td><span class="sev sev-info">INFO</span></td><td>Informational, no direct risk</td><td>Deprecated API usage, code quality note</td><td>Review and decide</td></tr>
+</tbody>
+</table>
+</div>
+</div>
+</section>
+
+<!-- ═══════════════════════════════════════════════════════
+     SECTION 3 — PROJECT OVERVIEW
+═══════════════════════════════════════════════════════ -->
+<section id="project">
+<h2 class="section-title"><span class="num">3</span> Project Overview</h2>
+
+<div class="card">
+<h4>What is SAST Security Copilot?</h4>
+<p>An AI-powered web platform that automatically scans source code repositories or ZIP archives for security vulnerabilities. Unlike traditional scanners that just list rule violations, this system uses Large Language Models (LLMs) to provide:</p>
+<ul style="margin-top:.6rem;padding-left:1.2rem;color:var(--text2)">
+  <li>Human-readable <strong>explanations</strong> of each vulnerability</li>
+  <li>Real-world <strong>attack scenarios</strong> (Proof of Concept)</li>
+  <li><strong>Business impact</strong> assessment</li>
+  <li>Step-by-step <strong>remediation guidance</strong></li>
+  <li><strong>Fixed code snippets</strong> ready to apply</li>
+</ul>
+</div>
+
+<div class="card-grid">
+  <div class="card">
+    <h4>🎯 Problem Solved</h4>
+    <p>Traditional SAST tools give raw output like <em>"CWE-89 at line 42"</em> — meaningless to junior developers. This tool converts that into plain-English explanations with AI, making security accessible to everyone.</p>
+  </div>
+  <div class="card">
+    <h4>👥 Target Users</h4>
+    <ul>
+      <li>Developers who want to secure their own code</li>
+      <li>Security teams doing code reviews</li>
+      <li>DevSecOps pipelines</li>
+      <li>Students learning about application security</li>
+    </ul>
+  </div>
+  <div class="card">
+    <h4>⚡ Key Features</h4>
+    <ul>
+      <li>GitHub OAuth login — no passwords needed</li>
+      <li>Scan via GitHub URL or ZIP upload</li>
+      <li>Real-time progress via Server-Sent Events</li>
+      <li>AI fallback chain (3 providers)</li>
+      <li>Risk score dashboard with charts</li>
+      <li>Project management for multiple codebases</li>
+    </ul>
+  </div>
+  <div class="card">
+    <h4>🔍 Scan Pipeline Summary</h4>
+    <div class="flow">
+      <div class="flow-step active">Submit</div>
+      <div class="flow-arrow">→</div>
+      <div class="flow-step">Clone/Extract</div>
+      <div class="flow-arrow">→</div>
+      <div class="flow-step">AI Scan</div>
+      <div class="flow-arrow">→</div>
+      <div class="flow-step">AI Enrich</div>
+      <div class="flow-arrow">→</div>
+      <div class="flow-step active">Results</div>
+    </div>
+  </div>
+</div>
+</section>
+
+<!-- ═══════════════════════════════════════════════════════
+     SECTION 4 — SYSTEM ARCHITECTURE
+═══════════════════════════════════════════════════════ -->
+<section id="arch">
+<h2 class="section-title"><span class="num">4</span> System Architecture</h2>
+
+<div class="diagram-box">
+  <h4>4.1 — System Architecture Diagram</h4>
+  <div class="mermaid">
+graph TB
+    User["👤 Developer"]
+    subgraph FE["Frontend · React/Vite · :5173"]
+        UI["React SPA"]
+        Store["Zustand Store"]
+        QC["TanStack Query Cache"]
+    end
+    subgraph BE["Backend · Express/Node.js · :3001"]
+        API["REST API + SSE"]
+        Auth["Auth Module\n(Passport · JWT)"]
+        Proj["Projects Module"]
+        Scan["Scans Module"]
+        Issue["Issues Module"]
+        Queue["Bull Queue Worker"]
+        AISvc["AI Service\n(Fallback Chain)"]
+        AIScan["AI Scanner\n(File Walker)"]
+    end
+    subgraph AI["AI Providers"]
+        NV["NVIDIA NIM\nQwen3-235B"]
+        GM["Google Gemini\n1.5 Flash"]
+        OA["OpenAI\nGPT-4o-mini"]
+    end
+    subgraph Infra["Infrastructure"]
+        PG[("PostgreSQL 15")]
+        RD[("Redis 7")]
+        FS["Temp FS /tmp"]
+    end
+    GH["GitHub\nOAuth + Git"]
+
+    User --> UI
+    UI --> Store & QC
+    UI -- REST/SSE --> API
+    API --> Auth & Proj & Scan & Issue
+    Auth -- OAuth2 --> GH
+    Scan --> Queue
+    Queue -- clone --> GH
+    Queue --> AIScan --> AISvc
+    AISvc --> NV & GM & OA
+    BE --> PG
+    Queue --> RD
+    Queue --> FS
+  </div>
+  <div class="diagram-explain">
+    <p><strong>How to read this:</strong> The user accesses the React frontend (port 5173). The frontend sends REST API calls to the Express backend (port 3001). When a scan is triggered, the backend creates a job in Redis via Bull Queue. The queue worker clones the GitHub repo or extracts a ZIP to temp storage, then calls the AI Scanner. The AI Scanner sends each file to AI providers (NVIDIA first, then Gemini, then OpenAI as fallback). Results are saved to PostgreSQL.</p>
+  </div>
+</div>
+
+<div class="diagram-box">
+  <h4>4.2 — Data Flow Diagram Level 0 (Context Diagram)</h4>
+  <div class="mermaid">
+flowchart LR
+    Dev(["👤 Developer"])
+    GH(["GitHub"])
+    AIP(["AI Providers"])
+    SAST(["⚙️ SAST\nSecurity Copilot"])
+
+    Dev -- "Login · Submit URL/ZIP\nView results" --> SAST
+    SAST -- "Security report\nAI explanations\nRemediation advice" --> Dev
+    SAST -- "OAuth handshake\nGit clone" --> GH
+    GH -- "Auth token · Source code" --> SAST
+    SAST -- "Code + vuln context" --> AIP
+    AIP -- "Explanation · PoC · Fix" --> SAST
+  </div>
+  <div class="diagram-explain">
+    <p><strong>Level 0 (Context Diagram)</strong> treats the entire system as a single black box and shows only the external entities that interact with it. Here we have 3 external actors: the Developer (user), GitHub (for OAuth and code), and AI Providers (for intelligent analysis). This is the highest-level view.</p>
+  </div>
+</div>
+
+<div class="diagram-box">
+  <h4>4.3 — Data Flow Diagram Level 1</h4>
+  <div class="mermaid">
+flowchart TB
+    Dev(["👤 Dev"])
+    GH(["GitHub"])
+    AIP(["AI Providers"])
+
+    P1["1.0 Authentication\n& Session"]
+    P2["2.0 Project\nManagement"]
+    P3["3.0 Scan\nOrchestration"]
+    P4["4.0 Code\nAnalysis"]
+    P5["5.0 AI Issue\nEnrichment"]
+    P6["6.0 Result\nAggregation"]
+
+    DS1[("D1 Users")]
+    DS2[("D2 Projects")]
+    DS3[("D3 Scans")]
+    DS4[("D4 Issues")]
+    DS5[("D5 Queue")]
+
+    Dev -- "GitHub token" --> P1
+    P1 -- "OAuth" --> GH
+    GH -- "auth code" --> P1
+    P1 -- "JWT" --> Dev
+    P1 --> DS1
+    Dev -- "CRUD projects" --> P2
+    P2 --> DS2
+    Dev -- "repo URL/ZIP" --> P3
+    P3 --> DS3
+    P3 --> DS5
+    DS5 --> P4
+    P4 -- "clone" --> GH
+    P4 --> DS4
+    DS4 --> P5
+    P5 --> AIP
+    AIP --> P5
+    P5 --> DS4
+    DS3 & DS4 --> P6
+    P6 --> Dev
+  </div>
+  <div class="diagram-explain">
+    <p><strong>Level 1</strong> expands the black box into 6 internal processes. Each process reads/writes to data stores (D1–D5). The key flow is: Auth → Scan Orchestration → enqueue → Code Analysis (clone + AI) → AI Enrichment → Result Aggregation.</p>
+  </div>
+</div>
+
+<div class="diagram-box">
+  <h4>4.4 — Use Case Diagram</h4>
+  <div class="mermaid">
+flowchart LR
+    subgraph Actors
+        DEV["👤 Developer"]
+        GH2["🔗 GitHub"]
+        AI2["🤖 AI System"]
+    end
+    subgraph System["SAST Security Copilot"]
+        UC1["Login via GitHub OAuth"]
+        UC2["Create/Manage Projects"]
+        UC3["Start GitHub Repo Scan"]
+        UC4["Upload ZIP for Scan"]
+        UC5["Track Real-time Progress"]
+        UC6["View Scan Dashboard"]
+        UC7["View Issue Detail"]
+        UC8["Get AI Explanation on-demand"]
+        UC9["View Scan History"]
+        UC10["Clone Repository"]
+        UC11["Analyse Source Files"]
+        UC12["Enrich Issue with AI"]
+    end
+
+    DEV --> UC1 & UC2 & UC3 & UC4 & UC5 & UC6 & UC7 & UC8 & UC9
+    UC1 -.->|includes| UC10
+    UC3 -.->|includes| UC10
+    UC10 -.->|includes| UC11
+    UC11 -.->|includes| UC12
+    UC8 -.->|includes| UC12
+    GH2 --- UC1
+    GH2 --- UC10
+    AI2 --- UC12
+  </div>
+  <div class="diagram-explain">
+    <p><strong>Use Case Diagram</strong> shows what actions (use cases) each actor can perform. The Developer is the primary actor. Dashed arrows show &lt;&lt;includes&gt;&gt; relationships — when one use case always triggers another. Scanning always includes cloning, which always includes analysis.</p>
+  </div>
+</div>
+</section>
+
+<!-- ═══════════════════════════════════════════════════════
+     SECTION 5 — MORE DIAGRAMS
+═══════════════════════════════════════════════════════ -->
+<section id="diagrams">
+<h2 class="section-title"><span class="num">5</span> Detailed Diagrams</h2>
+
+<div class="diagram-box">
+  <h4>4.5 — Activity Diagram (Scan Workflow)</h4>
+  <div class="mermaid">
+flowchart TD
+    S([Start: User submits scan]) --> A
+    A["Create Scan record\nstatus = PENDING"] --> B
+    B["Add job to Bull Queue"] --> C
+    C{Source?}
+    C -- GitHub URL --> D1["Git clone repository\nstatus = CLONING"]
+    C -- ZIP upload --> D2["Extract ZIP archive\nstatus = CLONING"]
+    D1 & D2 --> E
+    E["Walk file tree\nstatus = SCANNING"] --> F
+    F{More files?}
+    F -- Yes --> G["Read file content"]
+    G --> H{File >60KB\nor empty?}
+    H -- Yes --> Skip["Skip file"] --> Delay
+    H -- No --> I["Send to AI Provider\nNVIDIA first"]
+    I --> J{AI responded?}
+    J -- Yes --> K["Save findings to DB"]
+    J -- No → try next --> I2["Try Gemini\nthen OpenAI"]
+    I2 --> J2{Responded?}
+    J2 -- Yes --> K
+    J2 -- No --> Log["Log: all providers failed"]
+    K & Log & Skip --> Delay["Wait 1.5s\nrate limit"]
+    Delay --> F
+    F -- No --> O["Batch AI Enrichment\nstatus = AI_ANALYSIS\nbatch=5, concurrency=2"]
+    O --> P["Compute risk score\nUpdate scan counters"]
+    P --> Q["status = COMPLETED"] --> End
+    D1 & D2 & E --> Fail["status = FAILED\nStore errorMsg"] --> End([End])
+  </div>
+  <div class="diagram-explain">
+    <p><strong>Activity Diagram</strong> shows the step-by-step flow of the scan process. Key points: <strong>1)</strong> Files over 60KB are skipped to control AI costs. <strong>2)</strong> AI providers are tried in order (NVIDIA → Gemini → OpenAI) — this is the fallback chain. <strong>3)</strong> 1.5s delay between files prevents hitting AI API rate limits. <strong>4)</strong> AI Enrichment runs in batches of 5 with 2 concurrent workers for efficiency.</p>
+  </div>
+</div>
+
+<div class="diagram-box">
+  <h4>4.6 — Class Diagram</h4>
+  <div class="mermaid">
+classDiagram
+    class User {
+        +String id
+        +String githubId
+        +String username
+        +String email
+        +DateTime createdAt
+        +Project[] projects
+        +Scan[] scans
+    }
+    class Project {
+        +String id
+        +String name
+        +String repoUrl
+        +String userId
+        +Scan[] scans
+    }
+    class Scan {
+        +String id
+        +ScanStatus status
+        +ScanSource source
+        +String inputRef
+        +Float riskScore
+        +Int totalIssues
+        +Int criticalCount
+        +String userId
+        +Issue[] issues
+    }
+    class Issue {
+        +String id
+        +String ruleId
+        +String title
+        +Severity severity
+        +String filePath
+        +Int lineStart
+        +String cweId
+        +String owaspId
+        +String aiExplanation
+        +String aiRemediation
+        +String aiFixCode
+        +Boolean aiProcessed
+    }
+    class AiService {
+        -AiProvider[] providers
+        +analyzeIssue()
+        +processScanIssues()
+        +getProviders()
+    }
+    class AiScannerService {
+        -AiProvider[] providers
+        +scan()
+        -scanFileWithFallback()
+        -getRelevantFiles()
+    }
+    class AiProvider {
+        <<interface>>
+        +String name
+        +scan()
+        +analyze()
+    }
+    class NvidiaProvider
+    class GeminiProvider
+    class OpenAIProvider
+
+    User "1" --> "*" Project
+    User "1" --> "*" Scan
+    Project "1" --> "*" Scan
+    Scan "1" --> "*" Issue
+    AiService --> AiProvider
+    AiScannerService --> AiProvider
+    AiProvider <|.. NvidiaProvider
+    AiProvider <|.. GeminiProvider
+    AiProvider <|.. OpenAIProvider
+  </div>
+  <div class="diagram-explain">
+    <p><strong>Class Diagram</strong> shows the data models and their relationships. The <code>AiProvider</code> is an <strong>interface</strong> (contract) — all three AI providers must implement <code>scan()</code> and <code>analyze()</code> methods. This is the <strong>Strategy Pattern</strong>, enabling easy swapping of AI providers. One User has many Projects and Scans; one Scan has many Issues.</p>
+  </div>
+</div>
+
+<div class="diagram-box">
+  <h4>4.7 — Sequence Diagram (OAuth Login + Scan Flow)</h4>
+  <div class="mermaid">
+sequenceDiagram
+    actor Dev as Developer
+    participant FE as React Frontend
+    participant BE as Express Backend
+    participant GH as GitHub
+    participant DB as PostgreSQL
+    participant RQ as Redis Queue
+    participant AI as AI Providers
+
+    Note over Dev,GH: GitHub OAuth Login
+    Dev->>FE: Click "Login with GitHub"
+    FE->>BE: GET /auth/github
+    BE->>GH: Redirect → OAuth authorize
+    Dev->>GH: Approve permissions
+    GH->>BE: GET /callback?code=xxx
+    BE->>GH: Exchange code → access_token
+    BE->>DB: Upsert user record
+    BE->>FE: Redirect /dashboard + JWT cookie
+    FE->>BE: GET /auth/me
+    BE-->>FE: User + stats
+
+    Note over Dev,AI: Start Scan
+    Dev->>FE: Submit repo URL
+    FE->>BE: POST /api/scans
+    BE->>DB: INSERT scan PENDING
+    BE->>RQ: scanQueue.add(job)
+    BE-->>FE: {scanId, status: PENDING}
+    FE->>BE: SSE stream /scans/:id/stream
+
+    RQ->>GH: git clone repo
+    RQ->>DB: UPDATE CLONING → SCANNING
+    loop Each source file
+        RQ->>AI: NVIDIA: analyze(file)
+        alt success
+            AI-->>RQ: findings[]
+        else fail → fallback
+            RQ->>AI: Gemini → OpenAI
+            AI-->>RQ: findings[]
+        end
+        RQ->>DB: INSERT issues
+    end
+
+    RQ->>DB: UPDATE AI_ANALYSIS
+    loop Batch enrich issues
+        RQ->>AI: analyze(issue)
+        AI-->>RQ: explanation+fix
+        RQ->>DB: UPDATE issue aiFields
+    end
+    RQ->>DB: UPDATE COMPLETED + riskScore
+    BE-->>FE: SSE: done event
+    FE->>Dev: Show results
+  </div>
+  <div class="diagram-explain">
+    <p><strong>Sequence Diagram</strong> shows the time-ordered interactions between components. Read top to bottom. Solid arrows = requests, dashed arrows = responses. The <strong>SSE (Server-Sent Events)</strong> connection keeps the frontend updated in real-time as the scan progresses through states.</p>
+  </div>
+</div>
+
+<div class="diagram-box">
+  <h4>4.8 — Collaboration Diagram</h4>
+  <div class="mermaid">
+flowchart LR
+    SC["ScanController"] -- "1: startScan()" --> SS
+    SS["ScanService"] -- "2: prisma.create(scan)" --> DB1[("PostgreSQL")]
+    SS -- "3: scanQueue.add(job)" --> BQ["Bull Queue"]
+    BQ -- "4: process(job)" --> QW["Queue Worker"]
+    QW -- "5a: git.clone()" --> GIT["SimpleGit"]
+    QW -- "5b: parse(zip)" --> ZIP["Unzipper"]
+    QW -- "6: scanner.scan(dir)" --> AIS["AiScannerService"]
+    AIS -- "7: withFallback(file)" --> AISV["AiService"]
+    AISV -- "8a: nvidia.scan()" --> NV["NvidiaProvider"]
+    AISV -- "8b: gemini.scan()" --> GM["GeminiProvider"]
+    AISV -- "8c: openai.scan()" --> OA["OpenAIProvider"]
+    QW -- "9: processScanIssues()" --> IS["IssueService"]
+    IS -- "10: aiService.analyze()" --> AISV
+    IS -- "11: prisma.update(issue)" --> DB2[("PostgreSQL")]
+  </div>
+  <div class="diagram-explain">
+    <p><strong>Collaboration Diagram</strong> shows how objects collaborate to complete a task. Numbers show the sequence of method calls. Unlike sequence diagrams (which are time-linear), collaboration diagrams emphasise the relationships between objects. The numbered calls show the order of execution during a scan job.</p>
+  </div>
+</div>
+
+<div class="diagram-box">
+  <h4>4.9 — Component Diagram</h4>
+  <div class="mermaid">
+flowchart TB
+    subgraph Frontend["Frontend Application"]
+        Router["React Router\n(Route Guards)"]
+        Pages["Pages\nDashboard·Scans·Projects·Login"]
+        UI_Comp["UI Components\nshadcn/ui · Recharts · Monaco"]
+        AuthStore["Zustand\nAuth Store"]
+        AxiosClient["Axios API Client\n+ Interceptors"]
+    end
+    subgraph Backend["Backend Application"]
+        Express["Express Server\nHelmet · CORS · Compression"]
+        RateLimit["Rate Limiter\n3 tiers"]
+        JwtMiddle["JWT Auth Middleware\npassport-jwt"]
+        subgraph Modules["Route Modules"]
+            AuthR["Auth Routes"]
+            ProjR["Project Routes"]
+            ScanR["Scan Routes"]
+            IssueR["Issue Routes"]
+        end
+        subgraph Queue["Bull Queue System"]
+            BullQ["Bull Queue\nscan-queue"]
+            Worker["Scan Worker\nclone·extract·analyse"]
+        end
+        subgraph AILayer["AI Layer"]
+            AiSvc2["AI Service\nFallback Chain"]
+            Scanner2["AI Scanner\nFile Walker"]
+            NVP["NVIDIA Provider"]
+            GMP["Gemini Provider"]
+            OAP["OpenAI Provider"]
+        end
+        Prisma["Prisma ORM"]
+        Winston["Winston Logger"]
+    end
+    PG[("PostgreSQL")]
+    Redis[("Redis")]
+
+    AxiosClient --> Express
+    Express --> RateLimit --> JwtMiddle --> Modules
+    ScanR --> BullQ
+    BullQ --> Worker --> Scanner2 --> AiSvc2
+    AiSvc2 --> NVP & GMP & OAP
+    Modules & Worker --> Prisma --> PG
+    BullQ --> Redis
+  </div>
+  <div class="diagram-explain">
+    <p><strong>Component Diagram</strong> shows the internal structural components and how they connect. Key insight: the frontend only talks to the Express server via REST/SSE. The Express server handles routing, auth, and rate limiting. Heavy processing (scanning) is offloaded to the Bull Queue Worker so the API stays fast and responsive.</p>
+  </div>
+</div>
+
+<div class="diagram-box">
+  <h4>4.10 — Deployment Diagram</h4>
+  <div class="mermaid">
+flowchart TB
+    Browser["🌐 User Browser"]
+    subgraph Host["Host Machine (Linux)"]
+        subgraph DockerNet["Docker Network: major-sast-agent_default"]
+            subgraph FEC["Container: frontend\nnginx:1.27-alpine"]
+                Nginx["nginx :80\n(SPA fallback)"]
+            end
+            subgraph BEC["Container: backend\nnode:20-alpine"]
+                Node["node dist/index.js :3001"]
+                Bearer2["Bearer CLI"]
+                TmpVol["Volume: scan_data\n/tmp/sast-agent"]
+            end
+            subgraph PGC["Container: postgres\npostgres:15-alpine"]
+                PGP["postgres :5432"]
+                PGVol["Volume: pg_data"]
+            end
+            subgraph RDC["Container: redis\nredis:7-alpine"]
+                RDP["redis :6379"]
+            end
+        end
+        P5173["Port 5173"] & P3001["Port 3001"]
+    end
+
+    Browser -- ":5173" --> P5173 --> Nginx
+    Browser -- ":3001" --> P3001 --> Node
+    Node -- "TCP 5432" --> PGP
+    Node -- "TCP 6379" --> RDP
+    Node --> Bearer2
+    Node --> TmpVol
+    PGP --> PGVol
+  </div>
+  <div class="diagram-explain">
+    <p><strong>Deployment Diagram</strong> shows how the software is physically deployed. All 4 containers run in the same Docker network so they can communicate internally. The host machine exposes ports 5173 (frontend) and 3001 (backend) to the browser. Volumes ensure data persists when containers restart.</p>
+  </div>
+</div>
+
+<div class="diagram-box">
+  <h4>4.11 — State Chart Diagram (Scan Lifecycle)</h4>
+  <div class="mermaid">
+stateDiagram-v2
+    [*] --> PENDING : User submits URL or ZIP
+    PENDING --> CLONING : Queue worker picks job
+    CLONING --> SCANNING : Clone/extract success
+    CLONING --> FAILED : Git error / ZIP corrupt / timeout
+    SCANNING --> PROCESSING : All files analysed by AI
+    SCANNING --> FAILED : Fatal exception in file walker
+    PROCESSING --> AI_ANALYSIS : Raw issues saved to DB
+    PROCESSING --> FAILED : DB write error
+    AI_ANALYSIS --> COMPLETED : All issues enriched
+    AI_ANALYSIS --> COMPLETED : Partial — some providers exhausted
+    AI_ANALYSIS --> FAILED : Critical DB failure
+    COMPLETED --> [*]
+    FAILED --> [*]
+
+    note right of CLONING
+        GitHub URL: git clone
+        ZIP: unzip to /tmp/sast-agent
+    end note
+    note right of SCANNING
+        File walker reads each file
+        AI Fallback: NVIDIA→Gemini→OpenAI
+        1.5s delay per file
+    end note
+    note right of AI_ANALYSIS
+        Batch=5, Concurrency=2
+        Adds: explanation, impact,
+        PoC, remediation, fixCode
+    end note
+  </div>
+  <div class="diagram-explain">
+    <p><strong>State Chart</strong> shows all possible states a Scan record can be in. Each state is stored in the PostgreSQL database and polled by the frontend every second via SSE. The state machine can reach COMPLETED from AI_ANALYSIS even with partial failures (some files may fail AI processing — the scan still completes).</p>
+  </div>
+</div>
+</section>
+
+<!-- ═══════════════════════════════════════════════════════
+     SECTION 6 — TECH STACK
+═══════════════════════════════════════════════════════ -->
+<section id="tech">
+<h2 class="section-title"><span class="num">6</span> Tech Stack Explained</h2>
+
+<div class="card-grid">
+  <div class="card">
+    <h4>⚛️ React 18 + Vite</h4>
+    <p>React is a JavaScript library for building UIs with reusable components. Vite is a blazing-fast build tool. The frontend is a <strong>Single Page Application (SPA)</strong> — one HTML file, JavaScript handles all navigation without full page reloads.</p>
+  </div>
+  <div class="card">
+    <h4>🐻 Zustand</h4>
+    <p>Lightweight state management library. The <code>authStore</code> holds the logged-in user globally so any component can access it. Alternative to Redux but far simpler.</p>
+  </div>
+  <div class="card">
+    <h4>🔄 TanStack Query</h4>
+    <p>Data fetching + caching library. Handles loading/error states, re-fetching on window focus, and caching API responses automatically. Replaces manual <code>useEffect</code> fetch patterns.</p>
+  </div>
+  <div class="card">
+    <h4>🎨 Tailwind CSS + shadcn/ui</h4>
+    <p>Tailwind is a utility-first CSS framework. shadcn/ui provides unstyled, accessible UI components (Button, Dialog, Tabs, etc.) built on Radix UI primitives.</p>
+  </div>
+  <div class="card">
+    <h4>📊 Recharts + Monaco</h4>
+    <p>Recharts renders charts (pie charts for severity breakdown, bar charts for risk scores). Monaco is the VS Code editor — used to display code snippets with syntax highlighting.</p>
+  </div>
+  <div class="card">
+    <h4>🟢 Node.js + Express</h4>
+    <p>Node.js runs JavaScript on the server. Express is a minimal web framework for building REST APIs. Our backend handles auth, CRUD operations, file uploads, and SSE streaming.</p>
+  </div>
+  <div class="card">
+    <h4>📘 TypeScript</h4>
+    <p>A typed superset of JavaScript. Catches bugs at compile time (before the code runs). Both frontend and backend use TypeScript for safer, more maintainable code.</p>
+  </div>
+  <div class="card">
+    <h4>🗄️ Prisma ORM</h4>
+    <p>Object-Relational Mapper — lets you write database queries in TypeScript instead of raw SQL. Schema defined in <code>schema.prisma</code>. Migrations track schema changes over time.</p>
+  </div>
+  <div class="card">
+    <h4>🐘 PostgreSQL 15</h4>
+    <p>Relational database. Stores users, projects, scans, and issues. Chosen over MySQL for better JSON support, full-text search, and reliability. Runs in Docker.</p>
+  </div>
+  <div class="card">
+    <h4>⚡ Redis 7</h4>
+    <p>In-memory data store. Used as the job queue backend for Bull. Jobs (scan tasks) are stored in Redis so they survive backend restarts. Also supports job retry, timeout, and monitoring.</p>
+  </div>
+  <div class="card">
+    <h4>🐂 Bull Queue</h4>
+    <p>A Node.js job queue library backed by Redis. Scan jobs are resource-intensive (git clone + AI calls). Bull offloads them from the HTTP request lifecycle — the API responds immediately and the work happens in background workers.</p>
+  </div>
+  <div class="card">
+    <h4>🔐 Passport.js</h4>
+    <p>Authentication middleware for Node.js. Uses "strategies" — <code>passport-github2</code> for OAuth login and <code>passport-jwt</code> for JWT verification on protected routes.</p>
+  </div>
+  <div class="card">
+    <h4>🛡️ Helmet</h4>
+    <p>Sets security-related HTTP headers automatically. Prevents clickjacking (X-Frame-Options), MIME sniffing (X-Content-Type-Options), and XSS (Content-Security-Policy). One line of code, huge security gain.</p>
+  </div>
+  <div class="card">
+    <h4>✅ Zod</h4>
+    <p>TypeScript-first schema validation library. Validates API inputs (e.g., ensures <code>repoUrl</code> is a valid GitHub/GitLab/Bitbucket URL) and throws structured errors. Prevents invalid data reaching the database.</p>
+  </div>
+  <div class="card">
+    <h4>🐳 Docker + Docker Compose</h4>
+    <p>Docker packages the app into containers — isolated environments with all dependencies. Docker Compose orchestrates all 4 containers (postgres, redis, backend, frontend) with one command: <code>docker compose up</code>.</p>
+  </div>
+  <div class="card">
+    <h4>📝 Winston Logger</h4>
+    <p>Structured logging library. Logs timestamped JSON entries for every request, queue job, and AI call. Essential for debugging production issues.</p>
+  </div>
+</div>
+</section>
+
+<!-- ═══════════════════════════════════════════════════════
+     SECTION 7 — SECURITY FEATURES
+═══════════════════════════════════════════════════════ -->
+<section id="security">
+<h2 class="section-title"><span class="num">7</span> Security Features Implemented</h2>
+
+<div class="card">
+<h4>Layered Security (Defence in Depth)</h4>
+<p>The system uses multiple overlapping security layers — if one fails, others still protect. This is the "defence in depth" principle.</p>
+</div>
+
+<div class="card-grid">
+  <div class="card">
+    <h4>🔒 Authentication — GitHub OAuth + JWT</h4>
+    <ul>
+      <li>No local passwords — reduces credential theft risk</li>
+      <li>JWT stored in <strong>HttpOnly</strong> cookie (JS can't read it → no XSS theft)</li>
+      <li><strong>SameSite=Lax</strong> on cookies → CSRF protection</li>
+      <li><strong>Secure</strong> flag in production → HTTPS only</li>
+      <li>7-day token expiry — limits exposure window</li>
+    </ul>
+  </div>
+  <div class="card">
+    <h4>⏱️ Rate Limiting (3 Tiers)</h4>
+    <ul>
+      <li><strong>Global:</strong> 1000 req/min per IP (brute-force prevention)</li>
+      <li><strong>Scans:</strong> 5 scans/hour per user (abuse prevention)</li>
+      <li><strong>AI Explain:</strong> 10 requests/min per user (cost control)</li>
+      <li>Returns structured JSON errors, not HTML</li>
+      <li>Health endpoint <code>/health</code> exempt from rate limiting</li>
+    </ul>
+  </div>
+  <div class="card">
+    <h4>🌐 CORS Policy</h4>
+    <ul>
+      <li>Only allows origin <code>http://localhost:5173</code></li>
+      <li>Credentials (cookies) enabled only for that origin</li>
+      <li>Allowed methods explicitly listed</li>
+      <li>Preflight OPTIONS handled automatically</li>
+    </ul>
+  </div>
+  <div class="card">
+    <h4>🪖 Helmet Security Headers</h4>
+    <ul>
+      <li><code>X-Frame-Options: SAMEORIGIN</code> → prevents clickjacking</li>
+      <li><code>X-Content-Type-Options: nosniff</code> → prevents MIME confusion</li>
+      <li><code>Strict-Transport-Security</code> → force HTTPS</li>
+      <li><code>Content-Security-Policy</code> → prevents script injection</li>
+      <li><code>Referrer-Policy: no-referrer</code> → privacy</li>
+    </ul>
+  </div>
+  <div class="card">
+    <h4>✅ Input Validation (Zod)</h4>
+    <ul>
+      <li>All API inputs validated with Zod schemas</li>
+      <li>Repo URL must be GitHub/GitLab/Bitbucket only</li>
+      <li>File size limit: 50MB for ZIP uploads</li>
+      <li>Path traversal prevention in ZIP extraction</li>
+      <li>SQL injection impossible via Prisma (parameterised queries)</li>
+    </ul>
+  </div>
+  <div class="card">
+    <h4>🔑 Authorisation (Row-Level Security)</h4>
+    <ul>
+      <li>Every DB query filters by <code>userId</code></li>
+      <li>Users can only see their own projects/scans/issues</li>
+      <li>IDOR prevented — changing IDs in URLs returns 404</li>
+      <li>Ownership checked before update/delete operations</li>
+    </ul>
+  </div>
+  <div class="card">
+    <h4>📁 Path Traversal Prevention</h4>
+    <pre><code>// ZIP extraction validates every path
+if (fileName.includes('..') ||
+    path.isAbsolute(fileName)) {
+  entry.autodrain(); // skip
+}</code></pre>
+    <p style="font-size:.82rem;color:var(--text2);margin-top:.5rem">Prevents attackers from submitting ZIPs containing <code>../../etc/passwd</code> paths.</p>
+  </div>
+  <div class="card">
+    <h4>🗜️ Compression + Request Size Limits</h4>
+    <ul>
+      <li>Response compression reduces data transfer</li>
+      <li>JSON body limit: 10MB</li>
+      <li>ZIP upload limit: 50MB</li>
+      <li>Prevents memory exhaustion attacks</li>
+    </ul>
+  </div>
+</div>
+</section>
+
+<!-- ═══════════════════════════════════════════════════════
+     SECTION 8 — AI ENGINE
+═══════════════════════════════════════════════════════ -->
+<section id="ai">
+<h2 class="section-title"><span class="num">8</span> AI Engine Deep Dive</h2>
+
+<div class="card">
+<h4>How AI-Powered SAST Works</h4>
+<p>Traditional SAST uses rule-based pattern matching (regex). This system uses LLMs to understand code semantics — it can find logical vulnerabilities that rules miss. Each file is sent with a carefully crafted prompt instructing the AI to act as a "hardened senior security auditor."</p>
+</div>
+
+<div class="subsection">
+<h3>Fallback Chain Architecture</h3>
+<div class="flow">
+  <div class="flow-step active">NVIDIA NIM (Qwen3-235B)</div>
+  <div class="flow-arrow">→ fails? →</div>
+  <div class="flow-step">Google Gemini 1.5 Flash</div>
+  <div class="flow-arrow">→ fails? →</div>
+  <div class="flow-step">OpenAI GPT-4o-mini</div>
+  <div class="flow-arrow">→ fails? →</div>
+  <div class="flow-step" style="border-color:var(--accent)">Log &amp; Skip</div>
+</div>
+<div class="card">
+<p>NVIDIA is tried first (cheapest/fastest). If it fails (rate limit, timeout, invalid JSON), Gemini is tried. If Gemini fails, OpenAI is the last resort. If all fail for a file, that file is skipped but the scan continues. This ensures <strong>99%+ scan completion</strong> even if one provider is down.</p>
+</div>
+</div>
+
+<div class="subsection">
+<h3>What the AI Prompt Contains</h3>
+<div class="card">
+<p>The AI is given the role of a "Hardened Senior Security Auditor" and instructed to check for:</p>
+<div class="term-grid">
+  <div class="term-card">
+    <div class="term">OWASP Top 10 &amp; SANS Top 25</div>
+    <div class="def">SQLi, NoSQLi, XSS, SSRF, CSRF, IDOR, Broken Auth, Insecure Deserialization</div>
+  </div>
+  <div class="term-card">
+    <div class="term">Cryptographic Failures</div>
+    <div class="def">Weak algorithms, hardcoded secrets, missing salt, bypassable encryption</div>
+  </div>
+  <div class="term-card">
+    <div class="term">Business Logic Flaws</div>
+    <div class="def">Race conditions, unauthorized state transitions, price manipulation</div>
+  </div>
+  <div class="term-card">
+    <div class="term">Input Validation</div>
+    <div class="def">Missing output encoding, improper regex, buffer overflows</div>
+  </div>
+  <div class="term-card">
+    <div class="term">Configuration Issues</div>
+    <div class="def">Leaked credentials in comments, insecure default settings, dangerous APIs</div>
+  </div>
+  <div class="term-card">
+    <div class="term">Supply Chain</div>
+    <div class="def">Malicious patterns, insecure dependency usage</div>
+  </div>
+</div>
+</div>
+</div>
+
+<div class="subsection">
+<h3>Two-Phase AI Processing</h3>
+<div class="card-grid">
+  <div class="card">
+    <h4>Phase 1: AI Scanning</h4>
+    <p>File-by-file scan. Each file's content is sent to AI, which returns a JSON array of findings. The AI must respond in strict JSON format — invalid responses are parsed and cleaned automatically.</p>
+    <p style="margin-top:.5rem;color:var(--text2);font-size:.85rem">Output per finding: ruleId, title, description, severity, category, lineStart, lineEnd, codeSnippet, cweId, owaspId</p>
+  </div>
+  <div class="card">
+    <h4>Phase 2: AI Enrichment</h4>
+    <p>After all raw findings are saved, a second AI pass enriches each issue with deeper analysis. Batch of 5 issues, 2 concurrent workers to balance speed vs API rate limits.</p>
+    <p style="margin-top:.5rem;color:var(--text2);font-size:.85rem">Adds: explanation, impact, proofOfConcept, remediation, fixCode</p>
+  </div>
+</div>
+</div>
+
+<div class="subsection">
+<h3>Risk Score Calculation</h3>
+<div class="card">
+<p>Each completed scan gets a <strong>0–10 risk score</strong> based on issue severity counts:</p>
+<div class="highlight">
+<strong>Risk Score = (Critical×10 + High×5 + Medium×2 + Low×0.5) / totalIssues</strong> (capped at 10)
+</div>
+<p style="color:var(--text2);font-size:.88rem;margin-top:.5rem">Higher score = more critical vulnerabilities found. Displayed as a gauge on the dashboard.</p>
+</div>
+</div>
+</section>
+
+<!-- ═══════════════════════════════════════════════════════
+     SECTION 9 — API REFERENCE
+═══════════════════════════════════════════════════════ -->
+<section id="api">
+<h2 class="section-title"><span class="num">9</span> API Endpoints</h2>
+
+<div class="card">
+<table>
+<thead><tr><th>Method</th><th>Endpoint</th><th>Auth</th><th>Description</th></tr></thead>
+<tbody>
+<tr><td><span class="sev sev-info">GET</span></td><td><code>/health</code></td><td>None</td><td>Health check — pings database</td></tr>
+<tr><td><span class="sev sev-info">GET</span></td><td><code>/auth/github</code></td><td>None</td><td>Redirect to GitHub OAuth</td></tr>
+<tr><td><span class="sev sev-info">GET</span></td><td><code>/auth/github/callback</code></td><td>None</td><td>OAuth callback — issues JWT cookie</td></tr>
+<tr><td><span class="sev sev-info">GET</span></td><td><code>/auth/me</code></td><td>JWT</td><td>Current user + stats</td></tr>
+<tr><td><span class="sev sev-medium">POST</span></td><td><code>/auth/logout</code></td><td>JWT</td><td>Clear JWT cookie</td></tr>
+<tr><td><span class="sev sev-info">GET</span></td><td><code>/api/projects</code></td><td>JWT</td><td>List user's projects</td></tr>
+<tr><td><span class="sev sev-medium">POST</span></td><td><code>/api/projects</code></td><td>JWT</td><td>Create project</td></tr>
+<tr><td><span class="sev sev-info">GET</span></td><td><code>/api/projects/:id</code></td><td>JWT</td><td>Get project + recent scans</td></tr>
+<tr><td><span class="sev sev-high">PUT</span></td><td><code>/api/projects/:id</code></td><td>JWT</td><td>Update project</td></tr>
+<tr><td><span class="sev sev-critical">DELETE</span></td><td><code>/api/projects/:id</code></td><td>JWT</td><td>Delete project (cascades scans)</td></tr>
+<tr><td><span class="sev sev-info">GET</span></td><td><code>/api/scans</code></td><td>JWT</td><td>List scans (paginated)</td></tr>
+<tr><td><span class="sev sev-medium">POST</span></td><td><code>/api/scans</code></td><td>JWT+Rate</td><td>Start GitHub repo scan</td></tr>
+<tr><td><span class="sev sev-medium">POST</span></td><td><code>/api/scans/upload</code></td><td>JWT+Rate</td><td>Upload ZIP for scan</td></tr>
+<tr><td><span class="sev sev-info">GET</span></td><td><code>/api/scans/:id</code></td><td>JWT</td><td>Scan summary + severity breakdown</td></tr>
+<tr><td><span class="sev sev-info">GET</span></td><td><code>/api/scans/:id/issues</code></td><td>JWT</td><td>All issues for a scan (paginated)</td></tr>
+<tr><td><span class="sev sev-info">GET</span></td><td><code>/api/scans/:id/stream</code></td><td>JWT</td><td>SSE: real-time scan progress</td></tr>
+<tr><td><span class="sev sev-info">GET</span></td><td><code>/api/issues</code></td><td>JWT</td><td>All issues across all scans</td></tr>
+<tr><td><span class="sev sev-info">GET</span></td><td><code>/api/issues/:id</code></td><td>JWT</td><td>Single issue detail</td></tr>
+<tr><td><span class="sev sev-medium">POST</span></td><td><code>/api/issues/:id/explain</code></td><td>JWT+Rate</td><td>On-demand AI explanation</td></tr>
+</tbody>
+</table>
+</div>
+
+<div class="subsection">
+<h3>SSE — Server-Sent Events Explained</h3>
+<div class="card-grid">
+  <div class="card">
+    <h4>What is SSE?</h4>
+    <p>A one-way stream from server to client over a single HTTP connection. The frontend subscribes to <code>/api/scans/:id/stream</code> and receives JSON events every second as the scan progresses.</p>
+  </div>
+  <div class="card">
+    <h4>Why SSE over WebSockets?</h4>
+    <p>SSE is simpler — just HTTP. Works through proxies and firewalls. No special server setup. Since we only need <em>server → client</em> updates (not bidirectional), SSE is the right choice.</p>
+  </div>
+</div>
+</div>
+</section>
+
+<!-- ═══════════════════════════════════════════════════════
+     SECTION 10 — DATABASE
+═══════════════════════════════════════════════════════ -->
+<section id="db">
+<h2 class="section-title"><span class="num">10</span> Database Design</h2>
+
+<div class="diagram-box">
+  <h4>Entity Relationship Diagram (ERD)</h4>
+  <div class="mermaid">
+erDiagram
+    USER {
+        string id PK
+        string githubId
+        string username
+        string email
+        string avatarUrl
+        datetime createdAt
+        datetime updatedAt
+    }
+    PROJECT {
+        string id PK
+        string name
+        string repoUrl
+        string description
+        string userId FK
+        datetime createdAt
+        datetime updatedAt
+    }
+    SCAN {
+        string id PK
+        enum status
+        enum source
+        string inputRef
+        float riskScore
+        int totalIssues
+        int criticalCount
+        int highCount
+        int mediumCount
+        int lowCount
+        string userId FK
+        string projectId FK
+        datetime createdAt
+        datetime completedAt
+    }
+    ISSUE {
+        string id PK
+        string ruleId
+        string title
+        string description
+        enum severity
+        string filePath
+        int lineStart
+        int lineEnd
+        string cweId
+        string owaspId
+        float cvssScore
+        string aiExplanation
+        string aiRemediation
+        string aiFixCode
+        boolean aiProcessed
+        string scanId FK
+        datetime createdAt
+    }
+
+    USER ||--o{ PROJECT : "owns"
+    USER ||--o{ SCAN : "initiates"
+    PROJECT ||--o{ SCAN : "contains"
+    SCAN ||--o{ ISSUE : "produces"
+  </div>
+  <div class="diagram-explain">
+    <p><strong>ERD</strong> shows database tables and their relationships. <code>||--o{</code> means "one to many." One User can own many Projects and initiate many Scans. One Scan produces many Issues. Issues contain both raw SAST data (ruleId, CWE, OWASP) and AI-enriched data (aiExplanation, aiRemediation, aiFixCode). The <code>aiProcessed</code> boolean prevents double-processing.</p>
+  </div>
+</div>
+
+<div class="card">
+<h4>Database Indexes (Performance)</h4>
+<table>
+<thead><tr><th>Table</th><th>Indexed Column(s)</th><th>Purpose</th></tr></thead>
+<tbody>
+<tr><td>scans</td><td>userId</td><td>Fast lookup of user's scans</td></tr>
+<tr><td>scans</td><td>projectId</td><td>Fast lookup of project scans</td></tr>
+<tr><td>scans</td><td>status</td><td>Filter by scan state</td></tr>
+<tr><td>scans</td><td>createdAt</td><td>Sort by date</td></tr>
+<tr><td>issues</td><td>scanId</td><td>Fast lookup of scan's issues</td></tr>
+<tr><td>issues</td><td>severity</td><td>Filter by severity</td></tr>
+<tr><td>issues</td><td>aiProcessed</td><td>Find unprocessed issues for enrichment</td></tr>
+</tbody>
+</table>
+</div>
+</section>
+
+<!-- ═══════════════════════════════════════════════════════
+     SECTION 11 — VIVA Q&A
+═══════════════════════════════════════════════════════ -->
+<section id="viva">
+<h2 class="section-title"><span class="num">11</span> VIVA Question &amp; Answer Bank</h2>
+<p style="color:var(--text2);margin-bottom:1.5rem">Click any question to reveal the answer.</p>
+
+<div class="qa-block" onclick="toggleQA(this)">
+  <div class="qa-q">What is SAST and how does it differ from DAST?</div>
+  <div class="qa-a">
+    <p><strong>SAST (Static Application Security Testing)</strong> analyses source code without executing it. It reads the code and finds vulnerabilities like a linter. Can run early in development (shift-left security).</p>
+    <p style="margin-top:.5rem"><strong>DAST (Dynamic Application Security Testing)</strong> attacks a running application from the outside, like an automated hacker. Finds runtime vulnerabilities SAST misses (e.g., configuration issues, runtime injection).</p>
+    <p style="margin-top:.5rem"><strong>Key difference:</strong> SAST = white-box (sees code), DAST = black-box (sees only behaviour). This project implements SAST — it reads the code files directly.</p>
+  </div>
+</div>
+
+<div class="qa-block" onclick="toggleQA(this)">
+  <div class="qa-q">What is OWASP Top 10? Name at least 5 categories.</div>
+  <div class="qa-a">
+    <p>OWASP (Open Web Application Security Project) Top 10 is the authoritative list of the most critical web application security risks:</p>
+    <ul style="margin-top:.5rem;padding-left:1.2rem">
+      <li><strong>A01: Broken Access Control</strong> — Users can access data/functions they shouldn't</li>
+      <li><strong>A02: Cryptographic Failures</strong> — Weak encryption, data transmitted in plaintext</li>
+      <li><strong>A03: Injection</strong> — SQL, command, LDAP injection attacks</li>
+      <li><strong>A04: Insecure Design</strong> — Missing security in architecture phase</li>
+      <li><strong>A05: Security Misconfiguration</strong> — Default passwords, open cloud storage</li>
+      <li><strong>A06: Vulnerable Components</strong> — Outdated libraries with known CVEs</li>
+      <li><strong>A07: Auth Failures</strong> — Weak passwords, missing MFA, session fixation</li>
+      <li><strong>A08: Integrity Failures</strong> — Unsigned updates, insecure deserialization</li>
+      <li><strong>A09: Logging Failures</strong> — No audit trail, attackers can cover tracks</li>
+      <li><strong>A10: SSRF</strong> — Server tricked into fetching internal resources</li>
+    </ul>
+    <p style="margin-top:.5rem">Our AI scanner prompt explicitly checks for all 10 categories.</p>
+  </div>
+</div>
+
+<div class="qa-block" onclick="toggleQA(this)">
+  <div class="qa-q">What is the difference between CWE, CVE, and CVSS?</div>
+  <div class="qa-a">
+    <p><strong>CWE (Common Weakness Enumeration):</strong> A catalog of <em>types</em> of software weaknesses. e.g., CWE-89 = SQL Injection (as a category). Maintained by MITRE.</p>
+    <p style="margin-top:.4rem"><strong>CVE (Common Vulnerabilities and Exposures):</strong> A specific <em>instance</em> of a vulnerability in a specific software version. e.g., CVE-2021-44228 is the Log4Shell bug in Log4j 2.x. Has a CVE ID, description, and affected versions.</p>
+    <p style="margin-top:.4rem"><strong>CVSS (Common Vulnerability Scoring System):</strong> A 0–10 numerical score for a CVE based on exploitability and impact. 9.8 = Critical. Used to prioritise patching.</p>
+    <p style="margin-top:.4rem"><strong>Analogy:</strong> CWE is "robbery as a category." CVE is "the robbery at 123 Main St on 1 Jan 2024." CVSS is "how severe was that robbery (10/10 = armed, no witnesses)."</p>
+  </div>
+</div>
+
+<div class="qa-block" onclick="toggleQA(this)">
+  <div class="qa-q">How does GitHub OAuth work in this project?</div>
+  <div class="qa-a">
+    <ol style="padding-left:1.2rem">
+      <li>User clicks "Login with GitHub" → Frontend hits <code>GET /auth/github</code></li>
+      <li>Backend (Passport.js) redirects user to <code>github.com/login/oauth/authorize?client_id=xxx</code></li>
+      <li>User approves on GitHub. GitHub redirects back to <code>/auth/github/callback?code=xxx</code></li>
+      <li>Backend exchanges the code for an access_token by calling GitHub's API</li>
+      <li>Backend fetches user profile (username, email, avatar) from GitHub API</li>
+      <li>Backend upserts user in PostgreSQL (create if new, update if existing)</li>
+      <li>Backend generates a JWT signed with <code>JWT_SECRET</code>, stored in HttpOnly cookie</li>
+      <li>User is redirected to <code>/dashboard</code> — now authenticated</li>
+      <li>Every subsequent API request includes the cookie; Passport-JWT middleware validates it</li>
+    </ol>
+  </div>
+</div>
+
+<div class="qa-block" onclick="toggleQA(this)">
+  <div class="qa-q">What is a JWT and why use HttpOnly cookies for storage?</div>
+  <div class="qa-a">
+    <p><strong>JWT (JSON Web Token)</strong> has 3 base64-encoded parts: <code>Header.Payload.Signature</code></p>
+    <ul style="margin-top:.4rem;padding-left:1.2rem">
+      <li><strong>Header:</strong> Algorithm used (e.g., HS256)</li>
+      <li><strong>Payload:</strong> Claims — userId, username, expiry</li>
+      <li><strong>Signature:</strong> HMAC of Header+Payload using secret — proves authenticity</li>
+    </ul>
+    <p style="margin-top:.6rem"><strong>Why HttpOnly cookies?</strong> The alternative is localStorage, but JavaScript can read localStorage — meaning an XSS attack could steal the token. HttpOnly cookies cannot be read by JavaScript at all. Only the browser sends them automatically with requests. This is the more secure approach.</p>
+    <p style="margin-top:.4rem">Combined with <code>SameSite=Lax</code>, the cookie isn't sent on cross-site requests, preventing CSRF attacks.</p>
+  </div>
+</div>
+
+<div class="qa-block" onclick="toggleQA(this)">
+  <div class="qa-q">Why use a Bull Queue and Redis? Why not just process scans directly?</div>
+  <div class="qa-a">
+    <p>Scans are <strong>long-running, resource-intensive tasks</strong> — cloning a repo can take 30 seconds, AI analysis of 100 files can take 5+ minutes. If we processed this directly in the HTTP request handler:</p>
+    <ul style="margin-top:.4rem;padding-left:1.2rem">
+      <li>The HTTP request would time out (typically 30s)</li>
+      <li>The user's browser would show an error</li>
+      <li>Server would be blocked, unable to serve other requests</li>
+      <li>If server restarts, the scan is lost</li>
+    </ul>
+    <p style="margin-top:.5rem">With Bull Queue + Redis:</p>
+    <ul style="padding-left:1.2rem">
+      <li>API responds immediately with <code>{scanId, status: PENDING}</code></li>
+      <li>Job persists in Redis — survives server restarts</li>
+      <li>Workers process jobs concurrently in background</li>
+      <li>Frontend polls progress via SSE</li>
+      <li>Job retries, timeouts (15min), and monitoring built-in</li>
+    </ul>
+  </div>
+</div>
+
+<div class="qa-block" onclick="toggleQA(this)">
+  <div class="qa-q">What is SQL Injection and how does Prisma prevent it?</div>
+  <div class="qa-a">
+    <p><strong>SQL Injection</strong> is when an attacker inserts SQL code into input fields to manipulate database queries.</p>
+    <pre><code>-- Vulnerable raw query:
+SELECT * FROM users WHERE username = '${userInput}'
+-- Attacker inputs: ' OR '1'='1
+-- Result: SELECT * FROM users WHERE username = '' OR '1'='1'
+-- This returns ALL users!</code></pre>
+    <p style="margin-top:.5rem"><strong>How Prisma prevents it:</strong> Prisma uses <strong>parameterized queries</strong> internally. You write:</p>
+    <pre><code>prisma.user.findFirst({ where: { username: userInput } })</code></pre>
+    <p>Prisma converts this to a prepared statement where the user input is never concatenated into SQL. The database treats it as data, not code. SQL injection is impossible through the Prisma ORM.</p>
+  </div>
+</div>
+
+<div class="qa-block" onclick="toggleQA(this)">
+  <div class="qa-q">Explain the multi-stage Docker build and why it matters.</div>
+  <div class="qa-a">
+    <p>A standard Dockerfile ships everything including devDependencies (TypeScript compiler, ts-node, jest, etc.) — making a huge image (often 1–2 GB).</p>
+    <p style="margin-top:.5rem">Our multi-stage backend Dockerfile:</p>
+    <ol style="padding-left:1.2rem;margin-top:.4rem">
+      <li><strong>Builder stage</strong> (node:20-alpine): Install ALL deps, compile TypeScript → JavaScript, generate Prisma client</li>
+      <li><strong>Runner stage</strong> (node:20-alpine, fresh): Install only production deps, copy <code>dist/</code> and <code>.prisma/client</code> from builder</li>
+    </ol>
+    <p style="margin-top:.5rem"><strong>Benefits:</strong></p>
+    <ul style="padding-left:1.2rem">
+      <li>Smaller image — no TypeScript compiler, no source code, no devDeps</li>
+      <li>Faster startup — less to load</li>
+      <li>More secure — smaller attack surface (fewer packages)</li>
+      <li>Production image doesn't expose source TypeScript</li>
+    </ul>
+  </div>
+</div>
+
+<div class="qa-block" onclick="toggleQA(this)">
+  <div class="qa-q">What is rate limiting and why are there 3 different rate limiters?</div>
+  <div class="qa-a">
+    <p>Rate limiting caps the number of requests a client can make in a time window. Different endpoints have different risk profiles:</p>
+    <table style="margin-top:.5rem">
+      <thead><tr><th>Limiter</th><th>Limit</th><th>Why</th></tr></thead>
+      <tbody>
+        <tr><td>Global</td><td>1000 req/min per IP</td><td>Prevents DoS, brute-force attacks on any endpoint</td></tr>
+        <tr><td>Scan</td><td>5 scans/hour per user</td><td>Each scan can cost $$ in AI API calls and server resources</td></tr>
+        <tr><td>AI Explain</td><td>10 req/min per user</td><td>On-demand AI calls cost money — prevents abuse</td></tr>
+      </tbody>
+    </table>
+    <p style="margin-top:.5rem">The scan and AI limiters key on <strong>user ID</strong> (not IP) — so users behind the same office network aren't unfairly limited together.</p>
+  </div>
+</div>
+
+<div class="qa-block" onclick="toggleQA(this)">
+  <div class="qa-q">What is IDOR and how does this project prevent it?</div>
+  <div class="qa-a">
+    <p><strong>IDOR (Insecure Direct Object Reference)</strong>: When an application uses user-supplied input to access objects directly without checking permissions.</p>
+    <p style="margin-top:.4rem">Example: User A has scan ID <code>abc123</code>. User B tries <code>GET /api/scans/abc123</code>. Without protection, User B sees User A's results.</p>
+    <p style="margin-top:.4rem"><strong>How we prevent it:</strong> Every single Prisma query includes <code>{ where: { id, userId } }</code>:</p>
+    <pre><code>prisma.scan.findFirstOrThrow({
+  where: { id: scanId, userId: req.user.id }
+})</code></pre>
+    <p style="margin-top:.4rem">If the scan exists but belongs to a different user, Prisma throws a "not found" error. The attacker gets a 404, not the data. This is <strong>row-level authorisation</strong>.</p>
+  </div>
+</div>
+
+<div class="qa-block" onclick="toggleQA(this)">
+  <div class="qa-q">What is the Strategy Pattern and where is it used here?</div>
+  <div class="qa-a">
+    <p>The <strong>Strategy Pattern</strong> defines a family of algorithms, encapsulates each one, and makes them interchangeable. The client uses the algorithms without knowing their implementation.</p>
+    <p style="margin-top:.4rem">In this project, the <code>AiProvider</code> interface is the strategy:</p>
+    <pre><code>interface AiProvider {
+  name: string;
+  scan(filePath: string, content: string): Promise&lt;AiScanFinding[]&gt;;
+  analyze(issue: AiIssueInput): Promise&lt;AiAnalysisResult&gt;;
+}</code></pre>
+    <p style="margin-top:.4rem"><code>NvidiaProvider</code>, <code>GeminiProvider</code>, and <code>OpenAIProvider</code> all implement this interface. The <code>AiScannerService</code> and <code>AiService</code> hold an array of providers and call them without knowing which specific AI company's API they're using. Adding a 4th AI provider requires only implementing the interface — zero changes to the rest of the system.</p>
+  </div>
+</div>
+
+<div class="qa-block" onclick="toggleQA(this)">
+  <div class="qa-q">What is Server-Sent Events (SSE) and why use it for scan progress?</div>
+  <div class="qa-a">
+    <p><strong>SSE (Server-Sent Events)</strong> is a browser standard that allows a server to push data to a client over a persistent HTTP connection. Unlike WebSockets (bidirectional), SSE is unidirectional (server → client only).</p>
+    <p style="margin-top:.4rem">The frontend opens a connection to <code>/api/scans/:id/stream</code>:</p>
+    <pre><code>// Backend sends:
+res.setHeader('Content-Type', 'text/event-stream');
+res.write(`data: ${JSON.stringify(progressData)}\n\n`);</code></pre>
+    <p style="margin-top:.4rem"><strong>Why SSE for scan progress?</strong></p>
+    <ul style="padding-left:1.2rem">
+      <li>Scans take minutes — polling every second wastes bandwidth with full HTTP overhead</li>
+      <li>SSE keeps one connection open, server pushes updates when they happen</li>
+      <li>Simpler than WebSockets — no special protocol, works through proxies</li>
+      <li>Browser auto-reconnects if connection drops</li>
+    </ul>
+  </div>
+</div>
+
+<div class="qa-block" onclick="toggleQA(this)">
+  <div class="qa-q">Why does the ZIP extraction check for path traversal?</div>
+  <div class="qa-a">
+    <p><strong>Path Traversal (Directory Traversal)</strong> is an attack where a malicious ZIP file contains entries with paths like <code>../../etc/passwd</code> or <code>../backend/.env</code>. When extracted naively, these write files outside the intended directory — potentially overwriting sensitive system files or application secrets.</p>
+    <pre><code>// Our protection:
+if (fileName.includes('..') || path.isAbsolute(fileName)) {
+  logger.warn(`Blocked ZIP path traversal: ${fileName}`);
+  entry.autodrain(); // skip this entry
+  return;
+}</code></pre>
+    <p style="margin-top:.4rem">Any ZIP entry containing <code>..</code> (parent directory traversal) or an absolute path (<code>/etc/passwd</code>) is silently skipped. The rest of the ZIP is still processed safely. This prevents CWE-22.</p>
+  </div>
+</div>
+
+<div class="qa-block" onclick="toggleQA(this)">
+  <div class="qa-q">What is Prisma and why use an ORM instead of raw SQL?</div>
+  <div class="qa-a">
+    <p><strong>Prisma</strong> is a next-generation ORM (Object-Relational Mapper) for Node.js and TypeScript.</p>
+    <p style="margin-top:.4rem"><strong>Benefits over raw SQL:</strong></p>
+    <ul style="padding-left:1.2rem">
+      <li><strong>Type safety:</strong> Auto-generated TypeScript types from your schema — IDE catches wrong column names at compile time</li>
+      <li><strong>SQL injection prevention:</strong> All queries are parameterised automatically</li>
+      <li><strong>Migrations:</strong> Schema changes are tracked as versioned migration files</li>
+      <li><strong>Readable syntax:</strong> <code>prisma.user.findMany({ where: { email } })</code> is clearer than raw SQL</li>
+      <li><strong>Prisma Studio:</strong> Visual database browser for development</li>
+    </ul>
+    <p style="margin-top:.4rem">The schema is defined once in <code>schema.prisma</code>. Running <code>prisma generate</code> creates fully-typed client code. Running <code>prisma migrate deploy</code> applies changes to the database.</p>
+  </div>
+</div>
+
+<div class="qa-block" onclick="toggleQA(this)">
+  <div class="qa-q">What is Helmet and what security headers does it add?</div>
+  <div class="qa-a">
+    <p>Helmet is a Node.js middleware that sets security-related HTTP response headers. One line (<code>app.use(helmet())</code>) adds multiple protections:</p>
+    <table style="margin-top:.5rem">
+      <thead><tr><th>Header</th><th>Protection</th></tr></thead>
+      <tbody>
+        <tr><td>Content-Security-Policy</td><td>Prevents XSS by restricting which scripts/styles can load</td></tr>
+        <tr><td>X-Frame-Options: SAMEORIGIN</td><td>Prevents clickjacking (embedding your site in iframes)</td></tr>
+        <tr><td>X-Content-Type-Options: nosniff</td><td>Prevents MIME type confusion attacks</td></tr>
+        <tr><td>Strict-Transport-Security</td><td>Forces HTTPS for 1 year</td></tr>
+        <tr><td>Referrer-Policy: no-referrer</td><td>Hides the referring URL for privacy</td></tr>
+        <tr><td>X-DNS-Prefetch-Control: off</td><td>Prevents DNS prefetch information leakage</td></tr>
+        <tr><td>X-Download-Options: noopen</td><td>Prevents IE from executing downloads in site's context</td></tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<div class="qa-block" onclick="toggleQA(this)">
+  <div class="qa-q">What is the purpose of the AI prompt engineering in this system?</div>
+  <div class="qa-a">
+    <p>Prompt engineering is crafting instructions that get reliable, structured output from an LLM. Our scan prompt uses several techniques:</p>
+    <ul style="padding-left:1.2rem;margin-top:.4rem">
+      <li><strong>Role assignment:</strong> "You are a hardened senior security auditor" — puts the AI in the right mindset</li>
+      <li><strong>Explicit scope:</strong> Lists exactly what to check (OWASP, cryptography, SSRF, etc.)</li>
+      <li><strong>Strict output format:</strong> "Respond ONLY with a valid JSON object with a findings array" — ensures parseable output</li>
+      <li><strong>Anti-hallucination rules:</strong> "Do NOT report generic warnings, only actionable security risks" — reduces noise</li>
+      <li><strong>Schema specification:</strong> Each field of the JSON is defined with expected values</li>
+      <li><strong>Zero-trust stance:</strong> Assumes all code is potentially malicious until proven safe</li>
+    </ul>
+    <p style="margin-top:.4rem">The response parser also handles malformed JSON by stripping markdown code fences before parsing.</p>
+  </div>
+</div>
+
+<div class="qa-block" onclick="toggleQA(this)">
+  <div class="qa-q">What is Zod and how is it used for validation?</div>
+  <div class="qa-a">
+    <p><strong>Zod</strong> is a TypeScript-first schema validation library. You define a schema once and it validates data + infers TypeScript types simultaneously.</p>
+    <pre><code>export const CreateScanSchema = z.object({
+  repoUrl: z.string().url().refine(
+    (url) => url.includes('github.com') ||
+              url.includes('gitlab.com'),
+    { message: 'Must be GitHub/GitLab/Bitbucket URL' }
+  ),
+  projectId: z.string().optional(),
+});</code></pre>
+    <p style="margin-top:.4rem">The controller calls <code>CreateScanSchema.parse(req.body)</code> — if validation fails, Zod throws a structured error with field-level messages. Our error handler converts this to a clean JSON 400 response. This ensures no invalid data reaches the database or queue.</p>
+  </div>
+</div>
+
+<div class="qa-block" onclick="toggleQA(this)">
+  <div class="qa-q">What is the difference between authentication and authorisation?</div>
+  <div class="qa-a">
+    <p><strong>Authentication</strong> = "Who are you?" — verifying identity. Our system uses GitHub OAuth + JWT. The JWT proves you are who you claim to be.</p>
+    <p style="margin-top:.4rem"><strong>Authorisation</strong> = "What are you allowed to do?" — checking permissions. After authentication, every data access in our system checks if the authenticated user owns the resource:</p>
+    <pre><code>// Both conditions must match:
+prisma.scan.findFirstOrThrow({
+  where: {
+    id: scanId,      // correct resource
+    userId: user.id  // belongs to this user
+  }
+})</code></pre>
+    <p style="margin-top:.4rem">This is why you can log in (authenticated) but can't see someone else's scan (not authorised). The middleware checks authentication; the service layer checks authorisation.</p>
+  </div>
+</div>
+
+<div class="qa-block" onclick="toggleQA(this)">
+  <div class="qa-q">What is the fallback chain and why is it important for reliability?</div>
+  <div class="qa-a">
+    <p>The fallback chain tries AI providers in priority order. If one fails, the next is used:</p>
+    <div class="flow" style="margin:.5rem 0">
+      <div class="flow-step">NVIDIA NIM</div>
+      <div class="flow-arrow">→ fail →</div>
+      <div class="flow-step">Gemini</div>
+      <div class="flow-arrow">→ fail →</div>
+      <div class="flow-step">OpenAI</div>
+    </div>
+    <p>Failures can happen due to: rate limits, API downtime, invalid JSON response, network timeout.</p>
+    <p style="margin-top:.4rem"><strong>Why important?</strong> AI APIs are not 100% reliable. Without fallback, a single provider outage would make all scans fail. With the chain, the system degrades gracefully — a file that fails all 3 providers is logged and skipped, but the rest of the scan completes normally. <strong>This is the Fault Tolerance principle.</strong></p>
+    <p style="margin-top:.4rem">NVIDIA is primary because it's the configured custom model (Qwen3-235B via NVIDIA NIM) which may be cheapest. Gemini and OpenAI are fallbacks with different API quotas, so it's unlikely all three fail simultaneously.</p>
+  </div>
+</div>
+
+<div class="qa-block" onclick="toggleQA(this)">
+  <div class="qa-q">What is Docker and what are the benefits of containerisation?</div>
+  <div class="qa-a">
+    <p><strong>Docker</strong> packages an application and all its dependencies into a lightweight, portable container. A container runs identically on any machine with Docker installed — eliminating "works on my machine" problems.</p>
+    <p style="margin-top:.4rem">This project runs 4 containers via Docker Compose:</p>
+    <table style="margin-top:.4rem">
+      <thead><tr><th>Container</th><th>Image</th><th>Purpose</th></tr></thead>
+      <tbody>
+        <tr><td>frontend</td><td>nginx:1.27-alpine</td><td>Serves static React build</td></tr>
+        <tr><td>backend</td><td>node:20-alpine (custom)</td><td>Express API + Bull worker</td></tr>
+        <tr><td>postgres</td><td>postgres:15-alpine</td><td>Database</td></tr>
+        <tr><td>redis</td><td>redis:7-alpine</td><td>Job queue storage</td></tr>
+      </tbody>
+    </table>
+    <p style="margin-top:.4rem"><strong>Benefits:</strong> Isolation (containers can't interfere with each other), reproducibility, easy scaling, environment parity (dev = prod), and one-command startup: <code>docker compose up</code>.</p>
+  </div>
+</div>
+
+</section>
+<!-- END QA -->
+
+<div style="text-align:center;padding:3rem 0 2rem;color:var(--text2);font-size:.85rem;border-top:1px solid var(--border);margin-top:2rem">
+  <p>SAST Security Copilot — VIVA Guide | Built with Node.js · React · PostgreSQL · Redis · AI</p>
+  <p style="margin-top:.3rem">All diagrams powered by <a href="https://mermaid.js.org" style="color:var(--accent)">Mermaid.js</a></p>
+</div>
+
+</div><!-- /container -->
+
+<script>
+// Theme toggle
+function toggleTheme() {
+  const html = document.documentElement;
+  const btn = document.querySelector('.theme-btn');
+  if (html.getAttribute('data-theme') === 'dark') {
+    html.setAttribute('data-theme', 'light');
+    btn.textContent = '🌙 Dark';
+    mermaid.initialize({ theme: 'default', startOnLoad: false });
+  } else {
+    html.setAttribute('data-theme', 'dark');
+    btn.textContent = '☀️ Light';
+    mermaid.initialize({ theme: 'dark', startOnLoad: false });
+  }
+  // Re-render mermaid diagrams
+  document.querySelectorAll('.mermaid').forEach(el => {
+    const src = el.getAttribute('data-src') || el.innerHTML;
+    el.setAttribute('data-src', src);
+    el.removeAttribute('data-processed');
+    el.innerHTML = src;
+  });
+  mermaid.run();
+}
+
+// QA toggle
+function toggleQA(el) {
+  el.classList.toggle('open');
+}
+
+// Mermaid init
+mermaid.initialize({
+  theme: 'dark',
+  startOnLoad: true,
+  securityLevel: 'loose',
+  flowchart: { useMaxWidth: true, htmlLabels: true },
+  sequence: { useMaxWidth: true },
+  er: { useMaxWidth: true }
+});
+</script>
+</body>
+</html>
