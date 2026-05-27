@@ -11,11 +11,11 @@
 @import url('https://cdn.jsdelivr.net/npm/geist@1.3.0/dist/fonts/geist-sans/style.css');
 @import url('https://cdn.jsdelivr.net/npm/geist@1.3.0/dist/fonts/geist-mono/style.css');
 
-/* ── SecNode Console Design Tokens ──────────────────── */
+/* ── Design Tokens ──────────────────────────────── */
 :root {
-  --font-sans: "Geist", ui-sans-serif, system-ui, -apple-system, "Segoe UI", Helvetica, Arial, sans-serif;
-  --font-mono: "Geist Mono", ui-monospace, "SF Mono", Menlo, Consolas, monospace;
-  --font-serif: "Newsreader", "Source Serif 4", Georgia, serif;
+  --font-sans:  "Geist", system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+  --font-mono:  "Geist Mono", ui-monospace, "SF Mono", Menlo, Consolas, monospace;
+  --font-serif: "Newsreader", ui-serif, Georgia, "Times New Roman", serif;
 
   --text-2xs:11px; --text-xs:12px; --text-sm:13px; --text-base:14px;
   --text-md:15px;  --text-lg:17px; --text-xl:20px; --text-2xl:24px;
@@ -25,84 +25,95 @@
   --space-5:20px; --space-6:24px; --space-8:32px; --space-10:40px;
   --space-12:48px; --space-16:64px;
 
-  --radius-xs:4px; --radius-sm:6px; --radius-md:8px; --radius-lg:10px;
-  --radius-xl:14px; --radius-2xl:18px;
-  --radius:10px;
+  --radius-row:8px; --radius-panel:12px; --radius-pill:9999px;
+  --radius-xs:4px; --radius-sm:6px; --radius-md:8px;
+  --radius-lg:12px; --radius-xl:14px; --radius-2xl:18px; --radius:12px;
 
   --sidebar-w:244px; --topbar-h:52px;
+
+  /* Severity — light mode defaults */
+  --sev-critical:#B04A3F; --sev-critical-bg:rgba(176,74,63,0.10);
+  --sev-high:#C47030;     --sev-high-bg:rgba(196,112,48,0.10);
+  --sev-medium:#B59F3B;   --sev-medium-bg:rgba(181,159,59,0.12);
+  --sev-low:#6A8CAF;      --sev-low-bg:rgba(106,140,175,0.10);
+  --sev-info:#6A8CAF;     --sev-info-bg:rgba(106,140,175,0.10);
+  --sev-ok:#788C5D;       --sev-ok-bg:rgba(120,140,93,0.10);
 }
 
+/* ── Light theme ──────────────────────────────────── */
 :root,
 .theme-light {
-  --bg:            oklch(0.987 0.014 82);
-  --bg-deep:       oklch(0.970 0.016 82);
-  --surface:       oklch(1.000 0.008 82);
-  --surface-2:     oklch(0.978 0.016 82);
-  --surface-3:     oklch(0.964 0.018 82);
-  --surface-inset: oklch(0.948 0.018 82);
+  --ivory:#FAF9F5; --paper:#FFFFFF;
+  --slate:#141413; --g700:#3D3D3A; --g500:#87867F;
+  --g100:#F0EEE6;  --g200:#E6E3DA; --g300:#D1CFC5;
+  --clay:#D97757;  --clay-d:#B85C3E; --oat:#E3DACC;
+  --olive:#788C5D; --rust:#B04A3F;  --sky:#6A8CAF;
 
-  --fg:        oklch(0.18 0.016 75);
-  --fg-strong: oklch(0.09 0.012 75);
-  --fg-muted:  oklch(0.44 0.010 75);
-  --fg-subtle: oklch(0.60 0.008 75);
-  --fg-faint:  oklch(0.76 0.006 75);
+  --bg:var(--ivory);        --bg-deep:#F0EDE5;
+  --surface:var(--paper);   --surface-2:var(--g100);
+  --surface-3:var(--g200);  --surface-inset:#EAE7DE;
 
-  --border:        oklch(0.90 0.012 82);
-  --border-strong: oklch(0.82 0.014 82);
-  --hairline:      oklch(0.93 0.010 82);
+  --fg:var(--slate);        --fg-strong:#0A0A09;
+  --fg-muted:var(--g500);   --fg-subtle:var(--g700);
+  --fg-faint:var(--g300);
 
-  --accent:             oklch(0.45 0.15 255);
-  --accent-fg:          oklch(1 0 0);
-  --accent-soft:        oklch(0.45 0.15 255 / 0.09);
-  --accent-soft-strong: oklch(0.45 0.15 255 / 0.16);
+  --border:var(--g300);     --border-strong:var(--g500);
+  --hairline:var(--g200);
 
-  --shadow-xs: 0 1px 2px oklch(0.18 0.016 75 / 0.06);
-  --shadow-sm: 0 1px 3px oklch(0.18 0.016 75 / 0.06), 0 2px 6px oklch(0.18 0.016 75 / 0.04);
-  --shadow-md: 0 2px 4px oklch(0.18 0.016 75 / 0.06), 0 8px 24px oklch(0.18 0.016 75 / 0.08);
-  --shadow-lg: 0 6px 12px oklch(0.18 0.016 75 / 0.08), 0 20px 48px oklch(0.18 0.016 75 / 0.12);
+  --accent:var(--clay);            --accent-fg:#FFFFFF;
+  --accent-soft:rgba(217,119,87,0.10);
+  --accent-soft-strong:rgba(217,119,87,0.18);
 
-  --sidebar-bg:     oklch(0.972 0.016 82);
-  --sidebar-fg:     oklch(0.18 0.016 75);
-  --sidebar-border: oklch(0.90 0.012 82);
-  --nav-bg:         oklch(0.987 0.014 82 / 0.92);
+  --shadow-xs:0 1px 2px rgba(20,20,19,0.06);
+  --shadow-sm:0 1px 3px rgba(20,20,19,0.06),0 2px 6px rgba(20,20,19,0.04);
+  --shadow-md:0 2px 4px rgba(20,20,19,0.06),0 8px 24px rgba(20,20,19,0.08);
+  --shadow-lg:0 6px 12px rgba(20,20,19,0.08),0 20px 48px rgba(20,20,19,0.12);
 
-  color-scheme: light;
+  --sidebar-bg:var(--g100);    --sidebar-fg:var(--slate);
+  --sidebar-border:var(--g300); --nav-bg:rgba(250,249,245,0.92);
+
+  color-scheme:light;
 }
 
+/* ── Dark theme ───────────────────────────────────── */
 .theme-dark {
-  --bg:            oklch(0.148 0.016 78);
-  --bg-deep:       oklch(0.118 0.016 78);
-  --surface:       oklch(0.188 0.015 78);
-  --surface-2:     oklch(0.210 0.014 78);
-  --surface-3:     oklch(0.232 0.013 78);
-  --surface-inset: oklch(0.168 0.015 78);
+  --ivory:#1C1B18; --paper:#242320;
+  --slate:#EDEBE3; --g700:#B8B5AE; --g500:#6B6A64;
+  --g100:#2B2A27;  --g200:#343330; --g300:#3F3E3B;
+  --clay:#E08B6A;  --clay-d:#D97757;
+  --olive:#8FA86A; --rust:#C05A4E; --sky:#7FA3C5;
 
-  --fg:        oklch(0.955 0.010 82);
-  --fg-strong: oklch(0.990 0.005 82);
-  --fg-muted:  oklch(0.680 0.010 78);
-  --fg-subtle: oklch(0.520 0.010 78);
-  --fg-faint:  oklch(0.380 0.010 78);
+  --bg:var(--ivory);        --bg-deep:#151411;
+  --surface:var(--paper);   --surface-2:var(--g100);
+  --surface-3:var(--g200);  --surface-inset:#1E1D1A;
 
-  --border:        oklch(0.290 0.014 78);
-  --border-strong: oklch(0.370 0.014 78);
-  --hairline:      oklch(0.240 0.013 78);
+  --fg:var(--slate);        --fg-strong:#F5F3EC;
+  --fg-muted:var(--g500);   --fg-subtle:var(--g700);
+  --fg-faint:var(--g300);
 
-  --accent:             oklch(0.74 0.14 252);
-  --accent-fg:          oklch(0.10 0.01 252);
-  --accent-soft:        oklch(0.74 0.14 252 / 0.13);
-  --accent-soft-strong: oklch(0.74 0.14 252 / 0.22);
+  --border:var(--g300);     --border-strong:#55544F;
+  --hairline:var(--g200);
 
-  --shadow-xs: 0 1px 2px oklch(0 0 0 / 0.50);
-  --shadow-sm: 0 2px 4px oklch(0 0 0 / 0.40), 0 1px 2px oklch(0 0 0 / 0.30);
-  --shadow-md: 0 2px 4px oklch(0 0 0 / 0.40), 0 10px 24px oklch(0 0 0 / 0.38);
-  --shadow-lg: 0 8px 16px oklch(0 0 0 / 0.45), 0 28px 56px oklch(0 0 0 / 0.55);
+  --accent:var(--clay);            --accent-fg:#1C1B18;
+  --accent-soft:rgba(224,139,106,0.13);
+  --accent-soft-strong:rgba(224,139,106,0.22);
 
-  --sidebar-bg:     oklch(0.128 0.015 78);
-  --sidebar-fg:     oklch(0.920 0.008 82);
-  --sidebar-border: oklch(0.240 0.013 78);
-  --nav-bg:         oklch(0.148 0.016 78 / 0.92);
+  --shadow-xs:0 1px 2px rgba(0,0,0,0.50);
+  --shadow-sm:0 2px 4px rgba(0,0,0,0.40),0 1px 2px rgba(0,0,0,0.30);
+  --shadow-md:0 2px 4px rgba(0,0,0,0.40),0 10px 24px rgba(0,0,0,0.38);
+  --shadow-lg:0 8px 16px rgba(0,0,0,0.45),0 28px 56px rgba(0,0,0,0.55);
 
-  color-scheme: dark;
+  --sidebar-bg:var(--g100);    --sidebar-fg:var(--slate);
+  --sidebar-border:var(--g300); --nav-bg:rgba(28,27,24,0.92);
+
+  --sev-critical:#E07070; --sev-critical-bg:rgba(224,112,112,0.15);
+  --sev-high:#E08B6A;     --sev-high-bg:rgba(224,139,106,0.14);
+  --sev-medium:#D4B94A;   --sev-medium-bg:rgba(212,185,74,0.14);
+  --sev-low:#7FA3C5;      --sev-low-bg:rgba(127,163,197,0.14);
+  --sev-info:#7FA3C5;     --sev-info-bg:rgba(127,163,197,0.14);
+  --sev-ok:#8FA86A;       --sev-ok-bg:rgba(143,168,106,0.14);
+
+  color-scheme:dark;
 }
 
 *, *::before, *::after { margin:0; padding:0; box-sizing:border-box }
@@ -120,52 +131,74 @@ body {
   transition: background .3s ease, color .3s ease;
 }
 
-nav {
-  position: sticky; top: 0; z-index: 100;
-  background: var(--nav-bg);
-  backdrop-filter: blur(14px) saturate(160%);
-  -webkit-backdrop-filter: blur(14px) saturate(160%);
-  border-bottom: 1px solid var(--hairline);
-  padding: 0 2rem;
-  height: 56px;
+/* ═══════════════════════════════════════════════════════
+   SIDEBAR
+═══════════════════════════════════════════════════════ */
+body { display:flex; min-height:100vh }
+
+.sidebar {
+  position: fixed; top:0; left:0;
+  width: var(--sidebar-w); height:100vh;
+  background: var(--sidebar-bg);
+  border-right: 1px solid var(--sidebar-border);
+  display: flex; flex-direction:column;
+  z-index: 100;
+  overflow: hidden;
 }
-.nav-inner {
-  max-width: 1160px; margin: 0 auto;
-  display: flex; align-items: center; justify-content: space-between;
-  height: 56px; gap: 1rem;
-}
-.nav-brand {
-  font-size: 13px; font-weight: 650;
+.sidebar-brand {
+  padding: 1.1rem 1rem .9rem;
+  font-size: 12px; font-weight: 700;
   color: var(--fg-strong);
-  letter-spacing: -0.015em;
+  letter-spacing: -0.01em;
+  border-bottom: 1px solid var(--hairline);
+  flex-shrink: 0;
   white-space: nowrap;
+  overflow: hidden; text-overflow: ellipsis;
 }
-.nav-links { display:flex; gap:.05rem; flex-wrap:wrap }
-.nav-links a {
+.sidebar-links {
+  flex: 1;
+  padding: .4rem 0;
+  overflow-y: auto;
+  scrollbar-width: thin;
+  scrollbar-color: var(--g300) transparent;
+}
+.sidebar-links a {
+  display: block;
   color: var(--fg-subtle);
   text-decoration: none;
-  font-size: 13px;
-  padding: .3rem .6rem;
-  border-radius: 6px;
-  transition: background .12s, color .12s;
+  font-size: 12.5px;
+  padding: .4rem 1rem;
+  border-left: 2px solid transparent;
+  transition: background .12s, color .12s, border-color .12s;
   letter-spacing: -0.005em;
+  line-height: 1.3;
 }
-.nav-links a:hover { background: var(--surface-2); color: var(--fg) }
+.sidebar-links a:hover { background: var(--surface-3); color: var(--fg); border-left-color: var(--clay) }
+.sidebar-links a.active { background: var(--surface-3); color: var(--fg-strong); border-left-color: var(--clay); font-weight: 600 }
+.sidebar-footer {
+  padding: .7rem .85rem;
+  border-top: 1px solid var(--hairline);
+  flex-shrink: 0;
+}
 .theme-btn {
   background: var(--surface);
   border: 1px solid var(--border);
   color: var(--fg-muted);
   cursor: pointer;
-  padding: 5px 12px;
+  padding: 5px 10px;
   border-radius: 7px;
   font-size: 12px; font-weight: 500;
-  display: flex; align-items: center; gap: .4rem;
-  transition: .12s; white-space: nowrap;
+  display: flex; align-items: center; justify-content: center; gap: .4rem;
+  transition: .12s; width: 100%;
   font-family: inherit;
   box-shadow: var(--shadow-xs);
 }
 .theme-btn:hover { border-color: var(--border-strong); background: var(--surface-2); color: var(--fg) }
 
+/* ═══════════════════════════════════════════════════════
+   LAYOUT
+═══════════════════════════════════════════════════════ */
+.main-content { margin-left: var(--sidebar-w); flex:1; min-width:0 }
 .container { max-width: 1100px; margin: 0 auto; padding: 3rem 2rem }
 
 .hero {
@@ -182,8 +215,8 @@ nav {
   content: '';
   position: absolute; inset: 0; pointer-events: none;
   background:
-    radial-gradient(ellipse 90% 55% at 50% -5%, oklch(0.78 0.12 85 / 0.18), transparent 70%),
-    radial-gradient(ellipse 50% 40% at 100% 110%, oklch(0.45 0.15 255 / 0.10), transparent 60%);
+    radial-gradient(ellipse 90% 55% at 50% -5%, rgba(227,218,204,0.45), transparent 70%),
+    radial-gradient(ellipse 50% 40% at 100% 110%, rgba(217,119,87,0.12), transparent 60%);
 }
 .hero h1 {
   font-family: var(--font-serif);
@@ -195,7 +228,7 @@ nav {
   margin-bottom: .75rem;
   position: relative;
 }
-.hero h1 span { color: var(--accent); font-style: italic }
+.hero h1 span { color: var(--clay); font-style: italic }
 .hero > p {
   color: var(--fg-muted);
   font-size: 1rem;
@@ -236,7 +269,7 @@ section { margin-bottom: 4.5rem }
 .section-title span.num {
   font-family: var(--font-mono);
   font-size: .875rem; font-weight: 600;
-  color: var(--accent);
+  color: var(--clay);
   letter-spacing: .02em;
   flex-shrink: 0;
 }
@@ -303,7 +336,7 @@ section { margin-bottom: 4.5rem }
   margin-bottom: .25rem;
 }
 .term-card .full {
-  color: var(--accent); font-size: 11px; font-weight: 600;
+  color: var(--clay); font-size: 11px; font-weight: 600;
   text-transform: uppercase; letter-spacing: .07em;
   margin-bottom: .5rem; display: block;
 }
@@ -374,7 +407,7 @@ tr:hover td { background: var(--surface-2) }
 }
 .qa-block.open { border-color: var(--border-strong) }
 .qa-block.open .qa-q { color: var(--fg-strong); background: var(--surface-2) }
-.qa-block.open .qa-q::after { content: '−'; color: var(--accent) }
+.qa-block.open .qa-q::after { content: '−'; color: var(--clay) }
 .qa-block.open .qa-a { display: block }
 
 /* Faculty tag on question */
@@ -394,19 +427,19 @@ tr:hover td { background: var(--surface-2) }
 }
 
 .fac-tag.snobby {
-  background: oklch(0.72 0.19 25 / 0.10);
-  color: oklch(0.55 0.18 25);
-  border-color: oklch(0.72 0.19 25 / 0.25);
+  background: rgba(176,74,63,0.10);
+  color: var(--rust);
+  border-color: rgba(176,74,63,0.25);
 }
 .fac-tag.confused {
-  background: oklch(0.78 0.12 85 / 0.12);
-  color: oklch(0.55 0.12 70);
-  border-color: oklch(0.78 0.12 85 / 0.30);
+  background: rgba(181,159,59,0.12);
+  color: #7A6B2A;
+  border-color: rgba(181,159,59,0.30);
 }
 .fac-tag.trap {
-  background: oklch(0.45 0.15 255 / 0.09);
-  color: var(--accent);
-  border-color: oklch(0.45 0.15 255 / 0.25);
+  background: rgba(106,140,175,0.09);
+  color: var(--sky);
+  border-color: rgba(106,140,175,0.25);
 }
 
 .qa-q-inner {
@@ -425,26 +458,26 @@ tr:hover td { background: var(--surface-2) }
 .highlight p { color: var(--fg-muted); font-size: .9rem; line-height: 1.65 }
 
 .warn-box {
-  background: oklch(0.72 0.19 25 / 0.08);
-  border: 1px solid oklch(0.72 0.19 25 / 0.25);
-  border-left: 3px solid oklch(0.55 0.18 25);
+  background: rgba(176,74,63,0.08);
+  border: 1px solid rgba(176,74,63,0.25);
+  border-left: 3px solid var(--rust);
   border-radius: 0 var(--radius-md) var(--radius-md) 0;
   padding: 14px 18px; margin: 1.25rem 0;
 }
-.warn-box strong { color: oklch(0.55 0.18 25) }
+.warn-box strong { color: var(--rust) }
 .warn-box p { color: var(--fg-muted); font-size: .9rem; line-height: 1.65 }
 
 .tip-box {
-  background: oklch(0.58 0.09 160 / 0.08);
-  border: 1px solid oklch(0.58 0.09 160 / 0.25);
-  border-left: 3px solid oklch(0.58 0.09 160);
+  background: rgba(120,140,93,0.08);
+  border: 1px solid rgba(120,140,93,0.25);
+  border-left: 3px solid var(--olive);
   border-radius: 0 var(--radius-md) var(--radius-md) 0;
   padding: 14px 18px; margin: 1.25rem 0;
 }
-.tip-box strong { color: oklch(0.40 0.10 155) }
+.tip-box strong { color: var(--olive) }
 .tip-box p { color: var(--fg-muted); font-size: .9rem; line-height: 1.65 }
-.theme-dark .tip-box strong { color: oklch(0.74 0.10 160) }
-.theme-dark .warn-box strong { color: oklch(0.72 0.19 25) }
+.theme-dark .tip-box strong { color: var(--olive) }
+.theme-dark .warn-box strong { color: var(--rust) }
 
 .flow { display: flex; align-items: center; flex-wrap: wrap; gap: .35rem; margin: 1.25rem 0 }
 .flow-step {
@@ -460,48 +493,170 @@ tr:hover td { background: var(--surface-2) }
 .flow-arrow { color: var(--fg-faint); font-size: .85rem; padding: 0 1px }
 .flow-step.active {
   background: var(--accent-soft);
-  color: var(--accent);
+  color: var(--clay);
   border-color: var(--accent-soft-strong);
   font-weight: 600;
 }
 
+@media (max-width: 900px) {
+  .sidebar { transform: translateX(-240px); position:fixed; transition: transform .3s }
+  .sidebar.open { transform: translateX(0) }
+  .main-content { margin-left:0 }
+  #sidebar-toggle { display:flex }
+}
 @media (max-width: 768px) {
   .hero { padding: 2.5rem 1.5rem }
-  .nav-links { display: none }
   .card-grid { grid-template-columns: 1fr }
   .term-grid { grid-template-columns: 1fr }
   .container { padding: 2rem 1rem }
   .section-title { font-size: 1.4rem }
 }
+
+/* ─── HERO BADGE / SUBTITLE ──────────────────────────── */
+.hero-badge {
+  display: inline-flex; align-items: center; gap: 6px;
+  background: rgba(217,119,87,0.12);
+  border: 1px solid rgba(217,119,87,0.25);
+  color: var(--clay-d);
+  font-size: 11px; font-weight: 700; letter-spacing: .1em;
+  text-transform: uppercase; padding: 4px 12px;
+  border-radius: var(--radius-pill); margin-bottom: 16px;
+  font-family: var(--font-mono);
+}
+.hero-subtitle {
+  font-family: var(--font-serif);
+  font-style: italic;
+  font-size: clamp(14px, 2vw, 17px);
+  color: var(--sky); margin-bottom: 1.5rem;
+  max-width: 560px; margin-left: auto; margin-right: auto;
+  line-height: 1.6;
+}
+
+/* ─── QUICK CARDS ─────────────────────────────────────── */
+.quick-cards {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(240px,1fr));
+  gap: 12px; margin-bottom: 1.5rem;
+}
+.quick-card {
+  background: var(--surface); border: 1px solid var(--border);
+  border-radius: var(--radius-panel); padding: 18px 20px;
+  box-shadow: var(--shadow-xs); transition: box-shadow .2s;
+}
+.quick-card:hover { box-shadow: var(--shadow-sm) }
+.quick-card-label {
+  font-family: var(--font-mono); font-size: 10px; font-weight: 700;
+  letter-spacing: .1em; text-transform: uppercase;
+  color: var(--clay); margin-bottom: 8px;
+}
+.quick-card p { font-size: .875rem; color: var(--fg-muted); line-height: 1.6 }
+
+/* ─── PITCH BLOCK ─────────────────────────────────────── */
+.pitch-block {
+  background: var(--surface); border: 1px solid var(--border);
+  border-radius: var(--radius-panel); padding: 22px 26px;
+  margin-bottom: 14px; box-shadow: var(--shadow-xs);
+}
+.pitch-block-title {
+  font-family: var(--font-mono); font-size: 11px; font-weight: 700;
+  letter-spacing: .08em; text-transform: uppercase;
+  color: var(--clay); margin-bottom: 12px;
+}
+.pitch-text {
+  font-size: 15px; color: var(--fg); line-height: 1.75;
+  font-style: italic; font-family: var(--font-serif);
+  margin-bottom: .75rem;
+}
+.pitch-text:last-of-type { margin-bottom: 0 }
+.pitch-duration {
+  display: inline-block; margin-top: 10px;
+  font-size: 11px; color: var(--fg-muted);
+  font-family: var(--font-mono); background: var(--surface-2);
+  padding: 2px 8px; border-radius: var(--radius-pill);
+}
+
+/* ─── ANALOGY BLOCK ───────────────────────────────────── */
+.analogy-label {
+  display: inline-flex; align-items: center; gap: 4px;
+  font-size: 11px; font-weight: 700; font-family: var(--font-mono);
+  color: var(--olive); background: rgba(120,140,93,0.12);
+  border: 1px solid rgba(120,140,93,0.3);
+  padding: 2px 8px; border-radius: var(--radius-pill);
+  margin-bottom: 6px; margin-right: 6px;
+}
+.analogy-block {
+  background: rgba(120,140,93,0.07);
+  border-left: 3px solid var(--olive);
+  border-radius: 0 var(--radius-row) var(--radius-row) 0;
+  padding: 10px 14px; margin: 10px 0 14px;
+  font-style: italic; font-size: .9rem;
+  color: var(--fg-muted); line-height: 1.65;
+}
+
+/* ─── SECTION DESC ────────────────────────────────────── */
+.section-desc {
+  font-size: .875rem; color: var(--fg-muted);
+  margin-top: 4px; font-style: italic;
+}
+
+/* ─── MOBILE SIDEBAR TOGGLE & OVERLAY ────────────────── */
+#sidebar-toggle {
+  display: none; position: fixed; top: 14px; left: 14px;
+  z-index: 200; width: 38px; height: 38px;
+  border-radius: var(--radius-row); border: 1px solid var(--border);
+  background: var(--surface); cursor: pointer;
+  align-items: center; justify-content: center;
+  font-size: 18px; color: var(--fg);
+  box-shadow: var(--shadow-sm);
+}
+#overlay {
+  display: none; position: fixed; inset: 0;
+  background: rgba(20,20,19,0.45); z-index: 90;
+}
+#overlay.visible { display: block }
+@media print { .sidebar { display:none } .main-content { margin-left:0 } .hero { page-break-after:always } }
 </style>
 </head>
 <body>
 
-<nav>
-  <div class="nav-inner">
-    <span class="nav-brand">SAST Security Copilot &mdash; Faculty VIVA</span>
-    <div class="nav-links">
-      <a href="#overview">Overview</a>
-      <a href="#motivation">Motivation</a>
-      <a href="#techstack">Tech Stack</a>
-      <a href="#diagrams">Diagrams</a>
-      <a href="#ai">AI Questions</a>
-      <a href="#security">Security</a>
-      <a href="#business">Business</a>
-      <a href="#testing">Testing</a>
-      <a href="#future">Future Scope</a>
-      <a href="#team">Team</a>
-      <a href="#survival">Survival Tips</a>
+<div id="overlay" onclick="closeSidebar()"></div>
+<button id="sidebar-toggle" onclick="toggleSidebar()" aria-label="Toggle menu">☰</button>
+
+<aside class="sidebar" id="sidebar">
+  <div class="sidebar-brand">SAST Copilot — Faculty VIVA</div>
+  <nav class="sidebar-links">
+    <a href="#pitches">Pitches</a>
+    <a href="#overview">Overview</a>
+    <a href="#motivation">Motivation</a>
+    <a href="#techstack">Tech Stack</a>
+    <a href="#diagrams">Diagrams</a>
+    <a href="#ai">AI Questions</a>
+    <a href="#security">Security</a>
+    <a href="#business">Business</a>
+    <a href="#testing">Testing</a>
+    <a href="#future">Future Scope</a>
+    <a href="#team">Team</a>
+    <a href="#survival">Survival Tips</a>
+    <div style="padding:6px 12px 2px;font-size:10px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--fg-faint)">Tags</div>
+    <div style="padding:4px 12px 10px;display:flex;flex-direction:column;gap:4px">
+      <span class="fac-tag snobby" style="align-self:flex-start">snobby</span>
+      <span class="fac-tag confused" style="align-self:flex-start">confused</span>
+      <span class="fac-tag trap" style="align-self:flex-start">trap</span>
     </div>
+  </nav>
+  <div class="sidebar-footer">
     <button class="theme-btn" onclick="toggleTheme()">&#9788; Light</button>
   </div>
-</nav>
+</aside>
 
+<div class="main-content">
 <div class="container">
 
   <div class="hero">
+    <div class="hero-badge">&#9650; Faculty VIVA Preparation Guide</div>
     <h1>Faculty VIVA <span>Survival Guide</span></h1>
-    <p>Every question a non-technical, occasionally snobby faculty member will ask — and exactly how to answer them without panicking. No deep tech required.</p>
+    <p class="hero-subtitle">Every question a non-technical, occasionally snobby faculty member will ask — and exactly how to answer, without panicking or bluffing.</p>
+    <p>SAST Security Copilot &mdash; AI-powered static code analysis, GitHub integration, real-time scanning dashboard.</p>
     <div class="badge-row">
       <span class="badge">Management POV</span>
       <span class="badge">Non-technical Faculty</span>
@@ -515,6 +670,44 @@ tr:hover td { background: var(--surface-2) }
     <strong>How to read this guide:</strong>
     <p>Every accordion shows the faculty question with a tag: <span class="fac-tag snobby">snobby</span> (testing your confidence), <span class="fac-tag confused">confused</span> (genuine misunderstanding), or <span class="fac-tag trap">trap</span> (trying to catch you out). The answer inside is what you actually say — written the way you'd speak it, not like a textbook.</p>
   </div>
+
+  <!-- ═══════════════════════════════════════════════════════
+       PITCHES — Quick-fire scripts
+  ═══════════════════════════════════════════════════════ -->
+  <section id="pitches">
+    <h2 class="section-title"><span class="num">00</span> Your Opening Pitches</h2>
+    <p class="section-desc" style="margin-bottom:1.5rem">Faculty always opens with "tell me about your project." Have these three versions ready. The 30-second one is non-negotiable — memorise it.</p>
+
+    <div class="quick-cards">
+      <div class="quick-card">
+        <div class="quick-card-label">One-Sentence Pitch</div>
+        <p>"An AI-powered tool that automatically scans software source code for security vulnerabilities and explains each issue to the developer in plain English — before the software is released."</p>
+      </div>
+      <div class="quick-card">
+        <div class="quick-card-label">Explain Like I'm 5</div>
+        <p>Imagine a very smart spell-checker, but instead of checking spelling, it reads code and says "this part is dangerous — a hacker could use it to steal passwords." Then it tells you exactly how to fix it.</p>
+      </div>
+      <div class="quick-card">
+        <div class="quick-card-label">The Core Analogy</div>
+        <p>SAST is like a building inspector who visits before construction is finished. They read the blueprints and spot structural flaws — before the building opens and before anyone gets hurt. Our AI explains the inspection report in simple language.</p>
+      </div>
+    </div>
+
+    <div class="pitch-block">
+      <div class="pitch-block-title">30-Second Pitch — Memorise This</div>
+      <p class="pitch-text">"Our project is an AI-powered security tool for developers. When you write code and push it to GitHub, there are often security mistakes hidden in it — things hackers can exploit. Our tool automatically scans that code, finds those mistakes, and then uses AI to explain what each problem is, why it's dangerous, and exactly how to fix it. It runs as a web application — you log in with GitHub, submit your repository, and in seconds you get a prioritised list of security issues with plain-English explanations. No security expertise required to use it."</p>
+      <span class="pitch-duration">~30 seconds at normal pace</span>
+    </div>
+
+    <div class="pitch-block">
+      <div class="pitch-block-title">2-Minute Full Explanation</div>
+      <p class="pitch-text">"Software security is one of the most critical and most neglected areas of modern development. Every application has code — and that code can have flaws that attackers exploit to steal data, crash systems, or take over accounts. The IBM Cost of Data Breach Report 2024 puts the average breach at $4.88 million. Most of those breaches exploit vulnerabilities that already existed in the code before it went live.</p>
+      <p class="pitch-text">The standard solution is security testing — but the professional tools are complex, expensive, and produce technical reports that only security specialists can interpret. A developer at a startup or a student building an application has no practical way to know if their code is secure.</p>
+      <p class="pitch-text">Our project solves this with a two-layer approach. The first layer is a SAST engine — Static Application Security Testing — which reads the source code without running it and identifies patterns that match known vulnerability categories defined by OWASP and CWE, the globally recognised security standards bodies. The second layer is AI enrichment: for every vulnerability found, we send the details to a large language model (via NVIDIA NIM, Google Gemini, or OpenAI — in a priority fallback chain) which generates a plain-English explanation, a risk assessment, and a remediation code snippet.</p>
+      <p class="pitch-text">The whole system is a web application. Developers log in via GitHub OAuth, submit a repository link or zip file, and see real-time scan progress in a dashboard. Results are stored permanently so teams can track their security posture over time. Everything runs in Docker containers — meaning it deploys anywhere with a single command."</p>
+      <span class="pitch-duration">~2 minutes at normal pace</span>
+    </div>
+  </section>
 
   <!-- ═══════════════════════════════════════════════════════
        §1  OVERVIEW & ONE-LINERS
@@ -670,7 +863,10 @@ tr:hover td { background: var(--surface-2) }
         </div>
       </div>
       <div class="qa-a">
-        They serve completely different purposes. Think of <strong>PostgreSQL</strong> as a filing cabinet — it permanently stores everything: user accounts, scan results, vulnerability reports. It is the long-term record. <strong>Redis</strong> is like a whiteboard — it holds temporary, fast-access information: the job queue of pending scans, session tokens, rate-limit counters. It is extremely fast but stores nothing permanently. Using the right tool for each job is a standard industry practice — the same approach used by Twitter, GitHub, and most large platforms.
+        They serve completely different purposes.
+        <span class="analogy-label">≈ analogy</span>
+        <div class="analogy-block">PostgreSQL is a filing cabinet — permanent, organised, searchable storage. Redis is a whiteboard — fast, temporary, gets wiped when you're done. You wouldn't store a legal contract on a whiteboard, and you wouldn't look up today's queue of tasks in a filing cabinet.</div>
+        <strong>PostgreSQL</strong> permanently stores everything: user accounts, scan results, vulnerability reports. <strong>Redis</strong> holds temporary, fast-access data: pending scan jobs, session tokens, rate-limit counters. It is extremely fast but stores nothing permanently. Using the right tool for each job is standard practice — the same approach used by Twitter, GitHub, and most large platforms.
       </div>
     </div>
 
@@ -682,7 +878,10 @@ tr:hover td { background: var(--surface-2) }
         </div>
       </div>
       <div class="qa-a">
-        PostgreSQL is the actual database — the storage engine. <strong>Prisma</strong> is an ORM (Object Relational Mapper) — it is a layer of code that lets our application talk to PostgreSQL using JavaScript objects instead of raw SQL queries. Think of PostgreSQL as the actual bank vault, and Prisma as the banker who knows the vault's layout and handles all the paperwork for us. It also auto-generates the database tables from our schema definition, which reduces errors and speeds up development.
+        PostgreSQL is the actual database — the storage engine. <strong>Prisma</strong> is an ORM (Object Relational Mapper).
+        <span class="analogy-label">≈ analogy</span>
+        <div class="analogy-block">PostgreSQL is the bank vault. Prisma is the banker — the intermediary who knows the vault's layout and handles all the paperwork. You tell the banker "store this" or "retrieve that", and they handle the vault mechanics. Without the banker, you'd have to memorise every combination and procedure yourself.</div>
+        Prisma lets our application talk to PostgreSQL using JavaScript objects instead of raw SQL queries. It also auto-generates the database tables from our schema definition, reducing errors and speeding up development.
       </div>
     </div>
 
@@ -706,7 +905,10 @@ tr:hover td { background: var(--surface-2) }
         </div>
       </div>
       <div class="qa-a">
-        You can — but it would only work on the one computer where you set it up. <strong>Docker</strong> packages the entire application — code, settings, libraries, database — into a self-contained container. Think of it like a shipping container: the goods inside are the same whether the ship is sailing in India or Germany. Docker makes our application run identically on any computer, any server, any cloud provider. It eliminates "it works on my machine" problems. For a project with multiple components (backend server, database, job queue) that need to work together, Docker Compose lets us start everything with a single command.
+        You can — but it would only work on the one computer where you set it up.
+        <span class="analogy-label">≈ analogy</span>
+        <div class="analogy-block">Docker is like a shipping container. Before containers existed, every cargo ship had to be specially loaded for each port. A shipping container means you pack it once — and every port handles it the same way, regardless of ship or country. Docker does this for software: pack once, run anywhere.</div>
+        <strong>Docker</strong> packages the entire application — code, settings, libraries, database — into a self-contained unit. It eliminates the "it works on my machine" problem. Our project has three components (backend, database, job queue) that need to work together — Docker Compose starts all of them with a single command: <code>docker compose up</code>. This is industry-standard practice; virtually every cloud deployment uses containers.
       </div>
     </div>
 
@@ -1238,6 +1440,19 @@ tr:hover td { background: var(--surface-2) }
 </div>
 
 <script>
+
+function toggleSidebar() {
+  var s = document.getElementById('sidebar');
+  var o = document.getElementById('overlay');
+  s.classList.toggle('open');
+  o.classList.toggle('visible');
+}
+function closeSidebar() {
+  var s = document.getElementById('sidebar');
+  var o = document.getElementById('overlay');
+  s.classList.remove('open');
+  o.classList.remove('visible');
+}
 function toggleTheme() {
   var html = document.documentElement;
   var btn  = document.querySelector('.theme-btn');
@@ -1258,6 +1473,31 @@ document.querySelectorAll('.qa-q').forEach(function(q) {
     block.classList.toggle('open');
   });
 });
+// Sidebar scroll-spy
+(function() {
+  var links = document.querySelectorAll('.sidebar-links a');
+  var sections = Array.from(links).map(function(a) {
+    var id = a.getAttribute('href').slice(1);
+    return document.getElementById(id);
+  }).filter(Boolean);
+
+  function onScroll() {
+    var scrollY = window.scrollY + 80;
+    var active = null;
+    sections.forEach(function(sec) {
+      if (sec.offsetTop <= scrollY) active = sec;
+    });
+    links.forEach(function(a) {
+      a.classList.remove('active');
+      if (active && a.getAttribute('href') === '#' + active.id) {
+        a.classList.add('active');
+      }
+    });
+  }
+  window.addEventListener('scroll', onScroll, { passive: true });
+  onScroll();
+})();
 </script>
+</div><!-- /main-content -->
 </body>
 </html>

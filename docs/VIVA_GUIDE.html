@@ -13,123 +13,109 @@
 @import url('https://cdn.jsdelivr.net/npm/geist@1.3.0/dist/fonts/geist-sans/style.css');
 @import url('https://cdn.jsdelivr.net/npm/geist@1.3.0/dist/fonts/geist-mono/style.css');
 
-/* ── SecNode Console Design Tokens ──────────────────── */
+/* ── Design Tokens ──────────────────────────────── */
 :root {
-  /* Type */
-  --font-sans: "Geist", ui-sans-serif, system-ui, -apple-system, "Segoe UI", Helvetica, Arial, sans-serif;
-  --font-mono: "Geist Mono", ui-monospace, "SF Mono", Menlo, Consolas, monospace;
-  --font-serif: "Newsreader", "Source Serif 4", Georgia, serif;
+  --font-sans:  "Geist", system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+  --font-mono:  "Geist Mono", ui-monospace, "SF Mono", Menlo, Consolas, monospace;
+  --font-serif: "Newsreader", ui-serif, Georgia, "Times New Roman", serif;
 
-  /* Type scale */
   --text-2xs:11px; --text-xs:12px; --text-sm:13px; --text-base:14px;
   --text-md:15px;  --text-lg:17px; --text-xl:20px; --text-2xl:24px;
   --text-3xl:30px; --text-4xl:38px; --text-5xl:48px;
 
-  /* Spacing */
   --space-1:4px;  --space-2:8px;  --space-3:12px; --space-4:16px;
   --space-5:20px; --space-6:24px; --space-8:32px; --space-10:40px;
   --space-12:48px; --space-16:64px;
 
-  /* Radius */
-  --radius-xs:4px; --radius-sm:6px; --radius-md:8px; --radius-lg:10px;
-  --radius-xl:14px; --radius-2xl:18px;
-  --radius:10px;
+  --radius-row:8px; --radius-panel:12px; --radius-pill:9999px;
+  --radius-xs:4px; --radius-sm:6px; --radius-md:8px;
+  --radius-lg:12px; --radius-xl:14px; --radius-2xl:18px; --radius:12px;
 
-  /* Shell */
   --sidebar-w:244px; --topbar-h:52px;
 
-  /* Severity — perceptually balanced, intentionally desaturated */
-  --sev-critical:   oklch(0.55 0.18 25);  --sev-critical-bg: oklch(0.55 0.18 25 / 0.10);
-  --sev-high:       oklch(0.66 0.15 50);  --sev-high-bg:     oklch(0.66 0.15 50 / 0.10);
-  --sev-medium:     oklch(0.78 0.12 85);  --sev-medium-bg:   oklch(0.78 0.12 85 / 0.12);
-  --sev-low:        oklch(0.62 0.07 220); --sev-low-bg:      oklch(0.62 0.07 220 / 0.10);
-  --sev-info:       oklch(0.55 0.10 250); --sev-info-bg:     oklch(0.55 0.10 250 / 0.10);
-  --sev-ok:         oklch(0.58 0.09 160); --sev-ok-bg:       oklch(0.58 0.09 160 / 0.10);
+  /* Severity — light mode defaults */
+  --sev-critical:#B04A3F; --sev-critical-bg:rgba(176,74,63,0.10);
+  --sev-high:#C47030;     --sev-high-bg:rgba(196,112,48,0.10);
+  --sev-medium:#B59F3B;   --sev-medium-bg:rgba(181,159,59,0.12);
+  --sev-low:#6A8CAF;      --sev-low-bg:rgba(106,140,175,0.10);
+  --sev-info:#6A8CAF;     --sev-info-bg:rgba(106,140,175,0.10);
+  --sev-ok:#788C5D;       --sev-ok-bg:rgba(120,140,93,0.10);
 }
 
-/* ── Light theme ─────────────────────────────────────── */
+/* ── Light theme ──────────────────────────────────── */
 :root,
 .theme-light {
-  /* warm paper — chroma pushed to 0.014 so warmth is visible */
-  --bg:            oklch(0.987 0.014 82);
-  --bg-deep:       oklch(0.970 0.016 82);
-  --surface:       oklch(1.000 0.008 82);
-  --surface-2:     oklch(0.978 0.016 82);
-  --surface-3:     oklch(0.964 0.018 82);
-  --surface-inset: oklch(0.948 0.018 82);
+  --ivory:#FAF9F5; --paper:#FFFFFF;
+  --slate:#141413; --g700:#3D3D3A; --g500:#87867F;
+  --g100:#F0EEE6;  --g200:#E6E3DA; --g300:#D1CFC5;
+  --clay:#D97757;  --clay-d:#B85C3E; --oat:#E3DACC;
+  --olive:#788C5D; --rust:#B04A3F;  --sky:#6A8CAF;
 
-  --fg:        oklch(0.18 0.016 75);
-  --fg-strong: oklch(0.09 0.012 75);
-  --fg-muted:  oklch(0.44 0.010 75);
-  --fg-subtle: oklch(0.60 0.008 75);
-  --fg-faint:  oklch(0.76 0.006 75);
+  --bg:var(--ivory);        --bg-deep:#F0EDE5;
+  --surface:var(--paper);   --surface-2:var(--g100);
+  --surface-3:var(--g200);  --surface-inset:#EAE7DE;
 
-  --border:        oklch(0.90 0.012 82);
-  --border-strong: oklch(0.82 0.014 82);
-  --hairline:      oklch(0.93 0.010 82);
+  --fg:var(--slate);        --fg-strong:#0A0A09;
+  --fg-muted:var(--g500);   --fg-subtle:var(--g700);
+  --fg-faint:var(--g300);
 
-  --accent:             oklch(0.45 0.15 255);
-  --accent-fg:          oklch(1 0 0);
-  --accent-soft:        oklch(0.45 0.15 255 / 0.09);
-  --accent-soft-strong: oklch(0.45 0.15 255 / 0.16);
+  --border:var(--g300);     --border-strong:var(--g500);
+  --hairline:var(--g200);
 
-  --shadow-xs: 0 1px 2px oklch(0.18 0.016 75 / 0.06);
-  --shadow-sm: 0 1px 3px oklch(0.18 0.016 75 / 0.06), 0 2px 6px oklch(0.18 0.016 75 / 0.04);
-  --shadow-md: 0 2px 4px oklch(0.18 0.016 75 / 0.06), 0 8px 24px oklch(0.18 0.016 75 / 0.08);
-  --shadow-lg: 0 6px 12px oklch(0.18 0.016 75 / 0.08), 0 20px 48px oklch(0.18 0.016 75 / 0.12);
+  --accent:var(--clay);            --accent-fg:#FFFFFF;
+  --accent-soft:rgba(217,119,87,0.10);
+  --accent-soft-strong:rgba(217,119,87,0.18);
 
-  --sidebar-bg:     oklch(0.972 0.016 82);
-  --sidebar-fg:     oklch(0.18 0.016 75);
-  --sidebar-border: oklch(0.90 0.012 82);
-  --nav-bg:         oklch(0.987 0.014 82 / 0.92);
+  --shadow-xs:0 1px 2px rgba(20,20,19,0.06);
+  --shadow-sm:0 1px 3px rgba(20,20,19,0.06),0 2px 6px rgba(20,20,19,0.04);
+  --shadow-md:0 2px 4px rgba(20,20,19,0.06),0 8px 24px rgba(20,20,19,0.08);
+  --shadow-lg:0 6px 12px rgba(20,20,19,0.08),0 20px 48px rgba(20,20,19,0.12);
 
-  color-scheme: light;
+  --sidebar-bg:var(--g100);    --sidebar-fg:var(--slate);
+  --sidebar-border:var(--g300); --nav-bg:rgba(250,249,245,0.92);
+
+  color-scheme:light;
 }
 
-/* ── Dark theme ──────────────────────────────────────── */
+/* ── Dark theme ───────────────────────────────────── */
 .theme-dark {
-  /* warm charcoal — chroma pushed to 0.016 */
-  --bg:            oklch(0.148 0.016 78);
-  --bg-deep:       oklch(0.118 0.016 78);
-  --surface:       oklch(0.188 0.015 78);
-  --surface-2:     oklch(0.210 0.014 78);
-  --surface-3:     oklch(0.232 0.013 78);
-  --surface-inset: oklch(0.168 0.015 78);
+  --ivory:#1C1B18; --paper:#242320;
+  --slate:#EDEBE3; --g700:#B8B5AE; --g500:#6B6A64;
+  --g100:#2B2A27;  --g200:#343330; --g300:#3F3E3B;
+  --clay:#E08B6A;  --clay-d:#D97757;
+  --olive:#8FA86A; --rust:#C05A4E; --sky:#7FA3C5;
 
-  --fg:        oklch(0.955 0.010 82);
-  --fg-strong: oklch(0.990 0.005 82);
-  --fg-muted:  oklch(0.680 0.010 78);
-  --fg-subtle: oklch(0.520 0.010 78);
-  --fg-faint:  oklch(0.380 0.010 78);
+  --bg:var(--ivory);        --bg-deep:#151411;
+  --surface:var(--paper);   --surface-2:var(--g100);
+  --surface-3:var(--g200);  --surface-inset:#1E1D1A;
 
-  --border:        oklch(0.290 0.014 78);
-  --border-strong: oklch(0.370 0.014 78);
-  --hairline:      oklch(0.240 0.013 78);
+  --fg:var(--slate);        --fg-strong:#F5F3EC;
+  --fg-muted:var(--g500);   --fg-subtle:var(--g700);
+  --fg-faint:var(--g300);
 
-  --accent:             oklch(0.74 0.14 252);
-  --accent-fg:          oklch(0.10 0.01 252);
-  --accent-soft:        oklch(0.74 0.14 252 / 0.13);
-  --accent-soft-strong: oklch(0.74 0.14 252 / 0.22);
+  --border:var(--g300);     --border-strong:#55544F;
+  --hairline:var(--g200);
 
-  --shadow-xs: 0 1px 2px oklch(0 0 0 / 0.50);
-  --shadow-sm: 0 2px 4px oklch(0 0 0 / 0.40), 0 1px 2px oklch(0 0 0 / 0.30);
-  --shadow-md: 0 2px 4px oklch(0 0 0 / 0.40), 0 10px 24px oklch(0 0 0 / 0.38);
-  --shadow-lg: 0 8px 16px oklch(0 0 0 / 0.45), 0 28px 56px oklch(0 0 0 / 0.55);
+  --accent:var(--clay);            --accent-fg:#1C1B18;
+  --accent-soft:rgba(224,139,106,0.13);
+  --accent-soft-strong:rgba(224,139,106,0.22);
 
-  --sidebar-bg:     oklch(0.128 0.015 78);
-  --sidebar-fg:     oklch(0.920 0.008 82);
-  --sidebar-border: oklch(0.240 0.013 78);
-  --nav-bg:         oklch(0.148 0.016 78 / 0.92);
+  --shadow-xs:0 1px 2px rgba(0,0,0,0.50);
+  --shadow-sm:0 2px 4px rgba(0,0,0,0.40),0 1px 2px rgba(0,0,0,0.30);
+  --shadow-md:0 2px 4px rgba(0,0,0,0.40),0 10px 24px rgba(0,0,0,0.38);
+  --shadow-lg:0 8px 16px rgba(0,0,0,0.45),0 28px 56px rgba(0,0,0,0.55);
 
-  /* Severity — brighter for dark bg */
-  --sev-critical:   oklch(0.72 0.19 25);  --sev-critical-bg: oklch(0.72 0.19 25 / 0.15);
-  --sev-high:       oklch(0.80 0.16 55);  --sev-high-bg:     oklch(0.80 0.16 55 / 0.14);
-  --sev-medium:     oklch(0.86 0.13 85);  --sev-medium-bg:   oklch(0.86 0.13 85 / 0.14);
-  --sev-low:        oklch(0.76 0.09 225); --sev-low-bg:      oklch(0.76 0.09 225 / 0.14);
-  --sev-info:       oklch(0.76 0.11 250); --sev-info-bg:     oklch(0.76 0.11 250 / 0.14);
-  --sev-ok:         oklch(0.74 0.10 160); --sev-ok-bg:       oklch(0.74 0.10 160 / 0.14);
+  --sidebar-bg:var(--g100);    --sidebar-fg:var(--slate);
+  --sidebar-border:var(--g300); --nav-bg:rgba(28,27,24,0.92);
 
-  color-scheme: dark;
+  --sev-critical:#E07070; --sev-critical-bg:rgba(224,112,112,0.15);
+  --sev-high:#E08B6A;     --sev-high-bg:rgba(224,139,106,0.14);
+  --sev-medium:#D4B94A;   --sev-medium-bg:rgba(212,185,74,0.14);
+  --sev-low:#7FA3C5;      --sev-low-bg:rgba(127,163,197,0.14);
+  --sev-info:#7FA3C5;     --sev-info-bg:rgba(127,163,197,0.14);
+  --sev-ok:#8FA86A;       --sev-ok-bg:rgba(143,168,106,0.14);
+
+  color-scheme:dark;
 }
 
 /* ═══════════════════════════════════════════════════════
@@ -151,49 +137,64 @@ body {
 }
 
 /* ═══════════════════════════════════════════════════════
-   NAV
+   SIDEBAR
 ═══════════════════════════════════════════════════════ */
-nav {
-  position: sticky; top: 0; z-index: 100;
-  background: var(--nav-bg);
-  backdrop-filter: blur(14px) saturate(160%);
-  -webkit-backdrop-filter: blur(14px) saturate(160%);
-  border-bottom: 1px solid var(--hairline);
-  padding: 0 2rem;
-  height: 56px;
+body { display:flex; min-height:100vh }
+
+.sidebar {
+  position: fixed; top:0; left:0;
+  width: var(--sidebar-w); height:100vh;
+  background: var(--sidebar-bg);
+  border-right: 1px solid var(--sidebar-border);
+  display: flex; flex-direction:column;
+  z-index: 100;
+  overflow: hidden;
 }
-.nav-inner {
-  max-width: 1160px; margin: 0 auto;
-  display: flex; align-items: center; justify-content: space-between;
-  height: 56px; gap: 1rem;
-}
-.nav-brand {
-  font-size: 13px; font-weight: 650;
+.sidebar-brand {
+  padding: 1.1rem 1rem .9rem;
+  font-size: 12px; font-weight: 700;
   color: var(--fg-strong);
-  letter-spacing: -0.015em;
+  letter-spacing: -0.01em;
+  border-bottom: 1px solid var(--hairline);
+  flex-shrink: 0;
   white-space: nowrap;
+  overflow: hidden; text-overflow: ellipsis;
 }
-.nav-links { display:flex; gap:.05rem; flex-wrap:wrap }
-.nav-links a {
+.sidebar-links {
+  flex: 1;
+  padding: .4rem 0;
+  overflow-y: auto;
+  scrollbar-width: thin;
+  scrollbar-color: var(--g300) transparent;
+}
+.sidebar-links a {
+  display: block;
   color: var(--fg-subtle);
   text-decoration: none;
-  font-size: 13px;
-  padding: .3rem .6rem;
-  border-radius: 6px;
-  transition: background .12s, color .12s;
+  font-size: 12.5px;
+  padding: .4rem 1rem;
+  border-left: 2px solid transparent;
+  transition: background .12s, color .12s, border-color .12s;
   letter-spacing: -0.005em;
+  line-height: 1.3;
 }
-.nav-links a:hover { background: var(--surface-2); color: var(--fg) }
+.sidebar-links a:hover { background: var(--surface-3); color: var(--fg); border-left-color: var(--clay) }
+.sidebar-links a.active { background: var(--surface-3); color: var(--fg-strong); border-left-color: var(--clay); font-weight: 600 }
+.sidebar-footer {
+  padding: .7rem .85rem;
+  border-top: 1px solid var(--hairline);
+  flex-shrink: 0;
+}
 .theme-btn {
   background: var(--surface);
   border: 1px solid var(--border);
   color: var(--fg-muted);
   cursor: pointer;
-  padding: 5px 12px;
+  padding: 5px 10px;
   border-radius: 7px;
   font-size: 12px; font-weight: 500;
-  display: flex; align-items: center; gap: .4rem;
-  transition: .12s; white-space: nowrap;
+  display: flex; align-items: center; justify-content: center; gap: .4rem;
+  transition: .12s; width: 100%;
   font-family: inherit;
   box-shadow: var(--shadow-xs);
 }
@@ -202,6 +203,7 @@ nav {
 /* ═══════════════════════════════════════════════════════
    LAYOUT
 ═══════════════════════════════════════════════════════ */
+.main-content { margin-left: var(--sidebar-w); flex:1; min-width:0 }
 .container { max-width: 1100px; margin: 0 auto; padding: 3rem 2rem }
 
 /* ═══════════════════════════════════════════════════════
@@ -221,8 +223,8 @@ nav {
   content: '';
   position: absolute; inset: 0; pointer-events: none;
   background:
-    radial-gradient(ellipse 90% 55% at 50% -5%, oklch(0.78 0.12 85 / 0.18), transparent 70%),
-    radial-gradient(ellipse 50% 40% at 100% 110%, oklch(0.45 0.15 255 / 0.10), transparent 60%);
+    radial-gradient(ellipse 90% 55% at 50% -5%, rgba(227,218,204,0.45), transparent 70%),
+    radial-gradient(ellipse 50% 40% at 100% 110%, rgba(217,119,87,0.12), transparent 60%);
 }
 .hero h1 {
   font-family: var(--font-serif);
@@ -538,46 +540,53 @@ tr:hover td { background: var(--surface-2) }
 /* ═══════════════════════════════════════════════════════
    RESPONSIVE
 ═══════════════════════════════════════════════════════ */
+@media (max-width: 900px) {
+  .sidebar { position:static; width:100%; height:auto; flex-direction:row; flex-shrink:0; overflow:visible }
+  .sidebar-brand { border-bottom:none; border-right:1px solid var(--hairline) }
+  .sidebar-links { display:none }
+  .sidebar-footer { margin-left:auto; padding:.5rem .75rem }
+  .main-content { margin-left:0 }
+}
 @media (max-width: 768px) {
   .hero { padding: 2.5rem 1.5rem }
-  .nav-links { display: none }
   .card-grid { grid-template-columns: 1fr }
   .term-grid { grid-template-columns: 1fr }
   .container { padding: 2rem 1rem }
   .section-title { font-size: 1.4rem }
   .diagram-box > .mermaid { padding: 1rem }
 }
-@media print { nav { display:none } .hero { page-break-after:always } }
+@media print { .sidebar { display:none } .main-content { margin-left:0 } .hero { page-break-after:always } }
 </style>
 </head>
 <body>
 
-<nav>
-  <div class="nav-inner">
-    <div class="nav-brand">🛡️ SAST Copilot</div>
-    <div class="nav-links">
-      <a href="#cybersec">Cybersec Basics</a>
-      <a href="#jargon">Jargon</a>
-      <a href="#project">Project</a>
-      <a href="#arch">Architecture</a>
-      <a href="#diagrams">Diagrams</a>
-      <a href="#tech">Tech Stack</a>
-      <a href="#security">Security</a>
-      <a href="#ai">AI Engine</a>
-      <a href="#api">API</a>
-      <a href="#db">Database</a>
-      <a href="#cvss">CVSS</a>
-      <a href="#secure-code">Secure Code</a>
-      <a href="#comparison">SAST vs DAST</a>
-      <a href="#glossary">Glossary</a>
-      <a href="#whynot">Why Not X</a>
-      <a href="#dataflow">Data Flow</a>
-      <a href="#viva">VIVA Q&amp;A</a>
-    </div>
-    <button class="theme-btn" onclick="toggleTheme()">☀️ Light</button>
+<aside class="sidebar">
+  <div class="sidebar-brand">🛡️ SAST Copilot — VIVA</div>
+  <nav class="sidebar-links">
+    <a href="#cybersec">Cybersec Basics</a>
+    <a href="#jargon">Jargon</a>
+    <a href="#project">Project</a>
+    <a href="#arch">Architecture</a>
+    <a href="#diagrams">Diagrams</a>
+    <a href="#tech">Tech Stack</a>
+    <a href="#security">Security</a>
+    <a href="#ai">AI Engine</a>
+    <a href="#api">API</a>
+    <a href="#db">Database</a>
+    <a href="#cvss">CVSS</a>
+    <a href="#secure-code">Secure Code</a>
+    <a href="#comparison">SAST vs DAST</a>
+    <a href="#glossary">Glossary</a>
+    <a href="#whynot">Why Not X</a>
+    <a href="#dataflow">Data Flow</a>
+    <a href="#viva">VIVA Q&amp;A</a>
+  </nav>
+  <div class="sidebar-footer">
+    <button class="theme-btn" onclick="toggleTheme()">&#9788; Light</button>
   </div>
-</nav>
+</aside>
 
+<div class="main-content">
 <div class="container">
 
 <!-- HERO -->
@@ -2670,6 +2679,7 @@ const riskScore = Math.min((raw / maxPossible) * 100, 100);
 </div>
 
 </div><!-- /container -->
+</div><!-- /main-content -->
 
 <script>
 // Theme toggle
@@ -2714,6 +2724,30 @@ mermaid.initialize({
   class: { useMaxWidth: true },
   state: { useMaxWidth: true }
 });
+// Sidebar scroll-spy
+(function() {
+  var links = document.querySelectorAll('.sidebar-links a');
+  var sections = Array.from(links).map(function(a) {
+    var id = a.getAttribute('href').slice(1);
+    return document.getElementById(id);
+  }).filter(Boolean);
+
+  function onScroll() {
+    var scrollY = window.scrollY + 80;
+    var active = null;
+    sections.forEach(function(sec) {
+      if (sec.offsetTop <= scrollY) active = sec;
+    });
+    links.forEach(function(a) {
+      a.classList.remove('active');
+      if (active && a.getAttribute('href') === '#' + active.id) {
+        a.classList.add('active');
+      }
+    });
+  }
+  window.addEventListener('scroll', onScroll, { passive: true });
+  onScroll();
+})();
 </script>
 </body>
 </html>
