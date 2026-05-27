@@ -1,112 +1,130 @@
-@import url('https://cdn.jsdelivr.net/npm/geist@1.3.0/dist/fonts/geist-sans/style.css');
-@import url('https://cdn.jsdelivr.net/npm/geist@1.3.0/dist/fonts/geist-mono/style.css');
-
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
-@layer base {
-  :root {
-    /* Warm neutral light — subtle sand, not blue-gray */
-    --background: 36 14% 96%;
-    --foreground: 20 10% 11%;
+/* ═══════════════════════════════════════════════
+   DESIGN TOKENS
+═══════════════════════════════════════════════ */
+:root {
+  /* Surfaces */
+  --ivory:  #FAF9F5;
+  --paper:  #FFFFFF;
 
-    --card: 0 0% 100%;
-    --card-foreground: 20 10% 11%;
+  /* Ink */
+  --slate:  #141413;
+  --g700:   #3D3D3A;
+  --g500:   #87867F;
 
-    --popover: 0 0% 100%;
-    --popover-foreground: 20 10% 11%;
+  /* Neutrals — warm gray ramp */
+  --g100:   #F0EEE6;
+  --g200:   #E6E3DA;
+  --g300:   #D1CFC5;
 
-    --primary: 20 10% 11%;
-    --primary-foreground: 0 0% 100%;
+  /* Brand & Accents */
+  --clay:   #D97757;
+  --clay-d: #B85C3E;
+  --oat:    #E3DACC;
+  --olive:  #788C5D;
+  --rust:   #B04A3F;
+  --sky:    #6A8CAF;
 
-    --secondary: 32 10% 93%;
-    --secondary-foreground: 20 10% 11%;
+  /* Typography */
+  --font-serif: ui-serif, Georgia, "Times New Roman", Times, serif;
+  --font-sans:  system-ui, -apple-system, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+  --font-mono:  ui-monospace, "SF Mono", Menlo, Monaco, Consolas, monospace;
 
-    --muted: 32 10% 93%;
-    --muted-foreground: 25 7% 42%;
+  /* Radius */
+  --radius-row:   8px;
+  --radius-panel: 12px;
+  --radius-pill:  9999px;
 
-    --accent: 32 10% 93%;
-    --accent-foreground: 20 10% 11%;
+  /* Borders */
+  --border-style: 1.5px solid var(--g300);
 
-    --destructive: 0 72% 51%;
-    --destructive-foreground: 0 0% 100%;
+  /* Shadows */
+  --shadow-sm:   0 1px 3px rgba(20,20,19,0.06);
+  --shadow-card: 0 4px 14px rgba(20,20,19,0.08);
+  --shadow-lg:   0 12px 32px rgba(20,20,19,0.10);
+  --focus-ring:  0 0 0 3px rgba(217,119,87,0.15);
 
-    --border: 30 12% 88%;
-    --input: 30 10% 84%;
-    --ring: 213 83% 45%;
-
-    --link: 213 83% 45%;
-    --link-legal: 231 100% 64%;
-    --preview: 271 45% 49%;
-
-    --radius: 0.5rem;
-  }
-
-  .dark {
-    /* Warm charcoal dark */
-    --background: 20 7% 8%;
-    --foreground: 30 8% 93%;
-
-    --card: 20 6% 11%;
-    --card-foreground: 30 8% 93%;
-
-    --popover: 20 6% 11%;
-    --popover-foreground: 30 8% 93%;
-
-    --primary: 30 8% 93%;
-    --primary-foreground: 20 7% 8%;
-
-    --secondary: 20 5% 16%;
-    --secondary-foreground: 30 8% 93%;
-
-    --muted: 20 5% 16%;
-    --muted-foreground: 25 5% 57%;
-
-    --accent: 20 5% 16%;
-    --accent-foreground: 30 8% 93%;
-
-    --destructive: 0 62% 56%;
-    --destructive-foreground: 0 0% 100%;
-
-    --border: 20 6% 20%;
-    --input: 20 6% 20%;
-    --ring: 213 83% 55%;
-
-    --link: 213 83% 60%;
-    --link-legal: 231 100% 70%;
-    --preview: 271 45% 60%;
-  }
+  /* ─── Tailwind semantic remaps ─── */
+  --background:         var(--ivory);
+  --foreground:         var(--slate);
+  --card:               var(--paper);
+  --card-foreground:    var(--slate);
+  --popover:            var(--paper);
+  --popover-foreground: var(--slate);
+  --primary:            var(--slate);
+  --primary-foreground: var(--paper);
+  --secondary:          var(--g100);
+  --secondary-foreground: var(--slate);
+  --muted:              var(--g100);
+  --muted-foreground:   var(--g500);
+  --accent:             var(--g100);
+  --accent-foreground:  var(--slate);
+  --destructive:        var(--rust);
+  --destructive-foreground: var(--paper);
+  --border:             var(--g300);
+  --input:              var(--g300);
+  --ring:               var(--clay);
+  --link:               var(--clay);
+  --radius:             var(--radius-panel);
 }
 
+/* ═══════════════════════════════════════════════
+   DARK MODE
+═══════════════════════════════════════════════ */
+.dark {
+  --ivory:  #1C1B18;
+  --paper:  #242320;
+  --slate:  #EDEBE3;
+  --g700:   #C5C3B8;
+  --g500:   #888680;
+  --g100:   #2B2A27;
+  --g200:   #343330;
+  --g300:   #3F3E3B;
+  --clay:   #E08B6A;
+  --clay-d: #D97757;
+  --oat:    #3A3630;
+  --olive:  #8FA86A;
+  --rust:   #C05A4E;
+  --sky:    #7A9CBF;
+
+  --shadow-sm:   0 1px 3px rgba(0,0,0,0.22);
+  --shadow-card: 0 4px 14px rgba(0,0,0,0.28);
+  --shadow-lg:   0 12px 32px rgba(0,0,0,0.38);
+  --focus-ring:  0 0 0 3px rgba(224,139,106,0.18);
+}
+
+/* ═══════════════════════════════════════════════
+   BASE
+═══════════════════════════════════════════════ */
 @layer base {
-  * {
-    @apply border-border;
-  }
+  * { @apply border-border; }
   body {
     @apply bg-background text-foreground antialiased;
-    font-family: "Geist", ui-sans-serif, system-ui, -apple-system, "Segoe UI", sans-serif;
-    font-feature-settings: "ss01", "cv11", "liga";
+    font-family: var(--font-sans);
+    font-feature-settings: "cv02", "cv03", "cv04", "cv11";
     line-height: 1.5;
-    letter-spacing: -0.006em;
+    letter-spacing: -0.004em;
   }
   code, kbd, samp, pre {
-    font-family: "Geist Mono", ui-monospace, "JetBrains Mono", monospace;
+    font-family: var(--font-mono);
   }
 }
 
 /* Scrollbar */
 ::-webkit-scrollbar { width: 6px; height: 6px; }
-::-webkit-scrollbar-track { @apply bg-transparent; }
-::-webkit-scrollbar-thumb { @apply rounded-full bg-muted-foreground/20; }
-::-webkit-scrollbar-thumb:hover { @apply bg-muted-foreground/35; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb { border-radius: 9999px; background: var(--g300); }
+::-webkit-scrollbar-thumb:hover { background: var(--g500); }
 
 /* Monaco vulnerable code highlight */
 .vuln-line-highlight {
-  background-color: rgba(239, 68, 68, 0.10) !important;
+  background-color: rgba(176, 74, 63, 0.10) !important;
 }
 .vuln-line-decoration {
-  background-color: #ef4444 !important;
+  background-color: var(--rust) !important;
   width: 3px !important;
   margin-left: 3px;
 }

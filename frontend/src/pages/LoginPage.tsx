@@ -17,7 +17,7 @@ export default function LoginPage() {
                     <span className="text-sm font-semibold text-foreground">SAST Copilot</span>
                 </div>
                 <div className="space-y-4">
-                    <h1 className="text-4xl font-bold tracking-tight text-foreground leading-[1.1]">
+                    <h1 className="font-serif text-4xl font-bold tracking-tight text-foreground leading-[1.1]">
                         Catch vulnerabilities<br />before they ship.
                     </h1>
                     <p className="text-base text-muted-foreground max-w-sm leading-relaxed">

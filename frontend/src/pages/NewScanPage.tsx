@@ -68,7 +68,7 @@ export default function NewScanPage() {
     return (
         <div className="mx-auto max-w-4xl animate-slide-up space-y-12">
             <div className="space-y-3">
-                <h1 className="text-4xl font-bold tracking-[-0.06em] text-foreground md:text-5xl md:leading-[1.1]">
+                <h1 className="font-serif text-4xl font-bold tracking-tight text-foreground md:text-5xl md:leading-[1.1]">
                     New security scan
                 </h1>
                 <p className="text-lg leading-[1.4] text-muted-foreground">

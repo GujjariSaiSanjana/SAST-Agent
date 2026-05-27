@@ -97,7 +97,7 @@ export default function DashboardPage() {
             {/* Page header */}
             <div className="flex flex-col justify-between gap-4 md:flex-row md:items-end">
                 <div>
-                    <h1 className="text-4xl font-bold tracking-[-0.06em] text-foreground md:text-5xl">Overview</h1>
+                    <h1 className="font-serif text-4xl font-bold tracking-tight text-foreground md:text-5xl">Overview</h1>
                     <p className="mt-1 text-muted-foreground">Real-time security posture across all scans.</p>
                 </div>
                 <Link to="/scans/new" className="shrink-0">

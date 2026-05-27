@@ -9,7 +9,7 @@ const buttonVariants = cva(
         variants: {
             variant: {
                 default:
-                    "rounded-full bg-primary text-primary-foreground shadow-whisper hover:opacity-90 px-3",
+                    "rounded-full bg-primary text-primary-foreground shadow-whisper hover:bg-g700 active:scale-[0.98] px-3",
                 destructive:
                     "rounded-md bg-destructive text-destructive-foreground shadow-whisper hover:bg-destructive/90",
                 outline:
