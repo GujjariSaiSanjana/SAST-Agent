@@ -22,11 +22,11 @@ function StatCard({ label, value, sub, icon: Icon, trend }: { label: string; val
             <CardContent className="p-5">
                 <div className="flex items-start justify-between">
                     <div>
-                        <p className="text-xs font-semibold uppercase tracking-widest text-muted-foreground">{label}</p>
-                        <p className="mt-2 text-3xl font-black tracking-tight text-foreground">{value}</p>
+                        <p className="text-xs font-medium text-muted-foreground">{label}</p>
+                        <p className="mt-2 text-3xl font-bold tracking-tight text-foreground tabular-nums">{value}</p>
                         {sub && <p className="mt-1 text-xs text-muted-foreground">{sub}</p>}
                     </div>
-                    <div className="rounded-lg border border-border bg-muted/30 p-2">
+                    <div className="rounded-lg border border-border bg-muted/40 p-2">
                         <Icon className="h-4 w-4 text-muted-foreground" />
                     </div>
                 </div>
@@ -177,20 +177,13 @@ export default function DashboardPage() {
                         ) : (
                             ['CRITICAL', 'HIGH', 'MEDIUM', 'LOW'].map(s => {
                                 const count = sevCount[s] || 0;
-                                const max = Math.max(...Object.values(sevCount));
-                                const pct = max ? (count / max) * 100 : 0;
                                 return (
-                                    <div key={s} className="space-y-1">
-                                        <div className="flex justify-between text-xs">
-                                            <span className="font-semibold" style={{ color: SEVERITY_COLORS[s] }}>{s}</span>
-                                            <span className="font-bold text-foreground">{count}</span>
+                                    <div key={s} className="flex items-center justify-between py-1.5 border-b border-border/50 last:border-0">
+                                        <div className="flex items-center gap-2">
+                                            <span className="h-2 w-2 rounded-full flex-shrink-0" style={{ background: SEVERITY_COLORS[s] }} />
+                                            <span className="text-xs font-medium text-muted-foreground">{s}</span>
                                         </div>
-                                        <div className="h-1.5 w-full rounded-full bg-muted overflow-hidden">
-                                            <div
-                                                className="h-full rounded-full transition-all"
-                                                style={{ width: `${pct}%`, backgroundColor: SEVERITY_COLORS[s] }}
-                                            />
-                                        </div>
+                                        <span className="text-sm font-bold tabular-nums" style={{ color: count > 0 ? SEVERITY_COLORS[s] : undefined }}>{count}</span>
                                     </div>
                                 );
                             })
@@ -271,18 +264,14 @@ export default function DashboardPage() {
                             <>
                                 <div className="divide-y">
                                     {allIssues.map(issue => (
-                                        <Link to={`/scans/${issue.scan?.id || issue.scanId}`} key={issue.id} className="flex items-start gap-3 p-4 hover:bg-accent/50 transition-colors">
-                                            <div className="mt-0.5 h-2.5 w-2.5 rounded-full flex-shrink-0" style={{ backgroundColor: SEVERITY_COLORS[issue.severity] || '#ccc' }} />
+                                        <Link to={`/scans/${issue.scan?.id || issue.scanId}`} key={issue.id} className="flex items-center justify-between gap-3 px-4 py-3 hover:bg-muted/50 transition-colors">
                                             <div className="min-w-0">
-                                                <p className="text-xs font-semibold text-foreground line-clamp-1">{issue.title}</p>
-                                                <div className="flex items-center gap-2 mt-0.5">
-                                                    <span className="text-[10px] text-muted-foreground">{issue.category}</span>
-                                                    {issue.scan?.project?.name && (
-                                                        <span className="text-[10px] font-medium text-muted-foreground truncate">· {issue.scan.project.name}</span>
-                                                    )}
-                                                </div>
+                                                <p className="text-xs font-medium text-foreground line-clamp-1">{issue.title}</p>
+                                                <p className="text-[10px] text-muted-foreground mt-0.5">
+                                                    {issue.category}{issue.scan?.project?.name ? ` · ${issue.scan.project.name}` : ''}
+                                                </p>
                                             </div>
-                                            <span className="flex-shrink-0 text-[10px] font-bold uppercase" style={{ color: SEVERITY_COLORS[issue.severity] }}>
+                                            <span className="flex-shrink-0 text-[10px] font-semibold tabular-nums" style={{ color: SEVERITY_COLORS[issue.severity] }}>
                                                 {issue.severity}
                                             </span>
                                         </Link>

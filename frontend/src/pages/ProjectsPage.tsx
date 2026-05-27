@@ -80,20 +80,20 @@ export default function ProjectsPage() {
                         >
                             <div className="grid gap-3 md:grid-cols-2">
                                 <div>
-                                    <label className="mb-1 block text-xs font-semibold uppercase tracking-wide text-muted-foreground">
+                                    <label className="mb-1 block text-xs font-medium text-muted-foreground">
                                         Project name *
                                     </label>
                                     <input className={inputClass} value={name} onChange={e => setName(e.target.value)} placeholder="e.g. Auth Service" required />
                                 </div>
                                 <div>
-                                    <label className="mb-1 block text-xs font-semibold uppercase tracking-wide text-muted-foreground">
+                                    <label className="mb-1 block text-xs font-medium text-muted-foreground">
                                         Repository URL
                                     </label>
                                     <input className={inputClass} value={repoUrl} onChange={e => setRepoUrl(e.target.value)} placeholder="https://github.com/org/repo" type="url" />
                                 </div>
                             </div>
                             <div>
-                                <label className="mb-1 block text-xs font-semibold uppercase tracking-wide text-muted-foreground">
+                                <label className="mb-1 block text-xs font-medium text-muted-foreground">
                                     Description
                                 </label>
                                 <input className={inputClass} value={description} onChange={e => setDescription(e.target.value)} placeholder="Optional description" />
@@ -195,15 +195,15 @@ export default function ProjectsPage() {
                                     {/* Stats */}
                                     <div className="grid grid-cols-3 gap-2 rounded-lg border border-border bg-muted/30 p-3">
                                         <div className="text-center">
-                                            <p className="text-[10px] font-semibold uppercase tracking-wide text-muted-foreground">Risk</p>
+                                            <p className="text-[10px] font-medium text-muted-foreground">Risk</p>
                                             <RiskBadge score={riskScore} />
                                         </div>
                                         <div className="text-center border-x border-border">
-                                            <p className="text-[10px] font-semibold uppercase tracking-wide text-muted-foreground">Scans</p>
+                                            <p className="text-[10px] font-medium text-muted-foreground">Scans</p>
                                             <p className="text-sm font-bold text-foreground">{scanCount}</p>
                                         </div>
                                         <div className="text-center">
-                                            <p className="text-[10px] font-semibold uppercase tracking-wide text-muted-foreground">Latest</p>
+                                            <p className="text-[10px] font-medium text-muted-foreground">Latest</p>
                                             <p className="text-[10px] font-medium text-muted-foreground mt-0.5">
                                                 {latestScan ? formatDate(latestScan.createdAt) : '—'}
                                             </p>

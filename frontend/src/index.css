@@ -1,76 +1,79 @@
+@import url('https://cdn.jsdelivr.net/npm/geist@1.3.0/dist/fonts/geist-sans/style.css');
+@import url('https://cdn.jsdelivr.net/npm/geist@1.3.0/dist/fonts/geist-mono/style.css');
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
 @layer base {
   :root {
-    /* Surfaces — Expo-inspired light system */
-    --background: 240 7% 95%; /* Cloud Gray #f0f0f3 */
-    --foreground: 220 14% 13%; /* Near Black #1c2024 */
+    /* Warm neutral light — subtle sand, not blue-gray */
+    --background: 36 14% 96%;
+    --foreground: 20 10% 11%;
 
-    --card: 0 0% 100%; /* Pure White */
-    --card-foreground: 220 14% 13%;
+    --card: 0 0% 100%;
+    --card-foreground: 20 10% 11%;
 
     --popover: 0 0% 100%;
-    --popover-foreground: 220 14% 13%;
+    --popover-foreground: 20 10% 11%;
 
-    /* Primary actions: Expo Black on white text */
-    --primary: 0 0% 0%;
+    --primary: 20 10% 11%;
     --primary-foreground: 0 0% 100%;
 
-    --secondary: 240 8% 93%;
-    --secondary-foreground: 220 14% 13%;
+    --secondary: 32 10% 93%;
+    --secondary-foreground: 20 10% 11%;
 
-    --muted: 240 8% 93%;
-    --muted-foreground: 220 9% 40%; /* Slate Gray #60646c */
+    --muted: 32 10% 93%;
+    --muted-foreground: 25 7% 42%;
 
-    --accent: 240 8% 93%;
-    --accent-foreground: 220 14% 13%;
+    --accent: 32 10% 93%;
+    --accent-foreground: 20 10% 11%;
 
-    --destructive: 0 55% 74%; /* Destructive Rose #eb8e90 */
-    --destructive-foreground: 220 14% 13%;
+    --destructive: 0 72% 51%;
+    --destructive-foreground: 0 0% 100%;
 
-    --border: 230 14% 90%; /* Border Lavender #e0e1e6 */
-    --input: 230 10% 86%; /* Input Border #d9d9e0 */
-    --ring: 211 89% 43%; /* Link Cobalt focus #0d74ce */
+    --border: 30 12% 88%;
+    --input: 30 10% 84%;
+    --ring: 213 83% 45%;
 
-    --link: 211 89% 43%; /* Link Cobalt #0d74ce */
-    --link-legal: 231 100% 64%; /* Legal Blue #476cff */
-    --preview: 271 45% 49%; /* Preview Purple #8145b5 */
+    --link: 213 83% 45%;
+    --link-legal: 231 100% 64%;
+    --preview: 271 45% 49%;
 
-    --radius: 0.5rem; /* 8px — standard cards & functional UI */
+    --radius: 0.5rem;
   }
 
   .dark {
-    --background: 0 0% 9%;
-    --foreground: 240 7% 96%;
+    /* Warm charcoal dark */
+    --background: 20 7% 8%;
+    --foreground: 30 8% 93%;
 
-    --card: 0 0% 12%;
-    --card-foreground: 240 7% 96%;
+    --card: 20 6% 11%;
+    --card-foreground: 30 8% 93%;
 
-    --popover: 0 0% 12%;
-    --popover-foreground: 240 7% 96%;
+    --popover: 20 6% 11%;
+    --popover-foreground: 30 8% 93%;
 
-    --primary: 0 0% 100%;
-    --primary-foreground: 0 0% 0%;
+    --primary: 30 8% 93%;
+    --primary-foreground: 20 7% 8%;
 
-    --secondary: 0 0% 18%;
-    --secondary-foreground: 240 7% 96%;
+    --secondary: 20 5% 16%;
+    --secondary-foreground: 30 8% 93%;
 
-    --muted: 0 0% 18%;
-    --muted-foreground: 220 9% 65%;
+    --muted: 20 5% 16%;
+    --muted-foreground: 25 5% 57%;
 
-    --accent: 0 0% 18%;
-    --accent-foreground: 240 7% 96%;
+    --accent: 20 5% 16%;
+    --accent-foreground: 30 8% 93%;
 
-    --destructive: 0 45% 45%;
-    --destructive-foreground: 240 7% 96%;
+    --destructive: 0 62% 56%;
+    --destructive-foreground: 0 0% 100%;
 
-    --border: 220 9% 22%;
-    --input: 220 9% 22%;
-    --ring: 226 71% 50%;
+    --border: 20 6% 20%;
+    --input: 20 6% 20%;
+    --ring: 213 83% 55%;
 
-    --link: 211 89% 55%;
+    --link: 213 83% 60%;
     --link-legal: 231 100% 70%;
     --preview: 271 45% 60%;
   }
@@ -82,39 +85,25 @@
   }
   body {
     @apply bg-background text-foreground antialiased;
-    font-family: Inter, -apple-system, system-ui, sans-serif;
-    font-feature-settings: "cv02", "cv03", "cv04", "cv11";
-    line-height: 1.4;
+    font-family: "Geist", ui-sans-serif, system-ui, -apple-system, "Segoe UI", sans-serif;
+    font-feature-settings: "ss01", "cv11", "liga";
+    line-height: 1.5;
+    letter-spacing: -0.006em;
   }
-  code,
-  kbd,
-  samp,
-  pre {
-    font-family: "JetBrains Mono", ui-monospace, monospace;
+  code, kbd, samp, pre {
+    font-family: "Geist Mono", ui-monospace, "JetBrains Mono", monospace;
   }
 }
 
-/* Scrollbar — whisper contrast */
-::-webkit-scrollbar {
-  width: 8px;
-  height: 8px;
-}
+/* Scrollbar */
+::-webkit-scrollbar { width: 6px; height: 6px; }
+::-webkit-scrollbar-track { @apply bg-transparent; }
+::-webkit-scrollbar-thumb { @apply rounded-full bg-muted-foreground/20; }
+::-webkit-scrollbar-thumb:hover { @apply bg-muted-foreground/35; }
 
-::-webkit-scrollbar-track {
-  @apply bg-transparent;
-}
-
-::-webkit-scrollbar-thumb {
-  @apply rounded-full bg-muted-foreground/25;
-}
-
-::-webkit-scrollbar-thumb:hover {
-  @apply bg-muted-foreground/40;
-}
-
-/* Monaco editor line highlight for vulnerable code */
+/* Monaco vulnerable code highlight */
 .vuln-line-highlight {
-  background-color: rgba(239, 68, 68, 0.12) !important;
+  background-color: rgba(239, 68, 68, 0.10) !important;
 }
 .vuln-line-decoration {
   background-color: #ef4444 !important;

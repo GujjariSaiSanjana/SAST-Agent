@@ -18,8 +18,8 @@ export default {
         },
         extend: {
             fontFamily: {
-                sans: ["Inter", "-apple-system", "system-ui", "sans-serif"],
-                mono: ['"JetBrains Mono"', "ui-monospace", "monospace"],
+                sans: ["Geist", "ui-sans-serif", "system-ui", "-apple-system", "sans-serif"],
+                mono: ['"Geist Mono"', '"JetBrains Mono"', "ui-monospace", "monospace"],
             },
             colors: {
                 border: "hsl(var(--border))",
@@ -68,10 +68,8 @@ export default {
                 "3xl": "1.5rem",
             },
             boxShadow: {
-                whisper:
-                    "0 3px 6px rgba(0,0,0,0.08), 0 2px 4px rgba(0,0,0,0.07)",
-                elevated:
-                    "0 10px 20px rgba(0,0,0,0.1), 0 3px 6px rgba(0,0,0,0.05)",
+                whisper: "0 1px 3px rgba(30,20,10,0.07), 0 1px 2px rgba(30,20,10,0.05)",
+                elevated: "0 6px 18px rgba(30,20,10,0.09), 0 2px 6px rgba(30,20,10,0.05)",
             },
             keyframes: {
                 "accordion-down": {

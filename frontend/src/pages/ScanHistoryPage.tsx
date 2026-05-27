@@ -52,7 +52,7 @@ function ComparisonPanel({ scanA, scanB, onClose }: { scanA: any; scanB: any; on
                 </div>
             </CardHeader>
             <CardContent className="p-0">
-                <div className="grid grid-cols-3 text-xs font-semibold uppercase tracking-wide text-muted-foreground border-b">
+                <div className="grid grid-cols-3 text-xs font-medium text-muted-foreground border-b">
                     <div className="p-3 border-r">
                         <p className="truncate">{scanA.project?.name || scanA.inputRef?.split('/').pop() || 'Scan A'}</p>
                         <p className="text-[10px] font-normal mt-0.5">{formatDate(scanA.createdAt)}</p>
