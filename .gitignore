@@ -47,3 +47,11 @@ Thumbs.db
 # ── Misc ──────────────────────────────────────────────────────
 .eslintcache
 .cache/
+.gstack/
+
+# ── AI agent / tooling artifacts ──────────────────────────────
+.claude/
+
+# ── Personal deliverables (kept local, not for the repo) ──────
+*.pptx
+*.docx
